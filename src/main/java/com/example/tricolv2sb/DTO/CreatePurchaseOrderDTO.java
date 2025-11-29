@@ -10,10 +10,10 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class CreatePurchaseOrderDTO {
-    
+
     @NotNull(message = "Supplier ID is required")
     private Long supplierId;
-    
+
     @Valid
     private List<OrderLineItemDTO> orderLines;
 }
