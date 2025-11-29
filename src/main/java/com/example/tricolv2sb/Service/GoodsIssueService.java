@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,7 +69,7 @@ public class GoodsIssueService {
             issueLines.add(line);
         }
 
-        goodsIssue.setIssueLines(new HashSet<>(issueLines));
+        goodsIssue.setIssueLines(issueLines);
         GoodsIssue savedGoodsIssue = goodsIssueRepository.save(goodsIssue);
         return goodsIssueMapper.toDto(savedGoodsIssue);
     }
@@ -137,14 +136,25 @@ public class GoodsIssueService {
      */
     private void processGoodsIssueLineFIFO(GoodsIssueLine line) {
         Long productId = line.getProduct().getId();
+        Double reorderPoint = line.getProduct().getReorderPoint();
         Double requiredQuantity = line.getQuantity();
 
-        // Check total available stock
         Double availableStock = stockLotRepository.calculateTotalAvailableStock(productId);
         if (availableStock < requiredQuantity) {
             throw new IllegalStateException(
                     String.format("Insufficient stock for product ID %d. Required: %.2f, Available: %.2f",
                             productId, requiredQuantity, availableStock));
+        }
+
+        Double projectedStockAfterIssue = availableStock - requiredQuantity;
+        if (projectedStockAfterIssue <= reorderPoint) {
+            throw new IllegalStateException(
+                    String.format(
+                            "Issuing this quantity would reduce stock below the reorder point for product ID %d. " +
+                                    "Reorder Point: %.2f, Stock After Issue: %.2f, Available Stock: %.2f",
+                            productId, reorderPoint, projectedStockAfterIssue, availableStock
+                    )
+            );
         }
 
         List<StockLot> availableLots = stockLotRepository.findAvailableLotsByProductIdOrderByEntryDate(productId);
@@ -180,6 +190,7 @@ public class GoodsIssueService {
                             productId, remainingToConsume));
         }
     }
+
 
     @Transactional
     public void cancelGoodsIssue(Long id) {

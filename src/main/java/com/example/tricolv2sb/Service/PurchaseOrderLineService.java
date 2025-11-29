@@ -6,6 +6,7 @@ import com.example.tricolv2sb.DTO.UpdatePurchaseOrderLineDTO;
 import com.example.tricolv2sb.Entity.Product;
 import com.example.tricolv2sb.Entity.PurchaseOrder;
 import com.example.tricolv2sb.Entity.PurchaseOrderLine;
+import com.example.tricolv2sb.Entity.Enum.OrderStatus;
 import com.example.tricolv2sb.Exception.ProductNotFoundException;
 import com.example.tricolv2sb.Exception.PurchaseOrderLineNotFoundException;
 import com.example.tricolv2sb.Exception.PurchaseOrderNotFoundException;
@@ -51,11 +52,29 @@ public class PurchaseOrderLineService implements PurchaseOrderLineServiceInterfa
                                 "Purchase order line with ID " + id + " not found")));
     }
 
+    @Transactional(readOnly = true)
+    public List<ReadPurchaseOrderLineDTO> fetchPurchaseOrderLinesByOrderId(Long orderId) {
+        if (!purchaseOrderRepository.existsById(orderId)) {
+            throw new PurchaseOrderNotFoundException("Purchase order with ID " + orderId + " not found");
+        }
+
+        List<PurchaseOrderLine> orderLines = orderLineRepository.findByPurchaseOrderId(orderId);
+        return orderLines.stream()
+                .map(orderLineMapper::toDto)
+                .toList();
+    }
+
     @Transactional
     public ReadPurchaseOrderLineDTO createPurchaseOrderLine(CreatePurchaseOrderLineDTO dto) {
+        if (dto.getPurchaseOrderId() == null) {
+            throw new IllegalArgumentException("Purchase order ID is required for creating order line");
+        }
+
         PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(dto.getPurchaseOrderId())
                 .orElseThrow(() -> new PurchaseOrderNotFoundException(
                         "Purchase order with ID " + dto.getPurchaseOrderId() + " not found"));
+
+        validateOrderCanBeModified(purchaseOrder);
 
         Product product = productRepository.findById(dto.getProductId())
                 .orElseThrow(() -> new ProductNotFoundException(
@@ -66,6 +85,9 @@ public class PurchaseOrderLineService implements PurchaseOrderLineServiceInterfa
         orderLine.setProduct(product);
 
         PurchaseOrderLine savedOrderLine = orderLineRepository.save(orderLine);
+
+        updatePurchaseOrderTotal(purchaseOrder);
+
         return orderLineMapper.toDto(savedOrderLine);
     }
 
@@ -74,6 +96,10 @@ public class PurchaseOrderLineService implements PurchaseOrderLineServiceInterfa
         PurchaseOrderLine existingOrderLine = orderLineRepository.findById(id)
                 .orElseThrow(() -> new PurchaseOrderLineNotFoundException(
                         "Purchase order line with ID " + id + " not found"));
+
+        PurchaseOrder purchaseOrder = existingOrderLine.getPurchaseOrder();
+
+        validateOrderCanBeModified(purchaseOrder);
 
         orderLineMapper.updateFromDto(dto, existingOrderLine);
 
@@ -85,15 +111,24 @@ public class PurchaseOrderLineService implements PurchaseOrderLineServiceInterfa
         }
 
         PurchaseOrderLine savedOrderLine = orderLineRepository.save(existingOrderLine);
+
+        updatePurchaseOrderTotal(purchaseOrder);
+
         return orderLineMapper.toDto(savedOrderLine);
     }
 
     @Transactional
     public void deletePurchaseOrderLine(Long id) {
-        if (!orderLineRepository.existsById(id)) {
-            throw new PurchaseOrderLineNotFoundException(
-                    "Purchase order line with ID " + id + " not found");
-        }
+        PurchaseOrderLine orderLine = orderLineRepository.findById(id)
+                .orElseThrow(() -> new PurchaseOrderLineNotFoundException(
+                        "Purchase order line with ID " + id + " not found"));
+
+        Long purchaseOrderId = orderLine.getPurchaseOrder().getId();
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId)
+                .orElseThrow(() -> new PurchaseOrderNotFoundException(
+                        "Purchase order with ID " + purchaseOrderId + " not found"));
+
+        validateOrderCanBeModified(purchaseOrder);
 
         long stockLotCount = orderLineRepository.countStockLotsByOrderLineId(id);
 
@@ -104,6 +139,24 @@ public class PurchaseOrderLineService implements PurchaseOrderLineServiceInterfa
                             "Please handle the stock lots first before deleting this line.");
         }
 
+        purchaseOrder.getOrderLines().remove(orderLine);
         orderLineRepository.deleteById(id);
+
+        updatePurchaseOrderTotal(purchaseOrder);
+    }
+
+    private void validateOrderCanBeModified(PurchaseOrder purchaseOrder) {
+        if (purchaseOrder.getStatus() == OrderStatus.DELIVERED) {
+            throw new IllegalStateException("Cannot modify a delivered purchase order");
+        }
+
+        if (purchaseOrder.getStatus() == OrderStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot modify a cancelled purchase order");
+        }
+    }
+
+    private void updatePurchaseOrderTotal(PurchaseOrder purchaseOrder) {
+        purchaseOrder.calculateTotalAmount();
+        purchaseOrderRepository.save(purchaseOrder);
     }
 }

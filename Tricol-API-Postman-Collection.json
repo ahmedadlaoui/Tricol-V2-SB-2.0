@@ -1,8 +1,8 @@
 {
     "info": {
-        "_postman_id": "tricol-v2-collection",
-        "name": "Tricol V2 - Gestion Approvisionnement",
-        "description": "Collection complète des endpoints de l'application Tricol V2 - Gestion d'approvisionnement avec FIFO",
+        "_postman_id": "tricol-v2-sb-collection",
+        "name": "Tricol Warehouse Management System API",
+        "description": "Complete API collection for Tricol warehouse management system",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "item": [
@@ -15,10 +15,12 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/suppliers",
+                            "raw": "http://localhost:8080/api/v1/suppliers",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -33,10 +35,12 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/suppliers/1",
+                            "raw": "http://localhost:8080/api/v1/suppliers/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -58,13 +62,15 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"companyName\": \"Textile Suppliers SARL\",\n  \"address\": \"123 Rue du Commerce, Zone Industrielle\",\n  \"city\": \"Casablanca\",\n  \"email\": \"contact@textile-suppliers.ma\",\n  \"phone\": \"+212600123456\",\n  \"ice\": \"001234567890001\",\n  \"contactPerson\": \"Ahmed Bennani\"\n}"
+                            "raw": "{\n  \"companyName\": \"TechSupply Co\",\n  \"ice\": \"ICE123456789\",\n  \"contactPerson\": \"John Doe\",\n  \"email\": \"john@techsupply.com\",\n  \"phone\": \"0612345678\",\n  \"address\": \"123 Main Street\",\n  \"city\": \"Casablanca\"\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/v1/suppliers",
+                            "raw": "http://localhost:8080/api/v1/suppliers",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -85,13 +91,15 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"companyName\": \"Textile Suppliers SARL Updated\",\n  \"address\": \"456 Nouvelle Adresse\",\n  \"city\": \"Rabat\",\n  \"email\": \"new.contact@textile-suppliers.ma\",\n  \"phone\": \"+212600654321\",\n  \"ice\": \"001234567890001\",\n  \"contactPerson\": \"Fatima Alami\"\n}"
+                            "raw": "{\n  \"companyName\": \"TechSupply Co Updated\",\n  \"ice\": \"ICE123456789\",\n  \"contactPerson\": \"John Doe\",\n  \"email\": \"john.updated@techsupply.com\",\n  \"phone\": \"0612345678\",\n  \"address\": \"123 Main Street\",\n  \"city\": \"Casablanca\"\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/v1/suppliers/1",
+                            "raw": "http://localhost:8080/api/v1/suppliers/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -107,10 +115,12 @@
                         "method": "DELETE",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/suppliers/1",
+                            "raw": "http://localhost:8080/api/v1/suppliers/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -131,10 +141,12 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/products",
+                            "raw": "http://localhost:8080/api/v1/products",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -149,10 +161,12 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/products/1",
+                            "raw": "http://localhost:8080/api/v1/products/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -163,15 +177,17 @@
                     }
                 },
                 {
-                    "name": "Get Product Stock",
+                    "name": "Get Product Stock Detail",
                     "request": {
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/products/1/stock",
+                            "raw": "http://localhost:8080/api/v1/products/1/stock",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -194,13 +210,15 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"reference\": \"TSHIRT-PRO-001\",\n  \"name\": \"T-Shirt Professionnel Coton\",\n  \"description\": \"T-shirt 100% coton pour usage professionnel\",\n  \"unitPrice\": 45,\n  \"category\": \"VETEMENT\",\n  \"reorderPoint\": 50.0,\n  \"unitOfMeasure\": \"PCS\"\n}"
+                            "raw": "{\n  \"reference\": \"PROD-001\",\n  \"name\": \"Laptop HP\",\n  \"description\": \"HP Laptop i7 16GB RAM\",\n  \"category\": \"Electronics\",\n  \"unitPrice\": 8500.00,\n  \"unitOfMeasure\": \"UNIT\",\n  \"reorderPoint\": 5\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/v1/products",
+                            "raw": "http://localhost:8080/api/v1/products",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -221,13 +239,15 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"name\": \"T-Shirt Pro Updated\",\n  \"description\": \"T-shirt haute qualité\",\n  \"unitPrice\": 50,\n  \"category\": \"VETEMENT_PRO\",\n  \"reorderPoint\": 60.0,\n  \"unitOfMeasure\": \"PCS\"\n}"
+                            "raw": "{\n  \"reference\": \"PROD-001\",\n  \"name\": \"Laptop HP Updated\",\n  \"description\": \"HP Laptop i7 32GB RAM\",\n  \"category\": \"Electronics\",\n  \"unitPrice\": 9000.00,\n  \"unitOfMeasure\": \"UNIT\",\n  \"reorderPoint\": 5\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/v1/products/1",
+                            "raw": "http://localhost:8080/api/v1/products/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -243,10 +263,12 @@
                         "method": "DELETE",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/products/1",
+                            "raw": "http://localhost:8080/api/v1/products/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -262,15 +284,17 @@
             "name": "Purchase Orders",
             "item": [
                 {
-                    "name": "Get All Orders",
+                    "name": "Get All Purchase Orders",
                     "request": {
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/orders",
+                            "raw": "http://localhost:8080/api/v1/orders",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -280,15 +304,17 @@
                     }
                 },
                 {
-                    "name": "Get Order By ID",
+                    "name": "Get Purchase Order By ID",
                     "request": {
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/orders/1",
+                            "raw": "http://localhost:8080/api/v1/orders/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -299,15 +325,17 @@
                     }
                 },
                 {
-                    "name": "Get Orders By Supplier",
+                    "name": "Get Purchase Orders By Supplier",
                     "request": {
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/orders/supplier/1",
+                            "raw": "http://localhost:8080/api/v1/orders/supplier/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -319,7 +347,7 @@
                     }
                 },
                 {
-                    "name": "Create Order",
+                    "name": "Create Purchase Order",
                     "request": {
                         "method": "POST",
                         "header": [
@@ -330,13 +358,15 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"supplierId\": 1,\n  \"orderDate\": \"2025-11-11\",\n  \"expectedDeliveryDate\": \"2025-11-25\",\n  \"status\": \"PENDING\"\n}"
+                            "raw": "{\n  \"supplierId\": 1,\n  \"orderDate\": \"2025-01-15\"\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/v1/orders",
+                            "raw": "http://localhost:8080/api/v1/orders",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -346,7 +376,7 @@
                     }
                 },
                 {
-                    "name": "Update Order",
+                    "name": "Update Purchase Order",
                     "request": {
                         "method": "PUT",
                         "header": [
@@ -357,13 +387,15 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"expectedDeliveryDate\": \"2025-11-30\",\n  \"status\": \"PENDING\"\n}"
+                            "raw": "{\n  \"supplierId\": 1,\n  \"orderDate\": \"2025-01-16\"\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/v1/orders/1",
+                            "raw": "http://localhost:8080/api/v1/orders/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -374,15 +406,17 @@
                     }
                 },
                 {
-                    "name": "Validate Order",
+                    "name": "Validate Purchase Order",
                     "request": {
                         "method": "PUT",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/orders/1/validate",
+                            "raw": "http://localhost:8080/api/v1/orders/1/validate",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -394,15 +428,17 @@
                     }
                 },
                 {
-                    "name": "Receive Order (Stock IN)",
+                    "name": "Receive Purchase Order",
                     "request": {
                         "method": "PUT",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/orders/1/reception",
+                            "raw": "http://localhost:8080/api/v1/orders/1/reception",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -414,15 +450,17 @@
                     }
                 },
                 {
-                    "name": "Cancel Order",
+                    "name": "Cancel Purchase Order",
                     "request": {
                         "method": "PUT",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/orders/1/cancel",
+                            "raw": "http://localhost:8080/api/v1/orders/1/cancel",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -434,15 +472,17 @@
                     }
                 },
                 {
-                    "name": "Delete Order",
+                    "name": "Delete Purchase Order",
                     "request": {
                         "method": "DELETE",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/orders/1",
+                            "raw": "http://localhost:8080/api/v1/orders/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -455,7 +495,7 @@
             ]
         },
         {
-            "name": "Order Lines",
+            "name": "Purchase Order Lines",
             "item": [
                 {
                     "name": "Get All Order Lines",
@@ -463,10 +503,12 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/order-lines",
+                            "raw": "http://localhost:8080/api/v1/order-lines",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -481,14 +523,38 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/order-lines/1",
+                            "raw": "http://localhost:8080/api/v1/order-lines/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
                                 "order-lines",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Order Lines By Order ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:8080/api/v1/order-lines/order/1",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8080",
+                            "path": [
+                                "api",
+                                "v1",
+                                "order-lines",
+                                "order",
                                 "1"
                             ]
                         }
@@ -506,13 +572,15 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"purchaseOrderId\": 1,\n  \"productId\": 1,\n  \"quantity\": 100.0,\n  \"unitPrice\": 45.0\n}"
+                            "raw": "{\n  \"purchaseOrderId\": 1,\n  \"productId\": 1,\n  \"quantity\": 10,\n  \"unitPrice\": 8500.00\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/v1/order-lines",
+                            "raw": "http://localhost:8080/api/v1/order-lines",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -533,13 +601,15 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"quantity\": 150.0,\n  \"unitPrice\": 42.0\n}"
+                            "raw": "{\n  \"productId\": 1,\n  \"quantity\": 15,\n  \"unitPrice\": 8500.00\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/v1/order-lines/1",
+                            "raw": "http://localhost:8080/api/v1/order-lines/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -555,10 +625,12 @@
                         "method": "DELETE",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/order-lines/1",
+                            "raw": "http://localhost:8080/api/v1/order-lines/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -579,10 +651,12 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/goods-issues",
+                            "raw": "http://localhost:8080/api/v1/goods-issues",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -597,10 +671,12 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/goods-issues/1",
+                            "raw": "http://localhost:8080/api/v1/goods-issues/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -622,13 +698,15 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"destination\": \"Atelier Production A\",\n  \"motif\": \"PRODUCTION\",\n  \"issueDate\": \"2025-11-11\",\n  \"issueLines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 30.0\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 15.0\n    }\n  ]\n}"
+                            "raw": "{\n  \"issueDate\": \"2025-01-15\",\n  \"recipient\": \"Customer ABC\",\n  \"issueLines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 5,\n      \"unitPrice\": 9000.00\n    }\n  ]\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/v1/goods-issues",
+                            "raw": "http://localhost:8080/api/v1/goods-issues",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -649,13 +727,15 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"destination\": \"Atelier Production B\",\n  \"motif\": \"MAINTENANCE\",\n  \"issueDate\": \"2025-11-12\"\n}"
+                            "raw": "{\n  \"issueDate\": \"2025-01-16\",\n  \"recipient\": \"Customer ABC Updated\"\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/v1/goods-issues/1",
+                            "raw": "http://localhost:8080/api/v1/goods-issues/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -666,15 +746,17 @@
                     }
                 },
                 {
-                    "name": "Validate Goods Issue (Stock OUT FIFO)",
+                    "name": "Validate Goods Issue",
                     "request": {
                         "method": "PUT",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/goods-issues/1/validate",
+                            "raw": "http://localhost:8080/api/v1/goods-issues/1/validate",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -691,10 +773,12 @@
                         "method": "PUT",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/goods-issues/1/cancel",
+                            "raw": "http://localhost:8080/api/v1/goods-issues/1/cancel",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -711,14 +795,84 @@
                         "method": "DELETE",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/goods-issues/1",
+                            "raw": "http://localhost:8080/api/v1/goods-issues/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
                                 "goods-issues",
+                                "1"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Stock Movements",
+            "item": [
+                {
+                    "name": "Get All Stock Movements",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:8080/api/v1/stock-movements",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8080",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stock-movements"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Stock Movement By ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:8080/api/v1/stock-movements/1",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8080",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stock-movements",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Stock Movements By Product",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:8080/api/v1/stock-movements/product/1",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8080",
+                            "path": [
+                                "api",
+                                "v1",
+                                "stock-movements",
+                                "product",
                                 "1"
                             ]
                         }
@@ -735,10 +889,12 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/stock",
+                            "raw": "http://localhost:8080/api/v1/stock",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -748,15 +904,17 @@
                     }
                 },
                 {
-                    "name": "Get Product Stock Detail (FIFO Lots)",
+                    "name": "Get Product Stock Detail",
                     "request": {
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/stock/product/1",
+                            "raw": "http://localhost:8080/api/v1/stock/product/1",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -768,15 +926,17 @@
                     }
                 },
                 {
-                    "name": "Get Total Stock Valuation (FIFO)",
+                    "name": "Get Total Stock Valuation",
                     "request": {
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/stock/valuation",
+                            "raw": "http://localhost:8080/api/v1/stock/valuation",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -792,10 +952,12 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/v1/stock/alerts",
+                            "raw": "http://localhost:8080/api/v1/stock/alerts",
+                            "protocol": "http",
                             "host": [
-                                "{{base_url}}"
+                                "localhost"
                             ],
+                            "port": "8080",
                             "path": [
                                 "api",
                                 "v1",
@@ -806,75 +968,6 @@
                     }
                 }
             ]
-        },
-        {
-            "name": "Stock Movements",
-            "item": [
-                {
-                    "name": "Get All Stock Movements",
-                    "request": {
-                        "method": "GET",
-                        "header": [],
-                        "url": {
-                            "raw": "{{base_url}}/api/v1/stock-movements",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "api",
-                                "v1",
-                                "stock-movements"
-                            ]
-                        }
-                    }
-                },
-                {
-                    "name": "Get Stock Movement By ID",
-                    "request": {
-                        "method": "GET",
-                        "header": [],
-                        "url": {
-                            "raw": "{{base_url}}/api/v1/stock-movements/1",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "api",
-                                "v1",
-                                "stock-movements",
-                                "1"
-                            ]
-                        }
-                    }
-                },
-                {
-                    "name": "Get Stock Movements By Product",
-                    "request": {
-                        "method": "GET",
-                        "header": [],
-                        "url": {
-                            "raw": "{{base_url}}/api/v1/stock-movements/product/1",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "api",
-                                "v1",
-                                "stock-movements",
-                                "product",
-                                "1"
-                            ]
-                        }
-                    }
-                }
-            ]
-        }
-    ],
-    "variable": [
-        {
-            "key": "base_url",
-            "value": "http://localhost:8080",
-            "type": "string"
         }
     ]
 }

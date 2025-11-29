@@ -4,6 +4,7 @@ import com.example.tricolv2sb.DTO.CreateProductDTO;
 import com.example.tricolv2sb.DTO.ReadProductDTO;
 import com.example.tricolv2sb.DTO.UpdateProductDTO;
 import com.example.tricolv2sb.Entity.Product;
+import com.example.tricolv2sb.Exception.ProductNotFoundException;
 import com.example.tricolv2sb.Mapper.ProductMapper;
 import com.example.tricolv2sb.Repository.ProductRepository;
 import com.example.tricolv2sb.Service.ServiceInterfaces.ProductInterface;
@@ -56,10 +57,21 @@ public class ProductService implements ProductInterface {
         return productMapper.toDto(updatedProduct);
     }
 
+    @Transactional
     public void deleteProduct(Long id) {
-        if (!productRepository.existsById(id)) {
-            throw new RuntimeException("Product not found with id: " + id);
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product with ID " + id + " not found"));
+
+        if (!product.getPurchaseOrderLines().isEmpty()) {
+            throw new IllegalStateException(
+                    "Cannot delete product with existing order lines. Remove all order lines first.");
         }
+
+        if (!product.getStockLots().isEmpty()) {
+            throw new IllegalStateException(
+                    "Cannot delete product with existing stock. Clear all stock lots first.");
+        }
+
         productRepository.deleteById(id);
     }
 }

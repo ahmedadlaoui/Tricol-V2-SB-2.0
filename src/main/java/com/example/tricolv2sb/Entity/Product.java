@@ -2,7 +2,9 @@ package com.example.tricolv2sb.Entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "products")
@@ -33,14 +35,29 @@ public class Product {
     private String unitOfMeasure;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<PurchaseOrderLine> purchaseOrderLines;
+    private List<PurchaseOrderLine> purchaseOrderLines = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<GoodsIssueLine> goodsIssueLines;
+    private List<GoodsIssueLine> goodsIssueLines = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<StockLot> stockLots;
+    private List<StockLot> stockLots = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<StockMovement> stockMovements;
+    private List<StockMovement> stockMovements = new ArrayList<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Product))
+            return false;
+        Product product = (Product) o;
+        return Objects.equals(id, product.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

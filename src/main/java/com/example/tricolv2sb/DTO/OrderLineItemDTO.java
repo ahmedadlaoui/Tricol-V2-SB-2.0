@@ -8,7 +8,11 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class CreatePurchaseOrderLineDTO {
+public class OrderLineItemDTO {
+
+    @NotNull(message = "Product ID is required")
+    @Positive(message = "Product ID must be positive")
+    private Long productId;
 
     @NotNull(message = "Quantity is required")
     @DecimalMin(value = "0.01", message = "Quantity must be greater than 0")
@@ -17,11 +21,4 @@ public class CreatePurchaseOrderLineDTO {
     @NotNull(message = "Unit price is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Unit price must be greater than 0")
     private Double unitPrice;
-
-    @Positive(message = "Purchase order ID must be positive")
-    private Long purchaseOrderId;
-
-    @NotNull(message = "Product ID is required")
-    @Positive(message = "Product ID must be positive")
-    private Long productId;
 }

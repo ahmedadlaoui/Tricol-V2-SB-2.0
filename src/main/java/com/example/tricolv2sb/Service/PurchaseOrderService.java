@@ -5,8 +5,10 @@ import com.example.tricolv2sb.DTO.ReadPurchaseOrderDTO;
 import com.example.tricolv2sb.DTO.UpdatePurchaseOrderDTO;
 import com.example.tricolv2sb.Entity.*;
 import com.example.tricolv2sb.Exception.PurchaseOrderNotFoundException;
+import com.example.tricolv2sb.Exception.ProductNotFoundException;
 import com.example.tricolv2sb.Repository.StockMovementRepository;
 import com.example.tricolv2sb.Repository.StockLotRepository;
+import com.example.tricolv2sb.Repository.ProductRepository;
 import com.example.tricolv2sb.Entity.Enum.OrderStatus;
 import com.example.tricolv2sb.Mapper.PurchaseOrderMapper;
 import com.example.tricolv2sb.Entity.Enum.StockMovementType;
@@ -18,8 +20,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,10 +37,11 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
     private final StockLotRepository stockLotRepository;
     private final PurchaseOrderMapper purchaseOrderMapper;
     private final StockMovementRepository stockMovementRepository;
+    private final ProductRepository productRepository;
 
     @Transactional(readOnly = true)
     public List<ReadPurchaseOrderDTO> getAllPurchaseOrders() {
-        return purchaseOrderRepository.findAll()
+        return purchaseOrderRepository.findAllWithOrderLines()
                 .stream()
                 .map(purchaseOrderMapper::toDto)
                 .collect(Collectors.toList());
@@ -44,7 +49,7 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
 
     @Transactional(readOnly = true)
     public ReadPurchaseOrderDTO getPurchaseOrderById(Long id) {
-        PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(id)
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.findByIdWithOrderLines(id)
                 .orElseThrow(() -> new RuntimeException("Purchase order not found with id: " + id));
         return purchaseOrderMapper.toDto(purchaseOrder);
     }
@@ -60,6 +65,29 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
         purchaseOrder.setTotalAmount(0.0);
         purchaseOrder.setSupplier(supplier);
 
+        if (createPurchaseOrderDTO.getOrderLines() != null && !createPurchaseOrderDTO.getOrderLines().isEmpty()) {
+            List<PurchaseOrderLine> orderLines = new ArrayList<>();
+            double totalAmount = 0.0;
+
+            for (var lineDto : createPurchaseOrderDTO.getOrderLines()) {
+                Product product = productRepository.findById(lineDto.getProductId())
+                        .orElseThrow(() -> new ProductNotFoundException(
+                                "Product with ID " + lineDto.getProductId() + " not found"));
+
+                PurchaseOrderLine orderLine = new PurchaseOrderLine();
+                orderLine.setProduct(product);
+                orderLine.setQuantity(lineDto.getQuantity());
+                orderLine.setUnitPrice(lineDto.getUnitPrice());
+                orderLine.setPurchaseOrder(purchaseOrder);
+                orderLines.add(orderLine);
+
+                totalAmount += lineDto.getQuantity() * lineDto.getUnitPrice();
+            }
+
+            purchaseOrder.setOrderLines(orderLines);
+            purchaseOrder.setTotalAmount(totalAmount);
+        }
+
         PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
         return purchaseOrderMapper.toDto(savedPurchaseOrder);
     }
@@ -73,10 +101,21 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
         return purchaseOrderMapper.toDto(updatedPurchaseOrder);
     }
 
+    @Transactional
     public void deletePurchaseOrder(Long id) {
-        if (!purchaseOrderRepository.existsById(id)) {
-            throw new RuntimeException("Purchase order not found with id: " + id);
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(id)
+                .orElseThrow(() -> new PurchaseOrderNotFoundException(
+                        "Purchase order with ID " + id + " not found"));
+
+        if (purchaseOrder.getStatus() == OrderStatus.DELIVERED) {
+            throw new IllegalStateException("Cannot delete a delivered purchase order");
         }
+
+        if (!purchaseOrder.getOrderLines().isEmpty()) {
+            throw new IllegalStateException(
+                    "Cannot delete purchase order with existing lines. Delete all order lines first.");
+        }
+
         purchaseOrderRepository.deleteById(id);
     }
 
@@ -128,12 +167,10 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
 
     @Transactional
     public void receiveOrder(Long orderId) {
-        // Find the purchase order
         PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(orderId)
                 .orElseThrow(() -> new PurchaseOrderNotFoundException(
                         "Purchase order with ID " + orderId + " not found"));
 
-        // Check if order is in correct status
         if (purchaseOrder.getStatus() == OrderStatus.DELIVERED) {
             throw new IllegalStateException(
                     "Purchase order with ID " + orderId + " has already been received");
@@ -144,39 +181,28 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
                     "Cannot receive a cancelled purchase order");
         }
 
-        // Change status to DELIVERED
         purchaseOrder.setStatus(OrderStatus.DELIVERED);
-
-        // Process each order line
         LocalDate today = LocalDate.now();
 
         if (purchaseOrder.getOrderLines() != null && !purchaseOrder.getOrderLines().isEmpty()) {
             for (PurchaseOrderLine orderLine : purchaseOrder.getOrderLines()) {
                 // Create a new StockLot for each order line
                 StockLot stockLot = new StockLot();
-
-                // Generate unique lot number
                 String lotNumber = generateLotNumber(orderId, orderLine.getId());
                 stockLot.setLotNumber(lotNumber);
-
-                // Set entry date to today
                 stockLot.setEntryDate(today);
 
                 Double quantity = orderLine.getQuantity();
                 stockLot.setInitialQuantity(quantity);
                 stockLot.setRemainingQuantity(quantity);
 
-                // Set purchase price from order line unit price
                 stockLot.setPurchasePrice(orderLine.getUnitPrice());
-
-                // Link to product and purchase order line
                 stockLot.setProduct(orderLine.getProduct());
                 stockLot.setPurchaseOrderLine(orderLine);
-
-                // Save the stock lot
+                // Save stocklot
                 StockLot savedStockLot = stockLotRepository.save(stockLot);
 
-                // Create stock movement IN for this reception
+                // Create stock movement (IN)
                 StockMovement stockMovement = new StockMovement();
                 stockMovement.setMovementDate(today);
                 stockMovement.setQuantity(quantity);
@@ -185,12 +211,11 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
                 stockMovement.setStockLot(savedStockLot);
                 stockMovement.setPurchasseOrderLine(orderLine);
 
-                // Save the stock movement
+                // Save stock movement
                 stockMovementRepository.save(stockMovement);
             }
         }
 
-        // Save the updated purchase order
         purchaseOrderRepository.save(purchaseOrder);
     }
 

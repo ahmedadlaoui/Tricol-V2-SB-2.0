@@ -1,7 +1,6 @@
 package com.example.tricolv2sb.DTO;
 
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdatePurchaseOrderLineDTO {
 
-    @Min(value = 1, message = "Quantity must be at least 1")
-    private Integer quantity;
+    @DecimalMin(value = "0.01", message = "Quantity must be greater than 0")
+    private Double quantity;
 
     @DecimalMin(value = "0.0", inclusive = false, message = "Unit price must be greater than 0")
     private Double unitPrice;

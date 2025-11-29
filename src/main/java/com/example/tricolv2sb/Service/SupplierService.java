@@ -56,8 +56,12 @@ public class SupplierService implements SupplierServiceInterface {
 
     @Transactional
     public void deleteSupplier(Long id) {
-        if (!supplierRepository.existsById(id)) {
-            throw new SupplierNotFoundException("Supplier with ID " + id + " not found");
+        Supplier supplier = supplierRepository.findById(id)
+                .orElseThrow(() -> new SupplierNotFoundException("Supplier with ID " + id + " not found"));
+
+        if (!supplier.getPurchaseOrders().isEmpty()) {
+            throw new IllegalStateException(
+                    "Cannot delete supplier with existing purchase orders. Delete all purchase orders first.");
         }
 
         supplierRepository.deleteById(id);

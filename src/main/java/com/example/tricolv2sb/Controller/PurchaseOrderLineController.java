@@ -40,6 +40,12 @@ public class PurchaseOrderLineController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<List<ReadPurchaseOrderLineDTO>> getPurchaseOrderLinesByOrderId(@PathVariable Long orderId) {
+        List<ReadPurchaseOrderLineDTO> orderLines = purchaseOrderLineService.fetchPurchaseOrderLinesByOrderId(orderId);
+        return ResponseEntity.ok(orderLines);
+    }
+
     /**
      * POST /api/v1/purchase-order-lines
      * Creates a new purchase order line.
