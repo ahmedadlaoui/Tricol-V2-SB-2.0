@@ -12,6 +12,8 @@ public interface PurchaseOrderLineServiceInterface {
 
     Optional<ReadPurchaseOrderLineDTO> fetchPurchaseOrderLineById(Long id);
 
+    List<ReadPurchaseOrderLineDTO> fetchPurchaseOrderLinesByOrderId(Long orderId);
+
     ReadPurchaseOrderLineDTO createPurchaseOrderLine(CreatePurchaseOrderLineDTO dto);
 
     ReadPurchaseOrderLineDTO updatePurchaseOrderLine(Long id, UpdatePurchaseOrderLineDTO dto);

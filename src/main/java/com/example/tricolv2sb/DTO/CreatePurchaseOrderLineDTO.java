@@ -18,6 +18,7 @@ public class CreatePurchaseOrderLineDTO {
     @DecimalMin(value = "0.0", inclusive = false, message = "Unit price must be greater than 0")
     private Double unitPrice;
 
+    @NotNull(message = "Purchase order ID is required")
     @Positive(message = "Purchase order ID must be positive")
     private Long purchaseOrderId;
 

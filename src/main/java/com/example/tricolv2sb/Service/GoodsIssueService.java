@@ -10,6 +10,7 @@ import com.example.tricolv2sb.Exception.GoodsIssueNotFoundException;
 import com.example.tricolv2sb.Exception.ProductNotFoundException;
 import com.example.tricolv2sb.Mapper.GoodsIssueMapper;
 import com.example.tricolv2sb.Repository.*;
+import com.example.tricolv2sb.Service.ServiceInterfaces.GoodsIssueServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class GoodsIssueService {
+public class GoodsIssueService implements GoodsIssueServiceInterface {
 
     private final GoodsIssueRepository goodsIssueRepository;
     private final GoodsIssueLineRepository goodsIssueLineRepository;
@@ -152,9 +153,7 @@ public class GoodsIssueService {
                     String.format(
                             "Issuing this quantity would reduce stock below the reorder point for product ID %d. " +
                                     "Reorder Point: %.2f, Stock After Issue: %.2f, Available Stock: %.2f",
-                            productId, reorderPoint, projectedStockAfterIssue, availableStock
-                    )
-            );
+                            productId, reorderPoint, projectedStockAfterIssue, availableStock));
         }
 
         List<StockLot> availableLots = stockLotRepository.findAvailableLotsByProductIdOrderByEntryDate(productId);
@@ -190,7 +189,6 @@ public class GoodsIssueService {
                             productId, remainingToConsume));
         }
     }
-
 
     @Transactional
     public void cancelGoodsIssue(Long id) {

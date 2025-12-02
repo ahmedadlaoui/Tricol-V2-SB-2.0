@@ -1,20 +1,28 @@
 package com.example.tricolv2sb.Service;
 
 import com.example.tricolv2sb.DTO.ReadStockMovementDTO;
+import com.example.tricolv2sb.DTO.StockMovementSearchCriteriaDTO;
+import com.example.tricolv2sb.Entity.Enum.StockMovementType;
 import com.example.tricolv2sb.Entity.StockMovement;
 import com.example.tricolv2sb.Exception.StockMovementNotFoundException;
 import com.example.tricolv2sb.Mapper.StockMovementMapper;
 import com.example.tricolv2sb.Repository.StockMovementRepository;
+import com.example.tricolv2sb.Service.ServiceInterfaces.StockMovementServiceInterface;
+import com.example.tricolv2sb.Specification.StockMovementSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class StockMovementService {
+public class StockMovementService implements StockMovementServiceInterface {
 
     private final StockMovementRepository stockMovementRepository;
     private final StockMovementMapper stockMovementMapper;
@@ -43,4 +51,27 @@ public class StockMovementService {
                 .map(stockMovementMapper::toDto)
                 .toList();
     }
+
+    /**
+     * Recherche avancée de mouvements de stock avec critères multiples et
+     * pagination
+     */
+    @Transactional(readOnly = true)
+    public Page<ReadStockMovementDTO> searchStockMovements(
+            LocalDate dateDebut,
+            LocalDate dateFin,
+            Long produitId,
+            String reference,
+            StockMovementType type,
+            String numeroLot,
+            Pageable pageable) {
+
+        Specification<StockMovement> spec = StockMovementSpecification.buildSearchSpecification(
+                dateDebut, dateFin, produitId, reference, type, numeroLot);
+
+        Page<StockMovement> movements = stockMovementRepository.findAll(spec, pageable);
+
+        return movements.map(stockMovementMapper::toDto);
+    }
+
 }

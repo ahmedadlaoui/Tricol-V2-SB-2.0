@@ -5,8 +5,8 @@ import com.example.tricolv2sb.DTO.CreateProductDTO;
 import com.example.tricolv2sb.DTO.ProductStockDetailDTO;
 import com.example.tricolv2sb.DTO.ReadProductDTO;
 import com.example.tricolv2sb.DTO.UpdateProductDTO;
-import com.example.tricolv2sb.Service.ProductService;
-import com.example.tricolv2sb.Service.StockService;
+import com.example.tricolv2sb.Service.ServiceInterfaces.ProductInterface;
+import com.example.tricolv2sb.Service.ServiceInterfaces.StockServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +20,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductController implements ProductControllerInterface {
 
-    private final ProductService productService;
-    private final StockService stockService;
+    private final ProductInterface productService;
+    private final StockServiceInterface stockService;
 
     @Override
     public ResponseEntity<List<ReadProductDTO>> getAllProducts() {

@@ -3,7 +3,7 @@ package com.example.tricolv2sb.Controller;
 import com.example.tricolv2sb.DTO.ProductStockDetailDTO;
 import com.example.tricolv2sb.DTO.StockSummaryDTO;
 import com.example.tricolv2sb.DTO.StockValuationDTO;
-import com.example.tricolv2sb.Service.StockService;
+import com.example.tricolv2sb.Service.ServiceInterfaces.StockServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/api/v1/stock")
 public class StockController {
 
-    private final StockService stockService;
+    private final StockServiceInterface stockService;
 
     @GetMapping
     public ResponseEntity<List<StockSummaryDTO>> getGlobalStock() {
@@ -35,9 +35,4 @@ public class StockController {
         return ResponseEntity.ok(valuation);
     }
 
-    @GetMapping("/alerts")
-    public ResponseEntity<List<StockSummaryDTO>> getStockAlerts() {
-        List<StockSummaryDTO> alerts = stockService.getStockAlerts();
-        return ResponseEntity.ok(alerts);
-    }
 }

@@ -4,7 +4,7 @@ import com.example.tricolv2sb.Controller.ControllerInterfaces.PurchaseOrderContr
 import com.example.tricolv2sb.DTO.CreatePurchaseOrderDTO;
 import com.example.tricolv2sb.DTO.ReadPurchaseOrderDTO;
 import com.example.tricolv2sb.DTO.UpdatePurchaseOrderDTO;
-import com.example.tricolv2sb.Service.PurchaseOrderService;
+import com.example.tricolv2sb.Service.ServiceInterfaces.PurchaseOrderInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/api/v1/orders")
 public class PurchaseOrderController implements PurchaseOrderControllerInterface {
 
-    private final PurchaseOrderService purchaseOrderService;
+    private final PurchaseOrderInterface purchaseOrderService;
 
     @Override
     public ResponseEntity<List<ReadPurchaseOrderDTO>> getAllPurchaseOrders() {

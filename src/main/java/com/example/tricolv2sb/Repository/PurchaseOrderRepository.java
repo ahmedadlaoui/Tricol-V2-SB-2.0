@@ -15,11 +15,7 @@ import java.util.Optional;
 
 @Repository
 public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Long> {
-    List<PurchaseOrder> findBySupplierId(Long supplierId);
-
     List<PurchaseOrder> findBySupplier(Supplier supplier);
-
-    List<PurchaseOrder> findByStatus(OrderStatus status);
 
     @EntityGraph(attributePaths = { "orderLines", "orderLines.product" })
     @Query("SELECT po FROM PurchaseOrder po WHERE po.id = :id")

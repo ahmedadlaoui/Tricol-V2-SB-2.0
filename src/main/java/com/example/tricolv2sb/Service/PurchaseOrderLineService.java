@@ -66,10 +66,6 @@ public class PurchaseOrderLineService implements PurchaseOrderLineServiceInterfa
 
     @Transactional
     public ReadPurchaseOrderLineDTO createPurchaseOrderLine(CreatePurchaseOrderLineDTO dto) {
-        if (dto.getPurchaseOrderId() == null) {
-            throw new IllegalArgumentException("Purchase order ID is required for creating order line");
-        }
-
         PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(dto.getPurchaseOrderId())
                 .orElseThrow(() -> new PurchaseOrderNotFoundException(
                         "Purchase order with ID " + dto.getPurchaseOrderId() + " not found"));

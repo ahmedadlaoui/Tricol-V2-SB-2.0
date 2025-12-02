@@ -3,7 +3,7 @@ package com.example.tricolv2sb.Controller;
 import com.example.tricolv2sb.DTO.CreatePurchaseOrderLineDTO;
 import com.example.tricolv2sb.DTO.ReadPurchaseOrderLineDTO;
 import com.example.tricolv2sb.DTO.UpdatePurchaseOrderLineDTO;
-import com.example.tricolv2sb.Service.PurchaseOrderLineService;
+import com.example.tricolv2sb.Service.ServiceInterfaces.PurchaseOrderLineServiceInterface;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/api/v1/order-lines")
 public class PurchaseOrderLineController {
 
-    private final PurchaseOrderLineService purchaseOrderLineService;
+    private final PurchaseOrderLineServiceInterface purchaseOrderLineService;
 
     /**
      * GET /api/v1/purchase-order-lines

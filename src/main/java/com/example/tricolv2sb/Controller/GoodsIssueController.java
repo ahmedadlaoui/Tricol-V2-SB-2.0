@@ -3,7 +3,7 @@ package com.example.tricolv2sb.Controller;
 import com.example.tricolv2sb.DTO.CreateGoodsIssueDTO;
 import com.example.tricolv2sb.DTO.ReadGoodsIssueDTO;
 import com.example.tricolv2sb.DTO.UpdateGoodsIssueDTO;
-import com.example.tricolv2sb.Service.GoodsIssueService;
+import com.example.tricolv2sb.Service.ServiceInterfaces.GoodsIssueServiceInterface;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/api/v1/goods-issues")
 public class GoodsIssueController {
 
-    private final GoodsIssueService goodsIssueService;
+    private final GoodsIssueServiceInterface goodsIssueService;
 
     /**
      * GET /api/v1/goods-issues
