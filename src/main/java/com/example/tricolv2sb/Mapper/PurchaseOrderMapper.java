@@ -1,8 +1,8 @@
 package com.example.tricolv2sb.Mapper;
 
-import com.example.tricolv2sb.DTO.CreatePurchaseOrderDTO;
-import com.example.tricolv2sb.DTO.ReadPurchaseOrderDTO;
-import com.example.tricolv2sb.DTO.UpdatePurchaseOrderDTO;
+import com.example.tricolv2sb.DTO.purchaseorder.CreatePurchaseOrderDTO;
+import com.example.tricolv2sb.DTO.purchaseorder.ReadPurchaseOrderDTO;
+import com.example.tricolv2sb.DTO.purchaseorder.UpdatePurchaseOrderDTO;
 import com.example.tricolv2sb.Entity.PurchaseOrder;
 import com.example.tricolv2sb.Entity.PurchaseOrderLine;
 import org.mapstruct.Mapper;

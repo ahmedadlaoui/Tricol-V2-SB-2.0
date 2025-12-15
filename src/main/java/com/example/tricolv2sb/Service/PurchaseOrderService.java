@@ -1,8 +1,8 @@
 package com.example.tricolv2sb.Service;
 
-import com.example.tricolv2sb.DTO.CreatePurchaseOrderDTO;
-import com.example.tricolv2sb.DTO.ReadPurchaseOrderDTO;
-import com.example.tricolv2sb.DTO.UpdatePurchaseOrderDTO;
+import com.example.tricolv2sb.DTO.purchaseorder.CreatePurchaseOrderDTO;
+import com.example.tricolv2sb.DTO.purchaseorder.ReadPurchaseOrderDTO;
+import com.example.tricolv2sb.DTO.purchaseorder.UpdatePurchaseOrderDTO;
 import com.example.tricolv2sb.Entity.*;
 import com.example.tricolv2sb.Exception.PurchaseOrderNotFoundException;
 import com.example.tricolv2sb.Repository.StockMovementRepository;
@@ -11,6 +11,7 @@ import com.example.tricolv2sb.Entity.Enum.OrderStatus;
 import com.example.tricolv2sb.Mapper.PurchaseOrderMapper;
 import com.example.tricolv2sb.Entity.Enum.StockMovementType;
 import com.example.tricolv2sb.Repository.PurchaseOrderRepository;
+import com.example.tricolv2sb.Repository.ProductRepository;
 import com.example.tricolv2sb.Repository.SupplierRepository;
 import com.example.tricolv2sb.Service.ServiceInterfaces.PurchaseOrderInterface;
 
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,7 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
     private final StockLotRepository stockLotRepository;
     private final PurchaseOrderMapper purchaseOrderMapper;
     private final StockMovementRepository stockMovementRepository;
+    private final ProductRepository productRepository;
 
     @Transactional(readOnly = true)
     public List<ReadPurchaseOrderDTO> getAllPurchaseOrders() {
@@ -54,21 +57,73 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
                 .orElseThrow(() -> new RuntimeException(
                         "Supplier not found with id: " + createPurchaseOrderDTO.getSupplierId()));
 
-        PurchaseOrder purchaseOrder = purchaseOrderMapper.toEntity(createPurchaseOrderDTO);
+        PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setOrderDate(LocalDate.now());
         purchaseOrder.setStatus(OrderStatus.PENDING);
-        purchaseOrder.setTotalAmount(0.0);
         purchaseOrder.setSupplier(supplier);
+
+        List<PurchaseOrderLine> orderLines = new ArrayList<>();
+        for (CreatePurchaseOrderDTO.OrderLineDTO lineDTO : createPurchaseOrderDTO.getOrderLines()) {
+            Product product = productRepository.findById(lineDTO.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found with id: " + lineDTO.getProductId()));
+
+            PurchaseOrderLine line = new PurchaseOrderLine();
+            line.setQuantity(lineDTO.getQuantity());
+            line.setUnitPrice(lineDTO.getUnitPrice());
+            line.setProduct(product);
+            line.setPurchaseOrder(purchaseOrder);
+            orderLines.add(line);
+        }
+
+        purchaseOrder.setOrderLines(orderLines);
+        purchaseOrder.calculateTotalAmount();
 
         PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
         return purchaseOrderMapper.toDto(savedPurchaseOrder);
     }
 
     public ReadPurchaseOrderDTO updatePurchaseOrder(Long id, UpdatePurchaseOrderDTO updatePurchaseOrderDTO) {
-        PurchaseOrder existingPurchaseOrder = purchaseOrderRepository.findById(id)
+        PurchaseOrder existingPurchaseOrder = purchaseOrderRepository.findByIdWithOrderLines(id)
                 .orElseThrow(() -> new RuntimeException("Purchase order not found with id: " + id));
 
-        purchaseOrderMapper.updateEntity(updatePurchaseOrderDTO, existingPurchaseOrder);
+        existingPurchaseOrder.setStatus(updatePurchaseOrderDTO.getStatus());
+        if (updatePurchaseOrderDTO.getTotalAmount() != null) {
+            existingPurchaseOrder.setTotalAmount(updatePurchaseOrderDTO.getTotalAmount());
+        }
+
+        if (updatePurchaseOrderDTO.getOrderLines() != null && !updatePurchaseOrderDTO.getOrderLines().isEmpty()) {
+            existingPurchaseOrder.getOrderLines().clear();
+
+            for (UpdatePurchaseOrderDTO.OrderLineDTO lineDTO : updatePurchaseOrderDTO.getOrderLines()) {
+                PurchaseOrderLine line;
+                if (lineDTO.getId() != null) {
+                    line = existingPurchaseOrder.getOrderLines().stream()
+                            .filter(l -> l.getId().equals(lineDTO.getId()))
+                            .findFirst()
+                            .orElse(new PurchaseOrderLine());
+                } else {
+                    line = new PurchaseOrderLine();
+                }
+
+                if (lineDTO.getQuantity() != null) {
+                    line.setQuantity(lineDTO.getQuantity());
+                }
+                if (lineDTO.getUnitPrice() != null) {
+                    line.setUnitPrice(lineDTO.getUnitPrice());
+                }
+                if (lineDTO.getProductId() != null) {
+                    Product product = productRepository.findById(lineDTO.getProductId())
+                            .orElseThrow(() -> new RuntimeException("Product not found with id: " + lineDTO.getProductId()));
+                    line.setProduct(product);
+                }
+
+                line.setPurchaseOrder(existingPurchaseOrder);
+                existingPurchaseOrder.getOrderLines().add(line);
+            }
+
+            existingPurchaseOrder.calculateTotalAmount();
+        }
+
         PurchaseOrder updatedPurchaseOrder = purchaseOrderRepository.save(existingPurchaseOrder);
         return purchaseOrderMapper.toDto(updatedPurchaseOrder);
     }

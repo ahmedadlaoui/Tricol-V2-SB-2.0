@@ -1,4 +1,4 @@
-package com.example.tricolv2sb.DTO;
+package com.example.tricolv2sb.DTO.goodsissue;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

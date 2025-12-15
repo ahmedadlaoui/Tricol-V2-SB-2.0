@@ -1,8 +1,8 @@
 package com.example.tricolv2sb.Controller.ControllerInterfaces;
 
-import com.example.tricolv2sb.DTO.CreateProductDTO;
-import com.example.tricolv2sb.DTO.ReadProductDTO;
-import com.example.tricolv2sb.DTO.UpdateProductDTO;
+import com.example.tricolv2sb.DTO.product.CreateProductDTO;
+import com.example.tricolv2sb.DTO.product.ReadProductDTO;
+import com.example.tricolv2sb.DTO.product.UpdateProductDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

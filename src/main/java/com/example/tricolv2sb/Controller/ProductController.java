@@ -1,10 +1,10 @@
 package com.example.tricolv2sb.Controller;
 
 import com.example.tricolv2sb.Controller.ControllerInterfaces.ProductControllerInterface;
-import com.example.tricolv2sb.DTO.CreateProductDTO;
-import com.example.tricolv2sb.DTO.ProductStockDetailDTO;
-import com.example.tricolv2sb.DTO.ReadProductDTO;
-import com.example.tricolv2sb.DTO.UpdateProductDTO;
+import com.example.tricolv2sb.DTO.product.CreateProductDTO;
+import com.example.tricolv2sb.DTO.product.ProductStockDetailDTO;
+import com.example.tricolv2sb.DTO.product.ReadProductDTO;
+import com.example.tricolv2sb.DTO.product.UpdateProductDTO;
 import com.example.tricolv2sb.Service.ServiceInterfaces.ProductInterface;
 import com.example.tricolv2sb.Service.ServiceInterfaces.StockServiceInterface;
 import lombok.RequiredArgsConstructor;

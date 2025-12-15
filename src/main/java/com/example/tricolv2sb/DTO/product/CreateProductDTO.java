@@ -1,10 +1,13 @@
-package com.example.tricolv2sb.DTO;
+package com.example.tricolv2sb.DTO.product;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
-public class UpdateProductDTO {
+public class CreateProductDTO {
+    @NotBlank(message = "Reference is required")
+    private String reference;
+    
     @NotBlank(message = "Name is required")
     private String name;
     

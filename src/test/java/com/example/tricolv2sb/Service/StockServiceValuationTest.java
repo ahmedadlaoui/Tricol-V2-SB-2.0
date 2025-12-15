@@ -1,7 +1,8 @@
 package com.example.tricolv2sb.Service;
 
-import com.example.tricolv2sb.DTO.ProductStockDetailDTO;
-import com.example.tricolv2sb.DTO.StockValuationDTO;
+import com.example.tricolv2sb.DTO.product.ProductStockDetailDTO;
+import com.example.tricolv2sb.DTO.stock.StockValuationDTO;
+import com.example.tricolv2sb.DTO.stock.StockLotDTO;
 import com.example.tricolv2sb.Entity.Product;
 import com.example.tricolv2sb.Entity.StockLot;
 import com.example.tricolv2sb.Exception.ProductNotFoundException;

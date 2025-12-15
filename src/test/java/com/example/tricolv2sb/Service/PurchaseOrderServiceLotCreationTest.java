@@ -165,7 +165,6 @@ class PurchaseOrderServiceLotCreationTest {
                 "Les numéros de lot devraient être uniques");
     }
 
-    
     @Test
     @DisplayName("Test 3 - Date d'entrée du lot = date de réception")
     void testReceiveOrder_SetsCorrectEntryDate() {

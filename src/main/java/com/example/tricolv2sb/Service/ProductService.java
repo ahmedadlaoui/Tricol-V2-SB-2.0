@@ -1,8 +1,8 @@
 package com.example.tricolv2sb.Service;
 
-import com.example.tricolv2sb.DTO.CreateProductDTO;
-import com.example.tricolv2sb.DTO.ReadProductDTO;
-import com.example.tricolv2sb.DTO.UpdateProductDTO;
+import com.example.tricolv2sb.DTO.product.CreateProductDTO;
+import com.example.tricolv2sb.DTO.product.ReadProductDTO;
+import com.example.tricolv2sb.DTO.product.UpdateProductDTO;
 import com.example.tricolv2sb.Entity.Product;
 import com.example.tricolv2sb.Exception.ProductNotFoundException;
 import com.example.tricolv2sb.Mapper.ProductMapper;

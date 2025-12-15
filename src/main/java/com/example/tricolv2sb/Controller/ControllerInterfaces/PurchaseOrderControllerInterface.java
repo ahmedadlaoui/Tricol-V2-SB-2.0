@@ -1,8 +1,8 @@
 package com.example.tricolv2sb.Controller.ControllerInterfaces;
 
-import com.example.tricolv2sb.DTO.CreatePurchaseOrderDTO;
-import com.example.tricolv2sb.DTO.ReadPurchaseOrderDTO;
-import com.example.tricolv2sb.DTO.UpdatePurchaseOrderDTO;
+import com.example.tricolv2sb.DTO.purchaseorder.CreatePurchaseOrderDTO;
+import com.example.tricolv2sb.DTO.purchaseorder.ReadPurchaseOrderDTO;
+import com.example.tricolv2sb.DTO.purchaseorder.UpdatePurchaseOrderDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,6 +1,6 @@
 package com.example.tricolv2sb.Controller;
 
-import com.example.tricolv2sb.DTO.ReadStockMovementDTO;
+import com.example.tricolv2sb.DTO.stock.ReadStockMovementDTO;
 import com.example.tricolv2sb.Entity.Enum.StockMovementType;
 import com.example.tricolv2sb.Service.StockMovementService;
 import lombok.RequiredArgsConstructor;

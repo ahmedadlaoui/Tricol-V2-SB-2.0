@@ -1,4 +1,4 @@
-package com.example.tricolv2sb.DTO;
+package com.example.tricolv2sb.DTO.goodsissue;
 
 import com.example.tricolv2sb.Entity.Enum.GoodsIssueMotif;
 import lombok.Data;

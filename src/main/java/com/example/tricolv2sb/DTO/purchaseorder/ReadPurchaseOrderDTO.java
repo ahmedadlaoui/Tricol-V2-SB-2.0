@@ -1,4 +1,4 @@
-package com.example.tricolv2sb.DTO;
+package com.example.tricolv2sb.DTO.purchaseorder;
 
 import com.example.tricolv2sb.Entity.Enum.OrderStatus;
 import lombok.Data;

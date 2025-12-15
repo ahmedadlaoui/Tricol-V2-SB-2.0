@@ -1,7 +1,7 @@
 package com.example.tricolv2sb.Service;
 
-import com.example.tricolv2sb.DTO.CreateSupplierDTO;
-import com.example.tricolv2sb.DTO.ReadSupplierDTO;
+import com.example.tricolv2sb.DTO.supplier.CreateSupplierDTO;
+import com.example.tricolv2sb.DTO.supplier.ReadSupplierDTO;
 import com.example.tricolv2sb.Entity.Supplier;
 import com.example.tricolv2sb.Exception.SupplierAlreadyExistsException;
 import com.example.tricolv2sb.Exception.SupplierNotFoundException;

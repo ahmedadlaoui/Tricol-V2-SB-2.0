@@ -1,6 +1,6 @@
 package com.example.tricolv2sb.Service.ServiceInterfaces;
 
-import com.example.tricolv2sb.DTO.ReadStockMovementDTO;
+import com.example.tricolv2sb.DTO.stock.ReadStockMovementDTO;
 
 import java.util.List;
 import java.util.Optional;

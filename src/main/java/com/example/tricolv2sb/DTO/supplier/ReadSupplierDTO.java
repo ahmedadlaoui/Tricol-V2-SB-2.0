@@ -1,4 +1,4 @@
-package com.example.tricolv2sb.DTO;
+package com.example.tricolv2sb.DTO.supplier;
 
 import jakarta.validation.constraints.Email;
 import lombok.Data;

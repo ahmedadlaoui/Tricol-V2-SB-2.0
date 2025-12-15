@@ -1,8 +1,8 @@
 package com.example.tricolv2sb.Service.ServiceInterfaces;
 
-import com.example.tricolv2sb.DTO.CreatePurchaseOrderDTO;
-import com.example.tricolv2sb.DTO.ReadPurchaseOrderDTO;
-import com.example.tricolv2sb.DTO.UpdatePurchaseOrderDTO;
+import com.example.tricolv2sb.DTO.purchaseorder.CreatePurchaseOrderDTO;
+import com.example.tricolv2sb.DTO.purchaseorder.ReadPurchaseOrderDTO;
+import com.example.tricolv2sb.DTO.purchaseorder.UpdatePurchaseOrderDTO;
 
 import java.util.List;
 

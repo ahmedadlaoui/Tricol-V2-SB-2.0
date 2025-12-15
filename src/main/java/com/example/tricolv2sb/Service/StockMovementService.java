@@ -1,7 +1,7 @@
 package com.example.tricolv2sb.Service;
 
-import com.example.tricolv2sb.DTO.ReadStockMovementDTO;
-import com.example.tricolv2sb.DTO.StockMovementSearchCriteriaDTO;
+import com.example.tricolv2sb.DTO.stock.ReadStockMovementDTO;
+import com.example.tricolv2sb.DTO.stock.StockMovementSearchCriteriaDTO;
 import com.example.tricolv2sb.Entity.Enum.StockMovementType;
 import com.example.tricolv2sb.Entity.StockMovement;
 import com.example.tricolv2sb.Exception.StockMovementNotFoundException;

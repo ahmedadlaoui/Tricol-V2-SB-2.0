@@ -1,4 +1,4 @@
-package com.example.tricolv2sb.DTO;
+package com.example.tricolv2sb.DTO.stock;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

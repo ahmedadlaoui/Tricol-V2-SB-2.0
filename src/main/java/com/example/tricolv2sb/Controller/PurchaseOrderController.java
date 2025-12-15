@@ -1,9 +1,9 @@
 package com.example.tricolv2sb.Controller;
 
 import com.example.tricolv2sb.Controller.ControllerInterfaces.PurchaseOrderControllerInterface;
-import com.example.tricolv2sb.DTO.CreatePurchaseOrderDTO;
-import com.example.tricolv2sb.DTO.ReadPurchaseOrderDTO;
-import com.example.tricolv2sb.DTO.UpdatePurchaseOrderDTO;
+import com.example.tricolv2sb.DTO.purchaseorder.CreatePurchaseOrderDTO;
+import com.example.tricolv2sb.DTO.purchaseorder.ReadPurchaseOrderDTO;
+import com.example.tricolv2sb.DTO.purchaseorder.UpdatePurchaseOrderDTO;
 import com.example.tricolv2sb.Service.ServiceInterfaces.PurchaseOrderInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

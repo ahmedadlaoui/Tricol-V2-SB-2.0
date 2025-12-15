@@ -1,8 +1,8 @@
 package com.example.tricolv2sb.Service.ServiceInterfaces;
 
-import com.example.tricolv2sb.DTO.ProductStockDetailDTO;
-import com.example.tricolv2sb.DTO.StockSummaryDTO;
-import com.example.tricolv2sb.DTO.StockValuationDTO;
+import com.example.tricolv2sb.DTO.product.ProductStockDetailDTO;
+import com.example.tricolv2sb.DTO.stock.StockSummaryDTO;
+import com.example.tricolv2sb.DTO.stock.StockValuationDTO;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
 package com.example.tricolv2sb.Service;
 
-import com.example.tricolv2sb.DTO.CreateGoodsIssueDTO;
-import com.example.tricolv2sb.DTO.ReadGoodsIssueDTO;
-import com.example.tricolv2sb.DTO.UpdateGoodsIssueDTO;
+import com.example.tricolv2sb.DTO.goodsissue.CreateGoodsIssueDTO;
+import com.example.tricolv2sb.DTO.goodsissue.ReadGoodsIssueDTO;
+import com.example.tricolv2sb.DTO.goodsissue.UpdateGoodsIssueDTO;
 import com.example.tricolv2sb.Entity.*;
 import com.example.tricolv2sb.Entity.Enum.GoodsIssueStatus;
 import com.example.tricolv2sb.Entity.Enum.StockMovementType;

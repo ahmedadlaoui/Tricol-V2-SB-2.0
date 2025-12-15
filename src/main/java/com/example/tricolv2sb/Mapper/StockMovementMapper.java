@@ -1,6 +1,6 @@
 package com.example.tricolv2sb.Mapper;
 
-import com.example.tricolv2sb.DTO.ReadStockMovementDTO;
+import com.example.tricolv2sb.DTO.stock.ReadStockMovementDTO;
 import com.example.tricolv2sb.Entity.StockMovement;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

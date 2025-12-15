@@ -1,17 +1,21 @@
-package com.example.tricolv2sb.DTO;
+package com.example.tricolv2sb.DTO.product;
 
+import com.example.tricolv2sb.DTO.stock.StockLotDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StockSummaryDTO {
+public class ProductStockDetailDTO {
     private Long productId;
     private String productReference;
     private String productName;
     private Double totalStock;
     private Double reorderPoint;
-    private Boolean belowThreshold;
+    private Double fifoValuation;
+    private List<StockLotDTO> lots;
 }

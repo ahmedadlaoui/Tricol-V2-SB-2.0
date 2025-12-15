@@ -1,7 +1,7 @@
 package com.example.tricolv2sb.Service.ServiceInterfaces;
 
-import com.example.tricolv2sb.DTO.CreateSupplierDTO;
-import com.example.tricolv2sb.DTO.ReadSupplierDTO;
+import com.example.tricolv2sb.DTO.supplier.CreateSupplierDTO;
+import com.example.tricolv2sb.DTO.supplier.ReadSupplierDTO;
 
 import java.util.List;
 import java.util.Optional;
