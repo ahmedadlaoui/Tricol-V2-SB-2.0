@@ -1,5 +1,0 @@
-2025-12-15T11:57:46.982+01:00 ERROR 2008 --- [Tricol-V2-SB] [http-nio-8080-exec-7] c.e.tricolv2sb.Service.SupplierService   : Error adding new supplier : Supplier with this ICE: ICE123456789 already exists
-2025-12-15T11:58:35.360+01:00 ERROR 2008 --- [Tricol-V2-SB] [http-nio-8080-exec-5] c.e.tricolv2sb.Service.SupplierService   : Error fetching purchase order : Purchase order with ID 1 not found
-2025-12-15T11:58:38.610+01:00 ERROR 2008 --- [Tricol-V2-SB] [http-nio-8080-exec-1] c.e.tricolv2sb.Service.SupplierService   : Error fetching purchase order : Purchase order with ID 1 not found
-2025-12-15T11:58:42.354+01:00 ERROR 2008 --- [Tricol-V2-SB] [http-nio-8080-exec-3] c.e.tricolv2sb.Service.SupplierService   : Error fetching purchase order : Purchase order with ID 1 not found
-2025-12-15T11:58:48.211+01:00 ERROR 2008 --- [Tricol-V2-SB] [http-nio-8080-exec-10] c.e.tricolv2sb.Service.SupplierService   : Error fetching purchase order : Purchase order with ID 1 not found
