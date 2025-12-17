@@ -1,0 +1,447 @@
+TECHNICAL SPECIFICATION
+Spring Security JWT – Tricol Application
+1️⃣ CONTEXT & OBJECTIVE
+Context
+
+The Tricol application is a REST API for managing:
+
+Suppliers
+
+Products
+
+Purchase orders
+
+Stock and lots
+
+Outgoing delivery notes (bons de sortie)
+
+These modules already exist without security.
+
+The application handles sensitive business data (prices, stock valuation, suppliers) and must be secured before production.
+
+Objective
+
+Implement a robust, scalable, and enterprise-grade security system using Spring Security + JWT that provides:
+
+Stateless authentication
+
+Role-based access control
+
+Fine-grained permission management
+
+User-specific permission overrides
+
+Audit logging
+
+Secure deployment (Docker + CI)
+
+2️⃣ SECURITY PRINCIPLES & DESIGN RULES
+Core Principles
+
+Stateless authentication (JWT only)
+
+No hardcoded access logic in controllers
+
+Authorization based on permissions, not only roles
+
+Roles define default permissions
+
+Admin can override permissions per user
+
+Every sensitive action must be auditable
+
+3️⃣ USER TYPES & ACCESS MODEL
+Roles
+
+The system defines 4 roles:
+
+ADMIN
+
+RESPONSABLE_ACHATS
+
+MAGASINIER
+
+CHEF_ATELIER
+
+Roles do NOT directly control access.
+They only define default permissions.
+
+Permissions
+
+Permissions represent atomic actions, for example:
+
+FOURNISSEUR_CREATE
+
+PRODUIT_READ
+
+COMMANDE_VALIDATE
+
+BON_SORTIE_CREATE
+
+ADMIN_USER_MANAGE
+
+Controllers must ONLY check permissions, never roles.
+
+Dynamic Permission Logic
+
+Final permissions for a user are calculated as:
+
+Final Permissions =
+(Role Permissions)
++ (User Added Permissions)
+- (User Removed Permissions)
+
+
+This allows:
+
+Keeping a role
+
+Customizing access per user
+
+4️⃣ DATA MODEL (ENTITIES)
+4.1 User Entity (UserApp)
+
+Purpose: Represent an application user.
+
+Fields:
+
+id
+
+username (unique)
+
+password (BCrypt)
+
+enabled (boolean)
+
+roles (many-to-many)
+
+userPermissions (one-to-many)
+
+Rules:
+
+A new user has no role by default
+
+User cannot access any secured endpoint until a role is assigned
+
+4.2 Role Entity (RoleApp)
+
+Purpose: Group default permissions.
+
+Fields:
+
+id
+
+name (ENUM)
+
+permissions (many-to-many)
+
+Rules:
+
+Roles are predefined
+
+Roles are assigned only by ADMIN
+
+4.3 Permission Entity (Permission)
+
+Purpose: Represent one atomic action.
+
+Fields:
+
+id
+
+code (STRING, UNIQUE)
+
+Examples:
+
+STOCK_READ
+
+COMMANDE_RECEIVE
+
+ADMIN_AUDIT_READ
+
+4.4 UserPermission Entity (Override Table)
+
+Purpose: Customize permissions per user.
+
+Fields:
+
+id
+
+user
+
+permission
+
+enabled (BOOLEAN)
+
+Meaning:
+
+enabled = true → add permission
+
+enabled = false → remove permission
+
+4.5 AuditLog Entity
+
+Purpose: Trace sensitive actions.
+
+Fields:
+
+id
+
+username
+
+action
+
+timestamp
+
+optional metadata (entityId, entityType)
+
+5️⃣ AUTHENTICATION (JWT)
+5.1 Authentication Strategy
+
+Username + password
+
+Password stored hashed (BCrypt)
+
+Stateless JWT
+
+No HTTP session
+
+5.2 JWT Content
+
+Each JWT must include:
+
+username (subject)
+
+roles
+
+final permissions
+
+expiration date
+
+JWT is the single source of identity.
+
+5.3 Authentication Endpoints
+Register
+POST /auth/register
+
+
+Behavior:
+
+Create user
+
+Encode password
+
+No role assigned
+
+User cannot access secured endpoints
+
+Login
+POST /auth/login
+
+
+Behavior:
+
+Validate credentials
+
+Load roles + permissions
+
+Generate JWT
+
+Log login action
+
+Refresh Token
+POST /auth/refresh
+
+
+Behavior:
+
+Validate refresh token
+
+Generate new access token
+
+6️⃣ SPRING SECURITY CONFIGURATION
+6.1 Global Configuration
+
+Disable CSRF
+
+Stateless session
+
+JWT filter before UsernamePasswordAuthenticationFilter
+
+Allow /auth/**
+
+Secure everything else
+
+6.2 JWT Filter
+
+Responsibilities:
+
+Extract token from Authorization: Bearer
+
+Validate token
+
+Load user authorities
+
+Populate SecurityContext
+
+6.3 Authorities Mapping
+
+Each permission becomes a GrantedAuthority
+
+Roles may also be included as ROLE_XXX (optional)
+
+Authorization checks use permissions only
+
+7️⃣ AUTHORIZATION STRATEGY
+Method-Level Security
+
+Controllers and services must use:
+
+@PreAuthorize("hasAuthority('PERMISSION_CODE')")
+
+
+Examples:
+
+@PreAuthorize("hasAuthority('STOCK_READ')")
+
+@PreAuthorize("hasAuthority('ADMIN_USER_MANAGE')")
+
+Rules
+
+No permission → Access denied
+
+Permission revoked via override → Access denied
+
+Permission added via override → Access granted
+
+8️⃣ PERMISSION INITIALIZATION
+Startup Initialization Task
+
+On application startup:
+
+Create all permissions
+
+Create all roles
+
+Assign permissions to roles according to the matrix
+
+Create default admin account (optional)
+
+This ensures:
+
+Consistent environments
+
+No manual DB setup
+
+9️⃣ ADMINISTRATION FEATURES
+User Management (ADMIN only)
+
+Assign role to user
+
+Add permission to user
+
+Remove permission from user
+
+View users and permissions
+
+Permission Override Logic
+
+When admin updates permissions:
+
+Save change in UserPermission
+
+Recalculate permissions on next login
+
+Log action in audit table
+
+🔟 AUDIT LOGGING
+Actions to Log
+
+✔ Login
+✔ Logout
+✔ Role assignment
+✔ Permission changes
+✔ Stock movements
+✔ Order validation
+✔ Bon de sortie validation
+
+Audit Strategy
+
+Central AuditService
+
+Called from services, not controllers
+
+Stores: who, what, when
+
+1️⃣1️⃣ UNIT TESTING
+Mandatory Tests
+
+Login success
+
+Login failure
+
+Access denied without token
+
+Access denied without permission
+
+Access allowed with permission
+
+Tools
+
+Spring Boot Test
+
+MockMvc
+
+H2 (optional)
+
+1️⃣2️⃣ DOCKERIZATION
+Dockerfile Requirements
+
+Use Java 17
+
+Copy packaged JAR
+
+Expose application port
+
+Stateless container
+
+Image Lifecycle
+
+Build image
+
+Run container
+
+Push to Docker Hub
+
+1️⃣3️⃣ CI/CD (GitHub Actions)
+Single Workflow
+
+Steps:
+
+Checkout code
+
+Build project
+
+Run tests
+
+Build Docker image
+
+Push image to Docker Hub
+
+Secrets Required
+
+DockerHub username
+
+DockerHub password/token
+
+1️⃣4️⃣ NON-FUNCTIONAL REQUIREMENTS
+
+Secure password storage
+
+No sensitive data in logs
+
+Token expiration handling
+
+Clean error responses (401 / 403)
+
+Clear separation of concerns

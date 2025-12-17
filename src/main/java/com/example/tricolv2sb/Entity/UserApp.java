@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -35,6 +34,7 @@ public class UserApp implements UserDetails {
     private String fullName;
 
     @Column(name = "is_active")
+    @Builder.Default
     private Boolean isActive = true;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -63,31 +63,54 @@ public class UserApp implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        Set<GrantedAuthority> authorities = new java.util.HashSet<>();
+
+        if (role != null) {
+            authorities.add(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role.getName().name()));
+
+            if (role.getPermissions() != null) {
+                for (Permission p : role.getPermissions()) {
+                    authorities.add(new org.springframework.security.core.authority.SimpleGrantedAuthority(p.getAuthority()));
+                }
+            }
+        }
+
+        if (customPermissions != null) {
+            for (UserPermission up : customPermissions) {
+                String authName = up.getPermission().getAuthority();
+                if (up.isGranted()) {
+                    authorities.add(new org.springframework.security.core.authority.SimpleGrantedAuthority(authName));
+                } else {
+                    authorities.removeIf(auth -> auth.getAuthority().equals(authName));
+                }
+            }
+        }
+
+        return authorities;
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return this.email;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return this.isActive;
     }
 }

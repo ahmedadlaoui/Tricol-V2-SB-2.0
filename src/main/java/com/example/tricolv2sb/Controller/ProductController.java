@@ -1,6 +1,6 @@
 package com.example.tricolv2sb.Controller;
 
-import com.example.tricolv2sb.Controller.ControllerInterfaces.ProductControllerInterface;
+
 import com.example.tricolv2sb.DTO.product.CreateProductDTO;
 import com.example.tricolv2sb.DTO.product.ProductStockDetailDTO;
 import com.example.tricolv2sb.DTO.product.ReadProductDTO;
@@ -18,37 +18,37 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
-public class ProductController implements ProductControllerInterface {
+public class ProductController {
 
     private final ProductInterface productService;
     private final StockServiceInterface stockService;
 
-    @Override
+    @GetMapping
     public ResponseEntity<List<ReadProductDTO>> getAllProducts() {
         List<ReadProductDTO> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
     }
 
-    @Override
-    public ResponseEntity<ReadProductDTO> getProductById(Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<ReadProductDTO> getProductById(@PathVariable Long id) {
         ReadProductDTO product = productService.getProductById(id);
         return ResponseEntity.ok(product);
     }
 
-    @Override
-    public ResponseEntity<ReadProductDTO> createProduct(@Valid CreateProductDTO createProductDTO) {
+    @PostMapping
+    public ResponseEntity<ReadProductDTO> createProduct(@Valid @RequestBody CreateProductDTO createProductDTO) {
         ReadProductDTO createdProduct = productService.createProduct(createProductDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
 
-    @Override
-    public ResponseEntity<ReadProductDTO> updateProduct(Long id, @Valid UpdateProductDTO updateProductDTO) {
+    @PutMapping("/{id}")
+    public ResponseEntity<ReadProductDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody UpdateProductDTO updateProductDTO) {
         ReadProductDTO updatedProduct = productService.updateProduct(id, updateProductDTO);
         return ResponseEntity.ok(updatedProduct);
     }
 
-    @Override
-    public ResponseEntity<Void> deleteProduct(Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
