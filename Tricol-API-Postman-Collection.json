@@ -1,14 +1,24 @@
 {
 	"info": {
-		"_postman_id": "tricol-v2-collection",
-		"name": "Tricol Warehouse Management API",
-		"description": "Complete API collection for Tricol warehouse management system with embedded order lines",
+		"_postman_id": "tricol-v2-sb-collection",
+		"name": "Tricol V2 SB - Complete API Collection",
+		"description": "Complete API collection for Tricol warehouse management system with Spring Security JWT authentication",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
 		{
 			"key": "baseUrl",
 			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "1",
 			"type": "string"
 		},
 		{
@@ -34,13 +44,110 @@
 	],
 	"item": [
 		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"token\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"John Doe\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "auth", "register"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Assign Role to User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"roleName\": \"ADMIN\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/users/{{userId}}/assign-role",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "users", "{{userId}}", "assign-role"]
+						},
+						"description": "Assign a role to a user. Requires USER:UPDATE permission. Available roles: ADMIN, PURCHASING_MANAGER, STOREKEEPER, WORKSHOP_MANAGER"
+					}
+				}
+			]
+		},
+		{
 			"name": "Suppliers",
 			"item": [
 				{
 					"name": "Get All Suppliers",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/suppliers",
 							"host": ["{{baseUrl}}"],
@@ -52,7 +159,12 @@
 					"name": "Get Supplier By ID",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/suppliers/{{supplierId}}",
 							"host": ["{{baseUrl}}"],
@@ -68,6 +180,10 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
 							}
 						],
 						"body": {
@@ -89,6 +205,10 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
 							}
 						],
 						"body": {
@@ -106,7 +226,12 @@
 					"name": "Delete Supplier",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/suppliers/{{supplierId}}",
 							"host": ["{{baseUrl}}"],
@@ -123,7 +248,12 @@
 					"name": "Get All Products",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/products",
 							"host": ["{{baseUrl}}"],
@@ -135,7 +265,12 @@
 					"name": "Get Product By ID",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/products/{{productId}}",
 							"host": ["{{baseUrl}}"],
@@ -147,7 +282,12 @@
 					"name": "Get Product Stock Detail",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/products/{{productId}}/stock",
 							"host": ["{{baseUrl}}"],
@@ -163,6 +303,10 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
 							}
 						],
 						"body": {
@@ -184,6 +328,10 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
 							}
 						],
 						"body": {
@@ -201,7 +349,12 @@
 					"name": "Delete Product",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/products/{{productId}}",
 							"host": ["{{baseUrl}}"],
@@ -218,7 +371,12 @@
 					"name": "Get All Purchase Orders",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders",
 							"host": ["{{baseUrl}}"],
@@ -230,7 +388,12 @@
 					"name": "Get Purchase Order By ID",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders/{{orderId}}",
 							"host": ["{{baseUrl}}"],
@@ -242,7 +405,12 @@
 					"name": "Get Orders By Supplier",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders/supplier/{{supplierId}}",
 							"host": ["{{baseUrl}}"],
@@ -251,13 +419,17 @@
 					}
 				},
 				{
-					"name": "Create Order with Lines",
+					"name": "Create Purchase Order",
 					"request": {
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
 							}
 						],
 						"body": {
@@ -272,13 +444,17 @@
 					}
 				},
 				{
-					"name": "Update Order with Lines",
+					"name": "Update Purchase Order",
 					"request": {
 						"method": "PUT",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
 							}
 						],
 						"body": {
@@ -293,10 +469,15 @@
 					}
 				},
 				{
-					"name": "Validate Order",
+					"name": "Validate Purchase Order",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders/{{orderId}}/validate",
 							"host": ["{{baseUrl}}"],
@@ -305,10 +486,15 @@
 					}
 				},
 				{
-					"name": "Receive Order",
+					"name": "Receive Purchase Order",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders/{{orderId}}/reception",
 							"host": ["{{baseUrl}}"],
@@ -317,10 +503,15 @@
 					}
 				},
 				{
-					"name": "Cancel Order",
+					"name": "Cancel Purchase Order",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders/{{orderId}}/cancel",
 							"host": ["{{baseUrl}}"],
@@ -329,10 +520,15 @@
 					}
 				},
 				{
-					"name": "Delete Order",
+					"name": "Delete Purchase Order",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders/{{orderId}}",
 							"host": ["{{baseUrl}}"],
@@ -349,7 +545,12 @@
 					"name": "Get All Goods Issues",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues",
 							"host": ["{{baseUrl}}"],
@@ -361,7 +562,12 @@
 					"name": "Get Goods Issue By ID",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues/{{goodsIssueId}}",
 							"host": ["{{baseUrl}}"],
@@ -377,6 +583,10 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
 							}
 						],
 						"body": {
@@ -398,6 +608,10 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
 							}
 						],
 						"body": {
@@ -415,7 +629,12 @@
 					"name": "Validate Goods Issue",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues/{{goodsIssueId}}/validate",
 							"host": ["{{baseUrl}}"],
@@ -427,7 +646,12 @@
 					"name": "Cancel Goods Issue",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues/{{goodsIssueId}}/cancel",
 							"host": ["{{baseUrl}}"],
@@ -439,7 +663,12 @@
 					"name": "Delete Goods Issue",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues/{{goodsIssueId}}",
 							"host": ["{{baseUrl}}"],
@@ -456,7 +685,12 @@
 					"name": "Get Global Stock",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/stock",
 							"host": ["{{baseUrl}}"],
@@ -468,7 +702,12 @@
 					"name": "Get Product Stock Detail",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/stock/product/{{productId}}",
 							"host": ["{{baseUrl}}"],
@@ -480,7 +719,12 @@
 					"name": "Get Total Stock Valuation",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/stock/valuation",
 							"host": ["{{baseUrl}}"],
@@ -489,30 +733,29 @@
 					}
 				},
 				{
-					"name": "Get All Stock Movements",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/stock/mouvements/all",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "stock", "mouvements", "all"]
-						}
-					}
-				},
-				{
 					"name": "Search Stock Movements",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/stock/mouvements?produitId={{productId}}&page=0&size=20",
+							"raw": "{{baseUrl}}/api/v1/stock/mouvements?produitId={{productId}}&type=ENTREE&page=0&size=20",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "v1", "stock", "mouvements"],
 							"query": [
 								{
 									"key": "produitId",
-									"value": "{{productId}}"
+									"value": "{{productId}}",
+									"description": "Product ID"
+								},
+								{
+									"key": "type",
+									"value": "ENTREE",
+									"description": "ENTREE or SORTIE"
 								},
 								{
 									"key": "page",
@@ -527,10 +770,32 @@
 					}
 				},
 				{
+					"name": "Get All Stock Movements",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/stock/mouvements/all",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "stock", "mouvements", "all"]
+						}
+					}
+				},
+				{
 					"name": "Get Stock Movement By ID",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/stock/mouvements/1",
 							"host": ["{{baseUrl}}"],
@@ -542,7 +807,12 @@
 					"name": "Get Movements By Product",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/stock/mouvements/product/{{productId}}",
 							"host": ["{{baseUrl}}"],
@@ -554,3 +824,4 @@
 		}
 	]
 }
+
