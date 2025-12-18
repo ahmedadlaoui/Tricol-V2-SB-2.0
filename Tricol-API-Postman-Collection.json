@@ -1,50 +1,42 @@
 {
 	"info": {
-		"_postman_id": "tricol-v2-sb-collection",
-		"name": "Tricol V2 SB - Complete API Collection",
-		"description": "Complete API collection for Tricol warehouse management system with Spring Security JWT authentication",
+		"_postman_id": "tricol-v2-api",
+		"name": "Tricol V2 - Stock Management API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
 		{
 			"key": "baseUrl",
-			"value": "http://localhost:8080",
-			"type": "string"
+			"value": "http://localhost:8080"
 		},
 		{
 			"key": "token",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
 			"key": "userId",
-			"value": "1",
-			"type": "string"
+			"value": "1"
 		},
 		{
 			"key": "supplierId",
-			"value": "1",
-			"type": "string"
+			"value": "1"
 		},
 		{
 			"key": "productId",
-			"value": "1",
-			"type": "string"
+			"value": "1"
 		},
 		{
 			"key": "orderId",
-			"value": "1",
-			"type": "string"
+			"value": "1"
 		},
 		{
 			"key": "goodsIssueId",
-			"value": "1",
-			"type": "string"
+			"value": "1"
 		}
 	],
 	"item": [
 		{
-			"name": "Authentication",
+			"name": "Auth",
 			"item": [
 				{
 					"name": "Login",
@@ -53,12 +45,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"if (pm.response.code === 200) {",
-									"    var jsonData = pm.response.json();",
-									"    pm.collectionVariables.set(\"token\", jsonData.token);",
-									"}"
-								],
-								"type": "text/javascript"
+									"if(pm.response.code===200){pm.collectionVariables.set('token',pm.response.json().body.token);}"
+								]
 							}
 						}
 					],
@@ -72,12 +60,19 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}"
+							"raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"admin123\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/auth/login",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "auth", "login"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
 						}
 					}
 				},
@@ -93,22 +88,76 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"John Doe\"\n}"
+							"raw": "{\n  \"email\": \"newuser@test.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"New User\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/auth/register",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "auth", "register"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"me"
+							]
 						}
 					}
 				}
 			]
 		},
 		{
-			"name": "Admin",
+			"name": "Users",
 			"item": [
 				{
-					"name": "Assign Role to User",
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					}
+				},
+				{
+					"name": "Assign Role",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -127,10 +176,69 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/users/{{userId}}/assign-role",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "users", "{{userId}}", "assign-role"]
-						},
-						"description": "Assign a role to a user. Requires USER:UPDATE permission. Available roles: ADMIN, PURCHASING_MANAGER, STOREKEEPER, WORKSHOP_MANAGER"
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"{{userId}}",
+								"assign-role"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Dashboard",
+			"item": [
+				{
+					"name": "Get Dashboard Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/dashboard",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"dashboard"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Stock Alerts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/dashboard/alerts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"dashboard",
+								"alerts"
+							]
+						}
 					}
 				}
 			]
@@ -139,7 +247,7 @@
 			"name": "Suppliers",
 			"item": [
 				{
-					"name": "Get All Suppliers",
+					"name": "Get All",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -150,13 +258,19 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/suppliers",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "suppliers"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"suppliers"
+							]
 						}
 					}
 				},
 				{
-					"name": "Get Supplier By ID",
+					"name": "Get By ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -167,13 +281,20 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/suppliers/{{supplierId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "suppliers", "{{supplierId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"suppliers",
+								"{{supplierId}}"
+							]
 						}
 					}
 				},
 				{
-					"name": "Create Supplier",
+					"name": "Create",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -188,17 +309,23 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"companyName\": \"TechSupply Co\",\n  \"ice\": \"ICE123456789\",\n  \"contactPerson\": \"John Doe\",\n  \"email\": \"john@techsupply.com\",\n  \"phone\": \"0612345678\",\n  \"address\": \"123 Main Street\",\n  \"city\": \"Casablanca\"\n}"
+							"raw": "{\n  \"ice\": \"ICE123456789\",\n  \"email\": \"supplier@company.com\",\n  \"phone\": \"0612345678\",\n  \"address\": \"123 Business Street\",\n  \"city\": \"Casablanca\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/suppliers",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "suppliers"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"suppliers"
+							]
 						}
 					}
 				},
 				{
-					"name": "Update Supplier",
+					"name": "Update",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -213,17 +340,24 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"companyName\": \"TechSupply Co Updated\",\n  \"ice\": \"ICE123456789\",\n  \"contactPerson\": \"John Doe\",\n  \"email\": \"john.updated@techsupply.com\",\n  \"phone\": \"0612345678\",\n  \"address\": \"123 Main Street\",\n  \"city\": \"Casablanca\"\n}"
+							"raw": "{\n  \"ice\": \"ICE123456789\",\n  \"email\": \"updated@company.com\",\n  \"phone\": \"0698765432\",\n  \"address\": \"456 New Street\",\n  \"city\": \"Rabat\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/suppliers/{{supplierId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "suppliers", "{{supplierId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"suppliers",
+								"{{supplierId}}"
+							]
 						}
 					}
 				},
 				{
-					"name": "Delete Supplier",
+					"name": "Delete",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -234,8 +368,15 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/suppliers/{{supplierId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "suppliers", "{{supplierId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"suppliers",
+								"{{supplierId}}"
+							]
 						}
 					}
 				}
@@ -245,7 +386,7 @@
 			"name": "Products",
 			"item": [
 				{
-					"name": "Get All Products",
+					"name": "Get All",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -256,13 +397,19 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/products",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "products"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products"
+							]
 						}
 					}
 				},
 				{
-					"name": "Get Product By ID",
+					"name": "Get By ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -273,13 +420,20 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/products/{{productId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "products", "{{productId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"{{productId}}"
+							]
 						}
 					}
 				},
 				{
-					"name": "Get Product Stock Detail",
+					"name": "Get Stock Detail",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -290,13 +444,21 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/products/{{productId}}/stock",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "products", "{{productId}}", "stock"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"{{productId}}",
+								"stock"
+							]
 						}
 					}
 				},
 				{
-					"name": "Create Product",
+					"name": "Create",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -315,13 +477,19 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/products",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "products"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products"
+							]
 						}
 					}
 				},
 				{
-					"name": "Update Product",
+					"name": "Update",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -336,17 +504,24 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"reference\": \"PROD-001\",\n  \"name\": \"Laptop HP Updated\",\n  \"description\": \"HP Laptop i7 32GB RAM\",\n  \"category\": \"Electronics\",\n  \"unitPrice\": 9000,\n  \"unitOfMeasure\": \"UNIT\",\n  \"reorderPoint\": 5.0\n}"
+							"raw": "{\n  \"name\": \"Laptop HP Updated\",\n  \"description\": \"HP Laptop i7 32GB RAM\",\n  \"category\": \"Electronics\",\n  \"unitPrice\": 9500,\n  \"reorderPoint\": 10.0\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/products/{{productId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "products", "{{productId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"{{productId}}"
+							]
 						}
 					}
 				},
 				{
-					"name": "Delete Product",
+					"name": "Delete",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -357,8 +532,15 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/products/{{productId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "products", "{{productId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"{{productId}}"
+							]
 						}
 					}
 				}
@@ -368,7 +550,7 @@
 			"name": "Purchase Orders",
 			"item": [
 				{
-					"name": "Get All Purchase Orders",
+					"name": "Get All",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -379,13 +561,94 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "orders"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders"
+							]
 						}
 					}
 				},
 				{
-					"name": "Get Purchase Order By ID",
+					"name": "Get By Status (PENDING)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/orders/status/PENDING",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"status",
+								"PENDING"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get By Status (VALIDATED)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/orders/status/VALIDATED",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"status",
+								"VALIDATED"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get By Status (DELIVERED)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/orders/status/DELIVERED",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"status",
+								"DELIVERED"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get By ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -396,13 +659,20 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders/{{orderId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "orders", "{{orderId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"{{orderId}}"
+							]
 						}
 					}
 				},
 				{
-					"name": "Get Orders By Supplier",
+					"name": "Get By Supplier",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -413,13 +683,21 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders/supplier/{{supplierId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "orders", "supplier", "{{supplierId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"supplier",
+								"{{supplierId}}"
+							]
 						}
 					}
 				},
 				{
-					"name": "Create Purchase Order",
+					"name": "Create",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -434,17 +712,23 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"supplierId\": {{supplierId}},\n  \"orderLines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 50.0,\n      \"unitPrice\": 8500.00\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 100.0,\n      \"unitPrice\": 1200.00\n    }\n  ]\n}"
+							"raw": "{\n  \"supplierId\": 1,\n  \"orderLines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 50.0,\n      \"unitPrice\": 100.0\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 25.0,\n      \"unitPrice\": 200.0\n    }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "orders"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders"
+							]
 						}
 					}
 				},
 				{
-					"name": "Update Purchase Order",
+					"name": "Update",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -459,17 +743,24 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"status\": \"VALIDATED\",\n  \"orderLines\": [\n    {\n      \"id\": 1,\n      \"quantity\": 60.0,\n      \"unitPrice\": 8500.00\n    },\n    {\n      \"productId\": 3,\n      \"quantity\": 75.0,\n      \"unitPrice\": 2500.00\n    }\n  ]\n}"
+							"raw": "{\n  \"status\": \"PENDING\",\n  \"orderLines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 75.0,\n      \"unitPrice\": 95.0\n    }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders/{{orderId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "orders", "{{orderId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"{{orderId}}"
+							]
 						}
 					}
 				},
 				{
-					"name": "Validate Purchase Order",
+					"name": "Validate",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -480,13 +771,21 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders/{{orderId}}/validate",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "orders", "{{orderId}}", "validate"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"{{orderId}}",
+								"validate"
+							]
 						}
 					}
 				},
 				{
-					"name": "Receive Purchase Order",
+					"name": "Receive (Creates Stock)",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -497,13 +796,21 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders/{{orderId}}/reception",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "orders", "{{orderId}}", "reception"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"{{orderId}}",
+								"reception"
+							]
 						}
 					}
 				},
 				{
-					"name": "Cancel Purchase Order",
+					"name": "Cancel",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -514,13 +821,21 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders/{{orderId}}/cancel",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "orders", "{{orderId}}", "cancel"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"{{orderId}}",
+								"cancel"
+							]
 						}
 					}
 				},
 				{
-					"name": "Delete Purchase Order",
+					"name": "Delete",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -531,8 +846,15 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders/{{orderId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "orders", "{{orderId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"{{orderId}}"
+							]
 						}
 					}
 				}
@@ -542,7 +864,7 @@
 			"name": "Goods Issues",
 			"item": [
 				{
-					"name": "Get All Goods Issues",
+					"name": "Get All",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -553,13 +875,69 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "goods-issues"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"goods-issues"
+							]
 						}
 					}
 				},
 				{
-					"name": "Get Goods Issue By ID",
+					"name": "Get By Status (DRAFT)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/goods-issues/status/DRAFT",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"goods-issues",
+								"status",
+								"DRAFT"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get By Status (VALIDATED)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/goods-issues/status/VALIDATED",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"goods-issues",
+								"status",
+								"VALIDATED"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get By ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -570,13 +948,20 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues/{{goodsIssueId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "goods-issues", "{{goodsIssueId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"goods-issues",
+								"{{goodsIssueId}}"
+							]
 						}
 					}
 				},
 				{
-					"name": "Create Goods Issue",
+					"name": "Create",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -591,17 +976,23 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"destination\": \"Customer ABC\",\n  \"motif\": \"SALE\",\n  \"issueDate\": \"2025-01-15\",\n  \"issueLines\": [\n    {\n      \"productId\": {{productId}},\n      \"quantity\": 5.0\n    }\n  ]\n}"
+							"raw": "{\n  \"destination\": \"Workshop A\",\n  \"motif\": \"PRODUCTION\",\n  \"issueDate\": \"2025-12-18\",\n  \"issueLines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 10.0\n    }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "goods-issues"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"goods-issues"
+							]
 						}
 					}
 				},
 				{
-					"name": "Update Goods Issue",
+					"name": "Update (DRAFT only)",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -616,17 +1007,24 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"destination\": \"Customer ABC Updated\",\n  \"motif\": \"SALE\",\n  \"issueDate\": \"2025-01-16\"\n}"
+							"raw": "{\n  \"destination\": \"Workshop B\",\n  \"motif\": \"PRODUCTION\",\n  \"issueDate\": \"2025-12-19\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues/{{goodsIssueId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "goods-issues", "{{goodsIssueId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"goods-issues",
+								"{{goodsIssueId}}"
+							]
 						}
 					}
 				},
 				{
-					"name": "Validate Goods Issue",
+					"name": "Validate (Consumes Stock FIFO)",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -637,13 +1035,21 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues/{{goodsIssueId}}/validate",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "goods-issues", "{{goodsIssueId}}", "validate"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"goods-issues",
+								"{{goodsIssueId}}",
+								"validate"
+							]
 						}
 					}
 				},
 				{
-					"name": "Cancel Goods Issue",
+					"name": "Cancel",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -654,13 +1060,21 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues/{{goodsIssueId}}/cancel",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "goods-issues", "{{goodsIssueId}}", "cancel"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"goods-issues",
+								"{{goodsIssueId}}",
+								"cancel"
+							]
 						}
 					}
 				},
 				{
-					"name": "Delete Goods Issue",
+					"name": "Delete (DRAFT only)",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -671,8 +1085,15 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues/{{goodsIssueId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "goods-issues", "{{goodsIssueId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"goods-issues",
+								"{{goodsIssueId}}"
+							]
 						}
 					}
 				}
@@ -682,7 +1103,7 @@
 			"name": "Stock",
 			"item": [
 				{
-					"name": "Get Global Stock",
+					"name": "Get Global Stock Summary",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -693,8 +1114,14 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/stock",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "stock"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stock"
+							]
 						}
 					}
 				},
@@ -710,13 +1137,21 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/stock/product/{{productId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "stock", "product", "{{productId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stock",
+								"product",
+								"{{productId}}"
+							]
 						}
 					}
 				},
 				{
-					"name": "Get Total Stock Valuation",
+					"name": "Get Total Valuation",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -727,13 +1162,25 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/stock/valuation",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "stock", "valuation"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stock",
+								"valuation"
+							]
 						}
 					}
-				},
+				}
+			]
+		},
+		{
+			"name": "Stock Movements",
+			"item": [
 				{
-					"name": "Search Stock Movements",
+					"name": "Search Movements (All Params)",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -743,19 +1190,32 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/stock/mouvements?produitId={{productId}}&type=ENTREE&page=0&size=20",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "stock", "mouvements"],
+							"raw": "{{baseUrl}}/api/v1/stock/mouvements?dateDebut=2025-01-01&dateFin=2025-12-31&produitId=1&type=IN&page=0&size=20",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stock",
+								"mouvements"
+							],
 							"query": [
 								{
+									"key": "dateDebut",
+									"value": "2025-01-01"
+								},
+								{
+									"key": "dateFin",
+									"value": "2025-12-31"
+								},
+								{
 									"key": "produitId",
-									"value": "{{productId}}",
-									"description": "Product ID"
+									"value": "1"
 								},
 								{
 									"key": "type",
-									"value": "ENTREE",
-									"description": "ENTREE or SORTIE"
+									"value": "IN"
 								},
 								{
 									"key": "page",
@@ -770,7 +1230,201 @@
 					}
 				},
 				{
-					"name": "Get All Stock Movements",
+					"name": "Search Movements (By Type IN)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/stock/mouvements?type=IN&page=0&size=20",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stock",
+								"mouvements"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "IN"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Search Movements (By Type OUT)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/stock/mouvements?type=OUT&page=0&size=20",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stock",
+								"mouvements"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "OUT"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Search Movements (By Date Range)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/stock/mouvements?dateDebut=2025-12-01&dateFin=2025-12-31&page=0&size=20",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stock",
+								"mouvements"
+							],
+							"query": [
+								{
+									"key": "dateDebut",
+									"value": "2025-12-01"
+								},
+								{
+									"key": "dateFin",
+									"value": "2025-12-31"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Search Movements (By Product)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/stock/mouvements?produitId={{productId}}&page=0&size=20",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stock",
+								"mouvements"
+							],
+							"query": [
+								{
+									"key": "produitId",
+									"value": "{{productId}}"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Search Movements (By Lot Number)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/stock/mouvements?numeroLot=LOT-1-1-20251218&page=0&size=20",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stock",
+								"mouvements"
+							],
+							"query": [
+								{
+									"key": "numeroLot",
+									"value": "LOT-1-1-20251218"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get All Movements",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -781,13 +1435,21 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/stock/mouvements/all",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "stock", "mouvements", "all"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stock",
+								"mouvements",
+								"all"
+							]
 						}
 					}
 				},
 				{
-					"name": "Get Stock Movement By ID",
+					"name": "Get Movement By ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -798,8 +1460,16 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/stock/mouvements/1",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "stock", "mouvements", "1"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stock",
+								"mouvements",
+								"1"
+							]
 						}
 					}
 				},
@@ -815,8 +1485,17 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/stock/mouvements/product/{{productId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "stock", "mouvements", "product", "{{productId}}"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stock",
+								"mouvements",
+								"product",
+								"{{productId}}"
+							]
 						}
 					}
 				}
@@ -824,5 +1503,3 @@
 		}
 	]
 }
-
-

@@ -10,6 +10,8 @@ public class ReadSupplierDTO {
 
     private Long id;
 
+    private String ice;
+
     private String companyName;
 
     @Email

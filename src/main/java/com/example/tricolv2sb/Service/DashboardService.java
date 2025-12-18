@@ -143,7 +143,7 @@ public class DashboardService implements DashboardServiceInterface {
                         .reference("PO-" + order.getId())
                         .date(order.getOrderDate())
                         .description("Purchase order " + order.getStatus().name().toLowerCase() +
-                                " - " + order.getSupplier().getName())
+                                " - " + order.getSupplier().getEmail())
                         .build()));
 
         // Add recent goods issues
