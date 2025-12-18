@@ -34,8 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain
-    ) throws ServletException, IOException {
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
@@ -57,8 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
-                            userDetails.getAuthorities()
-                    );
+                            userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
@@ -68,19 +66,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         } catch (Exception e) {
             log.error("JWT Authentication error: {}", e.getMessage());
-            sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired Token", e.getMessage());
+            sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired Token",
+                    e.getMessage());
         }
     }
 
-    private void sendErrorResponse(HttpServletResponse response, int status, String message, String error) throws IOException {
+    private void sendErrorResponse(HttpServletResponse response, int status, String message, String error)
+            throws IOException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(status);
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("status", status);
-        body.put("message", message);
-        body.put("error", error);
+        com.example.tricolv2sb.DTO.common.ApiResponse<Object> apiResponse = com.example.tricolv2sb.DTO.common.ApiResponse
+                .builder()
+                .timestamp(java.time.LocalDateTime.now())
+                .status(status)
+                .message(message + (error != null ? ": " + error : ""))
+                .body(null)
+                .build();
 
-        new ObjectMapper().writeValue(response.getOutputStream(), body);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+        mapper.writeValue(response.getOutputStream(), apiResponse);
     }
 }

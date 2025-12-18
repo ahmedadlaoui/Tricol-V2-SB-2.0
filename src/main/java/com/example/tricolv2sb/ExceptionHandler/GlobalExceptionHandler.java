@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
     // ==================== AUTHENTICATION EXCEPTIONS ====================
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ApiResponse<Object>> handleAuthenticationException(AuthenticationException e) {
+    public ResponseEntity<ApiResponse<Object>> handleCustomAuthenticationException(AuthenticationException e) {
         return buildErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
@@ -63,6 +63,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DisabledException.class)
     public ResponseEntity<ApiResponse<Object>> handleDisabledAccount(DisabledException e) {
         return buildErrorResponse(HttpStatus.FORBIDDEN, "Account is disabled. Please contact administrator.");
+    }
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Object>> handleAccessDenied(
+            org.springframework.security.access.AccessDeniedException e) {
+        return buildErrorResponse(HttpStatus.FORBIDDEN, "Access Denied: You do not have the required permissions");
+    }
+
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleSpringAuthenticationException(
+            org.springframework.security.core.AuthenticationException e) {
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
     // ==================== VALIDATION EXCEPTIONS ====================
