@@ -1,6 +1,7 @@
 package com.example.tricolv2sb.Controller;
 
 import com.example.tricolv2sb.DTO.userapp.AssignRoleDTO;
+import com.example.tricolv2sb.DTO.userapp.ReadUserDTO;
 import com.example.tricolv2sb.Service.ServiceInterfaces.UserAppServiceInterface;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -8,12 +9,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserAppController {
 
     private final UserAppServiceInterface userAppService;
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<ReadUserDTO>> getAllUsers() {
+        return ResponseEntity.ok(userAppService.getAllUsers());
+    }
 
     @PutMapping("/{id}/assign-role")
     @PreAuthorize("hasAuthority('USER:UPDATE')")
@@ -24,4 +33,3 @@ public class UserAppController {
         return ResponseEntity.ok("Role assigned successfully to user " + id);
     }
 }
-

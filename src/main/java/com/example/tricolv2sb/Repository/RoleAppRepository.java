@@ -12,3 +12,4 @@ public interface RoleAppRepository extends JpaRepository<RoleApp, Long> {
     Optional<RoleApp> findByName(RoleName name);
 }
 
+
