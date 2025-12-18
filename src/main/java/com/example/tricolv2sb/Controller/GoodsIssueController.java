@@ -1,13 +1,16 @@
 package com.example.tricolv2sb.Controller;
 
+import com.example.tricolv2sb.DTO.common.ApiResponse;
 import com.example.tricolv2sb.DTO.goodsissue.CreateGoodsIssueDTO;
 import com.example.tricolv2sb.DTO.goodsissue.ReadGoodsIssueDTO;
 import com.example.tricolv2sb.DTO.goodsissue.UpdateGoodsIssueDTO;
+import com.example.tricolv2sb.Exception.ResourceNotFoundException;
 import com.example.tricolv2sb.Service.ServiceInterfaces.GoodsIssueServiceInterface;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,76 +22,57 @@ public class GoodsIssueController {
 
     private final GoodsIssueServiceInterface goodsIssueService;
 
-    /**
-     * GET /api/v1/goods-issues
-     * Gets a list of all goods issues
-     */
     @GetMapping
-    public ResponseEntity<List<ReadGoodsIssueDTO>> getAllGoodsIssues() {
+    @PreAuthorize("hasAuthority('GOODS_ISSUE:READ')")
+    public ResponseEntity<ApiResponse<List<ReadGoodsIssueDTO>>> getAllGoodsIssues() {
         List<ReadGoodsIssueDTO> goodsIssues = goodsIssueService.fetchAllGoodsIssues();
-        return ResponseEntity.ok(goodsIssues);
+        return ResponseEntity.ok(ApiResponse.success(goodsIssues, "Goods issues fetched successfully"));
     }
 
-    /**
-     * GET /api/v1/goods-issues/{id}
-     * Gets a single goods issue by its ID
-     */
     @GetMapping("/{id}")
-    public ResponseEntity<ReadGoodsIssueDTO> getGoodsIssueById(@PathVariable Long id) {
+    @PreAuthorize("hasAuthority('GOODS_ISSUE:READ')")
+    public ResponseEntity<ApiResponse<ReadGoodsIssueDTO>> getGoodsIssueById(@PathVariable Long id) {
         return goodsIssueService.fetchGoodsIssueById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+                .map(res -> ResponseEntity.ok(ApiResponse.success(res, "Goods issue fetched successfully")))
+                .orElseThrow(() -> new ResourceNotFoundException("Goods issue not found with ID: " + id));
     }
 
-    /**
-     * POST /api/v1/goods-issues
-     * Creates a new goods issue (status: DRAFT)
-     */
     @PostMapping
-    public ResponseEntity<ReadGoodsIssueDTO> createGoodsIssue(@Valid @RequestBody CreateGoodsIssueDTO dto) {
+    @PreAuthorize("hasAuthority('GOODS_ISSUE:CREATE')")
+    public ResponseEntity<ApiResponse<ReadGoodsIssueDTO>> createGoodsIssue(
+            @Valid @RequestBody CreateGoodsIssueDTO dto) {
         ReadGoodsIssueDTO newGoodsIssue = goodsIssueService.createGoodsIssue(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newGoodsIssue);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.created(newGoodsIssue, "Goods issue created successfully"));
     }
 
-    /**
-     * PUT /api/v1/goods-issues/{id}
-     * Updates an existing goods issue (only if status is DRAFT)
-     */
     @PutMapping("/{id}")
-    public ResponseEntity<ReadGoodsIssueDTO> updateGoodsIssue(
+    @PreAuthorize("hasAuthority('GOODS_ISSUE:UPDATE')")
+    public ResponseEntity<ApiResponse<ReadGoodsIssueDTO>> updateGoodsIssue(
             @PathVariable Long id,
             @Valid @RequestBody UpdateGoodsIssueDTO dto) {
         ReadGoodsIssueDTO updatedGoodsIssue = goodsIssueService.updateGoodsIssue(id, dto);
-        return ResponseEntity.ok(updatedGoodsIssue);
+        return ResponseEntity.ok(ApiResponse.success(updatedGoodsIssue, "Goods issue updated successfully"));
     }
 
-    /**
-     * DELETE /api/v1/goods-issues/{id}
-     * Deletes a goods issue (only if status is DRAFT)
-     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGoodsIssue(@PathVariable Long id) {
+    @PreAuthorize("hasAuthority('GOODS_ISSUE:DELETE')")
+    public ResponseEntity<ApiResponse<Void>> deleteGoodsIssue(@PathVariable Long id) {
         goodsIssueService.deleteGoodsIssue(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success(null, "Goods issue deleted successfully"));
     }
 
-    /**
-     * PUT /api/v1/goods-issues/{id}/validate
-     * Validates a goods issue and creates stock movements OUT
-     */
     @PutMapping("/{id}/validate")
-    public ResponseEntity<String> validateGoodsIssue(@PathVariable Long id) {
+    @PreAuthorize("hasAuthority('GOODS_ISSUE:VALIDATE')")
+    public ResponseEntity<ApiResponse<Void>> validateGoodsIssue(@PathVariable Long id) {
         goodsIssueService.validateGoodsIssue(id);
-        return ResponseEntity.ok("Goods issue " + id + " has been validated");
+        return ResponseEntity.ok(ApiResponse.success(null, "Goods issue validated successfully"));
     }
 
-    /**
-     * PUT /api/v1/goods-issues/{id}/cancel
-     * Cancels a goods issue
-     */
     @PutMapping("/{id}/cancel")
-    public ResponseEntity<String> cancelGoodsIssue(@PathVariable Long id) {
+    @PreAuthorize("hasAuthority('GOODS_ISSUE:CANCEL')")
+    public ResponseEntity<ApiResponse<Void>> cancelGoodsIssue(@PathVariable Long id) {
         goodsIssueService.cancelGoodsIssue(id);
-        return ResponseEntity.ok("Goods issue " + id + " has been cancelled");
+        return ResponseEntity.ok(ApiResponse.success(null, "Goods issue cancelled successfully"));
     }
 }

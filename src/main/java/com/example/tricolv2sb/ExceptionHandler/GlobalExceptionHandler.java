@@ -1,113 +1,129 @@
 package com.example.tricolv2sb.ExceptionHandler;
 
-import com.example.tricolv2sb.Exception.*;
-import com.example.tricolv2sb.Service.SupplierService;
+import com.example.tricolv2sb.DTO.common.ApiResponse;
+import com.example.tricolv2sb.Exception.AuthenticationException;
+import com.example.tricolv2sb.Exception.BusinessValidationException;
+import com.example.tricolv2sb.Exception.ResourceAlreadyExistsException;
+import com.example.tricolv2sb.Exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(SupplierService.class);
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(SupplierAlreadyExistsException.class)
-    public ResponseEntity<Map<String, Object>> handleSupplierConflict(SupplierAlreadyExistsException e) {
-        return buildErrorResponse(HttpStatus.CONFLICT, "Error adding new supplier : ", e);
+    // ==================== BUSINESS EXCEPTIONS ====================
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleResourceNotFound(ResourceNotFoundException e) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
-    @ExceptionHandler(SupplierNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleSupplierNotFound(SupplierNotFoundException e) {
-        return buildErrorResponse(HttpStatus.NOT_FOUND, "Error fetching supplier : ", e);
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<ApiResponse<Object>> handleResourceAlreadyExists(ResourceAlreadyExistsException e) {
+        return buildErrorResponse(HttpStatus.CONFLICT, e.getMessage());
     }
 
-    @ExceptionHandler(PurchaseOrderLineNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handlePurchaseOrderLineNotFound(PurchaseOrderLineNotFoundException e) {
-        return buildErrorResponse(HttpStatus.NOT_FOUND, "Error fetching purchase order line : ", e);
+    @ExceptionHandler(BusinessValidationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleBusinessValidation(BusinessValidationException e) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
-    @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleProductNotFound(ProductNotFoundException e) {
-        return buildErrorResponse(HttpStatus.NOT_FOUND, "Error fetching product : ", e);
+    // ==================== AUTHENTICATION EXCEPTIONS ====================
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleAuthenticationException(AuthenticationException e) {
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
-    @ExceptionHandler(PurchaseOrderNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handlePurchaseOrderNotFound(PurchaseOrderNotFoundException e) {
-        return buildErrorResponse(HttpStatus.NOT_FOUND, "Error fetching purchase order : ", e);
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiResponse<Object>> handleBadCredentials(BadCredentialsException e) {
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, "Invalid email or password");
     }
 
-    @ExceptionHandler(GoodsIssueNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleGoodsIssueNotFound(GoodsIssueNotFoundException e) {
-        return buildErrorResponse(HttpStatus.NOT_FOUND, "Error fetching goods issue : ", e);
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleUsernameNotFound(UsernameNotFoundException e) {
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, "Invalid email or password");
     }
 
-    @ExceptionHandler(StockMovementNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleStockMovementNotFound(StockMovementNotFoundException e) {
-        return buildErrorResponse(HttpStatus.NOT_FOUND, "Error fetching stock movement : ", e);
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ApiResponse<Object>> handleDisabledAccount(DisabledException e) {
+        return buildErrorResponse(HttpStatus.FORBIDDEN, "Account is disabled. Please contact administrator.");
     }
 
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalState(IllegalStateException e) {
-        logger.error("Illegal state operation: {}", e.getMessage());
-
-        Map<String, Object> body = new HashMap<>();
-        body.put("Status", HttpStatus.CONFLICT.value());
-        body.put("Message", e.getMessage());
-
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
-    }
+    // ==================== VALIDATION EXCEPTIONS ====================
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException e) {
-        logger.error("Validation error occurred: {}", e.getMessage());
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationErrors(MethodArgumentNotValidException e) {
+        logger.warn("Validation failed: {}", e.getMessage());
 
         Map<String, String> fieldErrors = e.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .collect(Collectors.toMap(
                         FieldError::getField,
-                        fieldError -> fieldError.getDefaultMessage() != null ? fieldError.getDefaultMessage()
+                        fieldError -> fieldError.getDefaultMessage() != null
+                                ? fieldError.getDefaultMessage()
                                 : "Invalid value",
                         (existing, replacement) -> existing));
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("Status", HttpStatus.BAD_REQUEST.value());
-        body.put("Message", "Validation failed");
-        body.put("Errors", fieldErrors);
+        ApiResponse<Map<String, String>> response = ApiResponse.<Map<String, String>>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Validation failed")
+                .body(fieldErrors)
+                .build();
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Object>> handleIllegalArgument(IllegalArgumentException e) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    // ==================== GENERIC EXCEPTIONS ====================
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGeneralException(Exception e) {
+    public ResponseEntity<ApiResponse<Object>> handleGeneralException(Exception e) {
         logger.error("Unexpected error occurred: ", e);
-        e.printStackTrace(); // Print full stack trace for debugging
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("Status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        body.put("Message", e.getMessage());
-        body.put("Error", e.getClass().getSimpleName());
+        ApiResponse<Object> response = ApiResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message("An unexpected error occurred. Please try again later.")
+                .body(null)
+                .build();
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
-    private ResponseEntity<Map<String, Object>> buildErrorResponse(HttpStatus status, String logPrefix, Exception e) {
-        logger.error(logPrefix + e.getMessage());
+    // ==================== HELPER METHOD ====================
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("Status", status.value());
-        body.put("Message", e.getMessage());
+    private ResponseEntity<ApiResponse<Object>> buildErrorResponse(HttpStatus status, String message) {
+        logger.warn("Error [{}]: {}", status.value(), message);
 
-        return ResponseEntity.status(status).body(body);
+        ApiResponse<Object> response = ApiResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(status.value())
+                .message(message)
+                .body(null)
+                .build();
+
+        return ResponseEntity.status(status).body(response);
     }
-
 }

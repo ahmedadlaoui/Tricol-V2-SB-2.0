@@ -6,8 +6,8 @@ import com.example.tricolv2sb.DTO.goodsissue.UpdateGoodsIssueDTO;
 import com.example.tricolv2sb.Entity.*;
 import com.example.tricolv2sb.Entity.Enum.GoodsIssueStatus;
 import com.example.tricolv2sb.Entity.Enum.StockMovementType;
-import com.example.tricolv2sb.Exception.GoodsIssueNotFoundException;
-import com.example.tricolv2sb.Exception.ProductNotFoundException;
+import com.example.tricolv2sb.Exception.BusinessValidationException;
+import com.example.tricolv2sb.Exception.ResourceNotFoundException;
 import com.example.tricolv2sb.Mapper.GoodsIssueMapper;
 import com.example.tricolv2sb.Repository.*;
 import com.example.tricolv2sb.Service.ServiceInterfaces.GoodsIssueServiceInterface;
@@ -45,8 +45,8 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
         return Optional.of(
                 goodsIssueRepository.findById(id)
                         .map(goodsIssueMapper::toDto)
-                        .orElseThrow(() -> new GoodsIssueNotFoundException(
-                                "Goods issue with ID " + id + " not found")));
+                        .orElseThrow(() -> new ResourceNotFoundException(
+                                "Goods issue not found with ID: " + id)));
     }
 
     @Transactional
@@ -60,8 +60,8 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
         List<GoodsIssueLine> issueLines = new ArrayList<>();
         for (var lineDto : dto.getIssueLines()) {
             Product product = productRepository.findById(lineDto.getProductId())
-                    .orElseThrow(() -> new ProductNotFoundException(
-                            "Product with ID " + lineDto.getProductId() + " not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Product not found with ID: " + lineDto.getProductId()));
 
             GoodsIssueLine line = new GoodsIssueLine();
             line.setProduct(product);
@@ -78,12 +78,11 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
     @Transactional
     public ReadGoodsIssueDTO updateGoodsIssue(Long id, UpdateGoodsIssueDTO dto) {
         GoodsIssue existingGoodsIssue = goodsIssueRepository.findById(id)
-                .orElseThrow(() -> new GoodsIssueNotFoundException(
-                        "Goods issue with ID " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Goods issue not found with ID: " + id));
 
         if (existingGoodsIssue.getStatus() != GoodsIssueStatus.DRAFT) {
-            throw new IllegalStateException(
-                    "Cannot update goods issue with status " + existingGoodsIssue.getStatus());
+            throw new BusinessValidationException(
+                    "Cannot update goods issue with status: " + existingGoodsIssue.getStatus());
         }
 
         goodsIssueMapper.updateFromDto(dto, existingGoodsIssue);
@@ -94,13 +93,11 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
     @Transactional
     public void deleteGoodsIssue(Long id) {
         GoodsIssue goodsIssue = goodsIssueRepository.findById(id)
-                .orElseThrow(() -> new GoodsIssueNotFoundException(
-                        "Goods issue with ID " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Goods issue not found with ID: " + id));
 
         if (goodsIssue.getStatus() != GoodsIssueStatus.DRAFT) {
-            throw new IllegalStateException(
-                    "Cannot delete goods issue with status " + goodsIssue.getStatus() +
-                            ". Only DRAFT goods issues can be deleted.");
+            throw new BusinessValidationException(
+                    "Only DRAFT goods issues can be deleted. Current status: " + goodsIssue.getStatus());
         }
 
         goodsIssueRepository.deleteById(id);
@@ -109,18 +106,17 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
     @Transactional
     public void validateGoodsIssue(Long id) {
         GoodsIssue goodsIssue = goodsIssueRepository.findById(id)
-                .orElseThrow(() -> new GoodsIssueNotFoundException(
-                        "Goods issue with ID " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Goods issue not found with ID: " + id));
 
         if (goodsIssue.getStatus() != GoodsIssueStatus.DRAFT) {
-            throw new IllegalStateException(
+            throw new BusinessValidationException(
                     "Only DRAFT goods issues can be validated. Current status: " + goodsIssue.getStatus());
         }
 
         List<GoodsIssueLine> issueLines = goodsIssueLineRepository.findByGoodsIssueId(id);
 
         if (issueLines.isEmpty()) {
-            throw new IllegalStateException("Cannot validate goods issue without issue lines");
+            throw new BusinessValidationException("Cannot validate goods issue without issue lines");
         }
 
         for (GoodsIssueLine line : issueLines) {
@@ -131,10 +127,6 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
         goodsIssueRepository.save(goodsIssue);
     }
 
-    /**
-     * Process a goods issue line using FIFO algorithm
-     * Consumes stock from oldest lots first and creates OUT stock movements
-     */
     private void processGoodsIssueLineFIFO(GoodsIssueLine line) {
         Long productId = line.getProduct().getId();
         Double reorderPoint = line.getProduct().getReorderPoint();
@@ -142,18 +134,17 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
 
         Double availableStock = stockLotRepository.calculateTotalAvailableStock(productId);
         if (availableStock < requiredQuantity) {
-            throw new IllegalStateException(
+            throw new BusinessValidationException(
                     String.format("Insufficient stock for product ID %d. Required: %.2f, Available: %.2f",
                             productId, requiredQuantity, availableStock));
         }
 
         Double projectedStockAfterIssue = availableStock - requiredQuantity;
         if (projectedStockAfterIssue <= reorderPoint) {
-            throw new IllegalStateException(
-                    String.format(
-                            "Issuing this quantity would reduce stock below the reorder point for product ID %d. " +
-                                    "Reorder Point: %.2f, Stock After Issue: %.2f, Available Stock: %.2f",
-                            productId, reorderPoint, projectedStockAfterIssue, availableStock));
+            throw new BusinessValidationException(
+                    String.format("Stock would fall below reorder point for product ID %d. " +
+                            "Reorder Point: %.2f, Stock After Issue: %.2f",
+                            productId, reorderPoint, projectedStockAfterIssue));
         }
 
         List<StockLot> availableLots = stockLotRepository.findAvailableLotsByProductIdOrderByEntryDate(productId);
@@ -184,7 +175,7 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
         }
 
         if (remainingToConsume > 0.001) {
-            throw new IllegalStateException(
+            throw new BusinessValidationException(
                     String.format("Failed to consume required quantity for product ID %d. Remaining: %.2f",
                             productId, remainingToConsume));
         }
@@ -193,12 +184,10 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
     @Transactional
     public void cancelGoodsIssue(Long id) {
         GoodsIssue goodsIssue = goodsIssueRepository.findById(id)
-                .orElseThrow(() -> new GoodsIssueNotFoundException(
-                        "Goods issue with ID " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Goods issue not found with ID: " + id));
 
         if (goodsIssue.getStatus() == GoodsIssueStatus.CANCELLED) {
-            throw new IllegalStateException(
-                    "Goods issue is already cancelled");
+            throw new BusinessValidationException("Goods issue is already cancelled");
         }
 
         goodsIssue.setStatus(GoodsIssueStatus.CANCELLED);

@@ -1,0 +1,245 @@
+PROJECT CONTEXT: TRICOL SUPPLY CHAIN & STOCK MANAGEMENT
+1. Project Overview
+Company: Tricol (Specialized in the design and manufacturing of professional clothing). Objective: Continue the digitalization of internal processes by developing a module dedicated to Supplier Order Management and Stock Management using FIFO valuation. Strategic Value: This module is a critical step towards a complete supply chain and production management system, ensuring rigorous tracking of raw materials and equipment.
+
+2. Functional Requirements
+A. Supplier Management
+Core Features: Complete CRUD (Create, Read, Update, Delete), Search, and Filtering.
+
+Data Points: Company name, full address, contact person, email, phone, city, ICE (Tax ID).
+
+B. Product Management
+Core Features: Complete CRUD.
+
+Stock Visibility: View available stock per product.
+
+Alerts: Automatic notification when stock falls below a defined minimum threshold.
+
+Data Points: Reference (SKU), name, description, unit price, category, current stock, reorder point, unit of measure.
+
+C. Supplier Orders (Purchase Orders)
+Lifecycle:
+
+Create new order.
+
+Modify or Cancel existing order.
+
+List all orders (Filter by supplier, status, period).
+
+View specific order details.
+
+Structure: Associate an order with a Supplier and a list of Products.
+
+Calculations: Automatic calculation of the total order amount.
+
+Statuses: PENDING, VALIDATED, DELIVERED, CANCELLED.
+
+Reception: receiving an order triggers automatic stock entry.
+
+D. Stock Management (FIFO Method)
+The system must strictly adhere to First-In, First-Out (FIFO) logic.
+
+Inbound Movements: Automatically recorded upon the reception (DELIVERED status) of Supplier Orders.
+
+Outbound Movements: Stock consumption based on FIFO (oldest batches are used first).
+
+Batch Traceability: Every stock entry is identified as a distinct "Batch" (Lot) containing:
+
+Unique Batch Number.
+
+Entry Date.
+
+Quantity.
+
+Unit Purchase Price.
+
+Source Supplier Order.
+
+Consultation:
+
+Available stock per product.
+
+Stock Valuation (FIFO): Value calculated based on the purchase price of the specific batches currently in stock.
+
+Movement History.
+
+Alerts: Notification when a product's global quantity is below the minimum threshold.
+
+E. Goods Issue (Sortie de Stock)
+This module manages the withdrawal of stock to production workshops with full traceability.
+
+Definition: A document formalizing the issuance of products (raw materials, supplies) from central stock to a specific workshop.
+
+Attributes:
+
+Unique Goods Issue Number (e.g., GI-2025-xxx).
+
+Issue Date.
+
+Target Workshop (e.g., Sewing, Maintenance).
+
+List of Products with Quantities.
+
+Reason: PRODUCTION, MAINTENANCE, OTHER.
+
+Status: DRAFT, VALIDATED, CANCELLED.
+
+Workflow:
+
+Create: Create a Goods Issue (Status: DRAFT). Add multiple products.
+
+Validate: Triggers automatic FIFO stock movements. Status becomes VALIDATED.
+
+Cancel: Only possible if status is DRAFT.
+
+Traceability: Hard link between the Goods Issue record and the specific Stock Movements generated.
+
+3. Specific Business Rules (FIFO Logic)
+Order Reception: Upon validation of a supplier order reception, the system creates stock batches with unique IDs and entry dates.
+
+Stock Exit (Consumption): The algorithm must:
+
+Identify the oldest available batches for the requested product.
+
+Consume quantities chronologically.
+
+Handle Batch Splitting: If a single batch cannot fulfill the request, the system must split the demand across multiple batches.
+
+Update the remaining quantity of each affected batch.
+
+Valuation: Stock value is calculated using the specific purchase price of the remaining batches (not an average).
+
+Immutable History: Every movement must be recorded with a reference to the specific batch involved.
+
+4. Link Between Goods Issue & Stock Movements (Deep Dive)
+Logic: Upon validation, a single line in a Goods Issue generates one or more Stock Movements depending on batch availability.
+
+Concrete Example:
+
+Request: Goods Issue GI-2025-042 requests 150 units of Product A.
+
+Stock State:
+
+Lot 001 (Oldest): 100 units available.
+
+Lot 002 (Next oldest): 80 units available.
+
+Execution:
+
+System takes all 100 units from Lot 001 (Lot becomes empty).
+
+System takes remaining 50 units from Lot 002 (Lot has 30 left).
+
+Result (Database Records):
+
+Movement 1: Outbound, 100 units, Source: Lot 001, Ref: GI-2025-042.
+
+Movement 2: Outbound, 50 units, Source: Lot 002, Ref: GI-2025-042.
+
+Traceability Benefit: Users can query GI-2025-042 and see exactly which batches were used, or query Lot 001 and see where it went.
+
+5. Typical Use Cases
+Case 1: Standard Production Issue
+Scenario: Sewing workshop needs raw materials.
+
+Steps:
+
+Creation: Manager creates Goods Issue for "Sewing Workshop", Reason: PRODUCTION. Adds 50m fabric, 10 spools of thread.
+
+Draft: Record is saved as DRAFT. Modifications (add/remove items) are allowed.
+
+Validation: Manager validates. FIFO algorithm runs. Stock decreases. Record becomes VALIDATED.
+
+Outcome: Materials are traced from central stock to the workshop.
+
+Case 2: Urgent Issue with Insufficient Stock
+Scenario: Urgent maintenance requires 5 Liters of lubricant.
+
+Steps:
+
+Creation: Technician creates Goods Issue for "Maintenance", Reason: MAINTENANCE. Asks for 5L.
+
+Validation Attempt: System checks global stock. Only 2L are available.
+
+Error: Validation is blocked. The system prevents negative stock or partial unfulfilled states that break consistency.
+
+Resolution: User must either modify the request to 2L or create a Supplier Order for the missing amount.
+
+Case 3: Cancellation
+Scenario: A Goods Issue was created by mistake.
+
+Steps:
+
+State: Record is in DRAFT status.
+
+Action: Manager cancels the Goods Issue.
+
+Result: Status becomes CANCELLED. No stock movements are generated. No batches are touched.
+
+Constraint: A VALIDATED Goods Issue cannot be cancelled or modified to ensure strict accounting and traceability integrity.
+
+6. Expected REST API Endpoints
+Suppliers
+GET /api/v1/suppliers
+
+GET /api/v1/suppliers/{id}
+
+POST /api/v1/suppliers
+
+PUT /api/v1/suppliers/{id}
+
+DELETE /api/v1/suppliers/{id}
+
+Products
+GET /api/v1/products
+
+GET /api/v1/products/{id}
+
+POST /api/v1/products
+
+PUT /api/v1/products/{id}
+
+DELETE /api/v1/products/{id}
+
+GET /api/v1/products/{id}/stock (View available stock)
+
+Supplier Orders
+GET /api/v1/orders (List)
+
+GET /api/v1/orders/{id} (Details)
+
+POST /api/v1/orders (Create)
+
+PUT /api/v1/orders/{id} (Modify)
+
+DELETE /api/v1/orders/{id} (Delete)
+
+GET /api/v1/orders/supplier/{id} (Filter by supplier)
+
+PUT /api/v1/orders/{id}/reception (Critical: Generates Stock Entry Batches)
+
+Stock Management
+GET /api/v1/stock (Global state)
+
+GET /api/v1/stock/product/{id} (Detailed view with FIFO batches)
+
+GET /api/v1/stock/movements (Global history)
+
+GET /api/v1/stock/movements/product/{id} (Product history)
+
+GET /api/v1/stock/alerts (Products below threshold)
+
+GET /api/v1/stock/valuation (Total value based on FIFO)
+
+Goods Issue (GoodsIssue)
+GET /api/v1/goods-issues (List all)
+
+GET /api/v1/goods-issues/{id} (Details)
+
+POST /api/v1/goods-issues (Create DRAFT)
+
+PUT /api/v1/goods-issues/{id} (Modify DRAFT)
+
+PUT /api/v1/goods-issues/{id}/validate (Critical: Triggers FIFO Exit Logic)
+
+PUT /api/v1/goods-issues/{id}/cancel (Cancel DRAFT)

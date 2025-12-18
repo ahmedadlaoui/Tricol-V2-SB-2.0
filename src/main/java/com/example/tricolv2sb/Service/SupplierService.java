@@ -3,17 +3,16 @@ package com.example.tricolv2sb.Service;
 import com.example.tricolv2sb.DTO.supplier.CreateSupplierDTO;
 import com.example.tricolv2sb.DTO.supplier.ReadSupplierDTO;
 import com.example.tricolv2sb.Entity.Supplier;
-import com.example.tricolv2sb.Exception.SupplierAlreadyExistsException;
-import com.example.tricolv2sb.Exception.SupplierNotFoundException;
+import com.example.tricolv2sb.Exception.BusinessValidationException;
+import com.example.tricolv2sb.Exception.ResourceAlreadyExistsException;
+import com.example.tricolv2sb.Exception.ResourceNotFoundException;
 import com.example.tricolv2sb.Mapper.SupplierMapper;
 import com.example.tricolv2sb.Repository.SupplierRepository;
 import com.example.tricolv2sb.Service.ServiceInterfaces.SupplierServiceInterface;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,8 +36,8 @@ public class SupplierService implements SupplierServiceInterface {
     public ReadSupplierDTO addSupplier(CreateSupplierDTO dto) {
         supplierRepository.findByIce(dto.getIce())
                 .ifPresent(s -> {
-                    throw new SupplierAlreadyExistsException(
-                            "Supplier with this ICE: " + dto.getIce() + " already exists");
+                    throw new ResourceAlreadyExistsException(
+                            "Supplier with ICE '" + dto.getIce() + "' already exists");
                 });
 
         Supplier supplier = supplierMapper.toEntity(dto);
@@ -51,17 +50,17 @@ public class SupplierService implements SupplierServiceInterface {
         return Optional.of(
                 supplierRepository.findById(id)
                         .map(supplierMapper::toDto)
-                        .orElseThrow(() -> new SupplierNotFoundException("Supplier with ID " + id + " not found")));
+                        .orElseThrow(() -> new ResourceNotFoundException("Supplier not found with ID: " + id)));
     }
 
     @Transactional
     public void deleteSupplier(Long id) {
         Supplier supplier = supplierRepository.findById(id)
-                .orElseThrow(() -> new SupplierNotFoundException("Supplier with ID " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Supplier not found with ID: " + id));
 
         if (!supplier.getPurchaseOrders().isEmpty()) {
-            throw new IllegalStateException(
-                    "Cannot delete supplier with existing purchase orders. Delete all purchase orders first.");
+            throw new BusinessValidationException(
+                    "Cannot delete supplier with existing purchase orders");
         }
 
         supplierRepository.deleteById(id);
@@ -69,10 +68,8 @@ public class SupplierService implements SupplierServiceInterface {
 
     @Transactional
     public ReadSupplierDTO updateSupplier(Long id, CreateSupplierDTO dto) {
-
         Supplier existingSupplier = supplierRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Supplier with ID " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Supplier not found with ID: " + id));
         supplierMapper.updateFromDto(dto, existingSupplier);
         Supplier savedSupplier = supplierRepository.save(existingSupplier);
         return supplierMapper.toDto(savedSupplier);

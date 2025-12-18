@@ -4,6 +4,7 @@ import com.example.tricolv2sb.DTO.authentication.AuthenticationRequest;
 import com.example.tricolv2sb.DTO.authentication.AuthenticationResponse;
 import com.example.tricolv2sb.DTO.authentication.RegisterRequest;
 import com.example.tricolv2sb.Entity.UserApp;
+import com.example.tricolv2sb.Exception.ResourceAlreadyExistsException;
 import com.example.tricolv2sb.Repository.UserAppRepository;
 import com.example.tricolv2sb.Security.JwtService;
 import com.example.tricolv2sb.Service.ServiceInterfaces.AuthServiceInterface;
@@ -27,8 +28,7 @@ public class AuthService implements AuthServiceInterface {
     @Override
     public AuthenticationResponse signUserIn(AuthenticationRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
         UserApp user = (UserApp) authentication.getPrincipal();
         String token = jwtService.generateToken(user);
@@ -45,7 +45,7 @@ public class AuthService implements AuthServiceInterface {
     @Transactional
     public AuthenticationResponse register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new ResourceAlreadyExistsException("Email already exists: " + request.getEmail());
         }
 
         UserApp user = UserApp.builder()

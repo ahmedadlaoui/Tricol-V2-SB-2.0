@@ -4,6 +4,7 @@ import com.example.tricolv2sb.DTO.userapp.AssignRoleDTO;
 import com.example.tricolv2sb.DTO.userapp.ReadUserDTO;
 import com.example.tricolv2sb.Entity.RoleApp;
 import com.example.tricolv2sb.Entity.UserApp;
+import com.example.tricolv2sb.Exception.ResourceNotFoundException;
 import com.example.tricolv2sb.Mapper.UserAppMapper;
 import com.example.tricolv2sb.Repository.RoleAppRepository;
 import com.example.tricolv2sb.Repository.UserAppRepository;
@@ -26,10 +27,10 @@ public class UserAppService implements UserAppServiceInterface {
     @Transactional
     public void assignRoleToUser(Long userId, AssignRoleDTO assignRoleDTO) {
         UserApp user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
 
         RoleApp role = roleRepository.findByName(assignRoleDTO.getRoleName())
-                .orElseThrow(() -> new RuntimeException("Role not found: " + assignRoleDTO.getRoleName()));
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + assignRoleDTO.getRoleName()));
 
         user.setRole(role);
         userRepository.save(user);

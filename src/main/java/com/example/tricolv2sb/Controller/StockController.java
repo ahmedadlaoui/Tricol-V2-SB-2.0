@@ -1,11 +1,13 @@
 package com.example.tricolv2sb.Controller;
 
+import com.example.tricolv2sb.DTO.common.ApiResponse;
 import com.example.tricolv2sb.DTO.product.ProductStockDetailDTO;
 import com.example.tricolv2sb.DTO.stock.StockSummaryDTO;
 import com.example.tricolv2sb.DTO.stock.StockValuationDTO;
 import com.example.tricolv2sb.Service.ServiceInterfaces.StockServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,21 +20,24 @@ public class StockController {
     private final StockServiceInterface stockService;
 
     @GetMapping
-    public ResponseEntity<List<StockSummaryDTO>> getGlobalStock() {
+    @PreAuthorize("hasAuthority('STOCK:READ')")
+    public ResponseEntity<ApiResponse<List<StockSummaryDTO>>> getGlobalStock() {
         List<StockSummaryDTO> stock = stockService.getGlobalStock();
-        return ResponseEntity.ok(stock);
+        return ResponseEntity.ok(ApiResponse.success(stock, "Global stock summary fetched successfully"));
     }
 
     @GetMapping("/product/{id}")
-    public ResponseEntity<ProductStockDetailDTO> getProductStockDetail(@PathVariable Long id) {
+    @PreAuthorize("hasAuthority('STOCK:READ')")
+    public ResponseEntity<ApiResponse<ProductStockDetailDTO>> getProductStockDetail(@PathVariable Long id) {
         ProductStockDetailDTO detail = stockService.getProductStockDetail(id);
-        return ResponseEntity.ok(detail);
+        return ResponseEntity.ok(ApiResponse.success(detail, "Product stock detail fetched successfully"));
     }
 
     @GetMapping("/valuation")
-    public ResponseEntity<StockValuationDTO> getTotalValuation() {
+    @PreAuthorize("hasAuthority('STOCK:READ')")
+    public ResponseEntity<ApiResponse<StockValuationDTO>> getTotalValuation() {
         StockValuationDTO valuation = stockService.getTotalValuation();
-        return ResponseEntity.ok(valuation);
+        return ResponseEntity.ok(ApiResponse.success(valuation, "Stock valuation fetched successfully"));
     }
 
 }
