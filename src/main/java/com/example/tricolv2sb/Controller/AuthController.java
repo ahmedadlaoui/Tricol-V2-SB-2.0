@@ -8,6 +8,7 @@ import com.example.tricolv2sb.DTO.userapp.ReadUserDTO;
 import com.example.tricolv2sb.Entity.UserApp;
 import com.example.tricolv2sb.Mapper.UserAppMapper;
 import com.example.tricolv2sb.Service.ServiceInterfaces.AuthServiceInterface;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,19 +24,20 @@ public class AuthController {
     private final UserAppMapper userAppMapper;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<AuthenticationResponse>> login(@RequestBody AuthenticationRequest request) {
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> login(
+            @Valid @RequestBody AuthenticationRequest request) {
         AuthenticationResponse response = authService.signUserIn(request);
         return ResponseEntity.ok(ApiResponse.success(response, "Login successful"));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<AuthenticationResponse>> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> register(@Valid @RequestBody RegisterRequest request) {
         AuthenticationResponse response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.created(response, "Registration successful"));
     }
 
-    @GetMapping("/me")
+    @GetMapping("/current")
     public ResponseEntity<ApiResponse<ReadUserDTO>> getCurrentUser(@AuthenticationPrincipal UserApp user) {
         ReadUserDTO userDTO = userAppMapper.toReadUserDTO(user);
         return ResponseEntity.ok(ApiResponse.success(userDTO, "Current user fetched successfully"));

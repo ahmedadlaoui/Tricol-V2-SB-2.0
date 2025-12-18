@@ -41,7 +41,7 @@ public class UserApp implements UserDetails {
     @JoinColumn(name = "role_id")
     private RoleApp role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<UserPermission> customPermissions;
 
     @Column(name = "created_at")
@@ -66,11 +66,13 @@ public class UserApp implements UserDetails {
         Set<GrantedAuthority> authorities = new java.util.HashSet<>();
 
         if (role != null) {
-            authorities.add(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role.getName().name()));
+            authorities.add(new org.springframework.security.core.authority.SimpleGrantedAuthority(
+                    "ROLE_" + role.getName().name()));
 
             if (role.getPermissions() != null) {
                 for (Permission p : role.getPermissions()) {
-                    authorities.add(new org.springframework.security.core.authority.SimpleGrantedAuthority(p.getAuthority()));
+                    authorities.add(
+                            new org.springframework.security.core.authority.SimpleGrantedAuthority(p.getAuthority()));
                 }
             }
         }

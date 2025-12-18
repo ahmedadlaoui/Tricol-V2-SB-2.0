@@ -1,6 +1,5 @@
 package com.example.tricolv2sb.Config;
 
-
 import com.example.tricolv2sb.Security.UserDetailsService;
 import com.example.tricolv2sb.Security.filters.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +26,7 @@ public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -34,8 +34,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder());
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(passwordEncoder());
         provider.setUserDetailsService(userDetailsService);
         return provider;
     }
@@ -51,9 +50,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers("/api/v1/auth/**").permitAll()
-                                .anyRequest().authenticated()
-                )
+                                .requestMatchers("/api/v1/auth/login").permitAll()
+                                .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
