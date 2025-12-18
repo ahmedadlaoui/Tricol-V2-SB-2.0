@@ -5,8 +5,8 @@ package com.example.tricolv2sb.Exception;
  * Used for: invalid state transitions, insufficient stock, cannot delete with
  * dependencies, etc.
  */
-public class BusinessValidationException extends RuntimeException {
-    public BusinessValidationException(String message) {
+public class BusinessViolationException extends RuntimeException {
+    public BusinessViolationException(String message) {
         super(message);
     }
 }

@@ -6,7 +6,7 @@ import com.example.tricolv2sb.DTO.goodsissue.UpdateGoodsIssueDTO;
 import com.example.tricolv2sb.Entity.*;
 import com.example.tricolv2sb.Entity.Enum.GoodsIssueStatus;
 import com.example.tricolv2sb.Entity.Enum.StockMovementType;
-import com.example.tricolv2sb.Exception.BusinessValidationException;
+import com.example.tricolv2sb.Exception.BusinessViolationException;
 import com.example.tricolv2sb.Exception.ResourceNotFoundException;
 import com.example.tricolv2sb.Mapper.GoodsIssueMapper;
 import com.example.tricolv2sb.Repository.*;
@@ -36,6 +36,14 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
     public List<ReadGoodsIssueDTO> fetchAllGoodsIssues() {
         List<GoodsIssue> goodsIssues = goodsIssueRepository.findAll();
         return goodsIssues.stream()
+                .map(goodsIssueMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReadGoodsIssueDTO> fetchGoodsIssuesByStatus(GoodsIssueStatus status) {
+        return goodsIssueRepository.findByStatus(status).stream()
                 .map(goodsIssueMapper::toDto)
                 .toList();
     }
@@ -81,7 +89,7 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
                 .orElseThrow(() -> new ResourceNotFoundException("Goods issue not found with ID: " + id));
 
         if (existingGoodsIssue.getStatus() != GoodsIssueStatus.DRAFT) {
-            throw new BusinessValidationException(
+            throw new BusinessViolationException(
                     "Cannot update goods issue with status: " + existingGoodsIssue.getStatus());
         }
 
@@ -96,7 +104,7 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
                 .orElseThrow(() -> new ResourceNotFoundException("Goods issue not found with ID: " + id));
 
         if (goodsIssue.getStatus() != GoodsIssueStatus.DRAFT) {
-            throw new BusinessValidationException(
+            throw new BusinessViolationException(
                     "Only DRAFT goods issues can be deleted. Current status: " + goodsIssue.getStatus());
         }
 
@@ -109,14 +117,14 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
                 .orElseThrow(() -> new ResourceNotFoundException("Goods issue not found with ID: " + id));
 
         if (goodsIssue.getStatus() != GoodsIssueStatus.DRAFT) {
-            throw new BusinessValidationException(
+            throw new BusinessViolationException(
                     "Only DRAFT goods issues can be validated. Current status: " + goodsIssue.getStatus());
         }
 
         List<GoodsIssueLine> issueLines = goodsIssueLineRepository.findByGoodsIssueId(id);
 
         if (issueLines.isEmpty()) {
-            throw new BusinessValidationException("Cannot validate goods issue without issue lines");
+            throw new BusinessViolationException("Cannot validate goods issue without issue lines");
         }
 
         for (GoodsIssueLine line : issueLines) {
@@ -134,14 +142,14 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
 
         Double availableStock = stockLotRepository.calculateTotalAvailableStock(productId);
         if (availableStock < requiredQuantity) {
-            throw new BusinessValidationException(
+            throw new BusinessViolationException(
                     String.format("Insufficient stock for product ID %d. Required: %.2f, Available: %.2f",
                             productId, requiredQuantity, availableStock));
         }
 
         Double projectedStockAfterIssue = availableStock - requiredQuantity;
         if (projectedStockAfterIssue <= reorderPoint) {
-            throw new BusinessValidationException(
+            throw new BusinessViolationException(
                     String.format("Stock would fall below reorder point for product ID %d. " +
                             "Reorder Point: %.2f, Stock After Issue: %.2f",
                             productId, reorderPoint, projectedStockAfterIssue));
@@ -175,7 +183,7 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
         }
 
         if (remainingToConsume > 0.001) {
-            throw new BusinessValidationException(
+            throw new BusinessViolationException(
                     String.format("Failed to consume required quantity for product ID %d. Remaining: %.2f",
                             productId, remainingToConsume));
         }
@@ -187,7 +195,7 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
                 .orElseThrow(() -> new ResourceNotFoundException("Goods issue not found with ID: " + id));
 
         if (goodsIssue.getStatus() == GoodsIssueStatus.CANCELLED) {
-            throw new BusinessValidationException("Goods issue is already cancelled");
+            throw new BusinessViolationException("Goods issue is already cancelled");
         }
 
         goodsIssue.setStatus(GoodsIssueStatus.CANCELLED);

@@ -4,7 +4,7 @@ import com.example.tricolv2sb.DTO.product.CreateProductDTO;
 import com.example.tricolv2sb.DTO.product.ReadProductDTO;
 import com.example.tricolv2sb.DTO.product.UpdateProductDTO;
 import com.example.tricolv2sb.Entity.Product;
-import com.example.tricolv2sb.Exception.BusinessValidationException;
+import com.example.tricolv2sb.Exception.BusinessViolationException;
 import com.example.tricolv2sb.Exception.ResourceAlreadyExistsException;
 import com.example.tricolv2sb.Exception.ResourceNotFoundException;
 import com.example.tricolv2sb.Mapper.ProductMapper;
@@ -66,12 +66,12 @@ public class ProductService implements ProductInterface {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + id));
 
         if (!product.getPurchaseOrderLines().isEmpty()) {
-            throw new BusinessValidationException(
+            throw new BusinessViolationException(
                     "Cannot delete product with existing order lines");
         }
 
         if (!product.getStockLots().isEmpty()) {
-            throw new BusinessValidationException(
+            throw new BusinessViolationException(
                     "Cannot delete product with existing stock");
         }
 

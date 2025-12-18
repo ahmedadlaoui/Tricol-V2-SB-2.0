@@ -2,7 +2,7 @@ package com.example.tricolv2sb.ExceptionHandler;
 
 import com.example.tricolv2sb.DTO.common.ApiResponse;
 import com.example.tricolv2sb.Exception.AuthenticationException;
-import com.example.tricolv2sb.Exception.BusinessValidationException;
+import com.example.tricolv2sb.Exception.BusinessViolationException;
 import com.example.tricolv2sb.Exception.ResourceAlreadyExistsException;
 import com.example.tricolv2sb.Exception.ResourceNotFoundException;
 import org.slf4j.Logger;
@@ -38,9 +38,9 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.CONFLICT, e.getMessage());
     }
 
-    @ExceptionHandler(BusinessValidationException.class)
-    public ResponseEntity<ApiResponse<Object>> handleBusinessValidation(BusinessValidationException e) {
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    @ExceptionHandler(BusinessViolationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleBusinessViolation(BusinessViolationException e) {
+        return buildErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
     }
 
     // ==================== AUTHENTICATION EXCEPTIONS ====================

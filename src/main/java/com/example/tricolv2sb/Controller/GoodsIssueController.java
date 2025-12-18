@@ -4,6 +4,7 @@ import com.example.tricolv2sb.DTO.common.ApiResponse;
 import com.example.tricolv2sb.DTO.goodsissue.CreateGoodsIssueDTO;
 import com.example.tricolv2sb.DTO.goodsissue.ReadGoodsIssueDTO;
 import com.example.tricolv2sb.DTO.goodsissue.UpdateGoodsIssueDTO;
+import com.example.tricolv2sb.Entity.Enum.GoodsIssueStatus;
 import com.example.tricolv2sb.Exception.ResourceNotFoundException;
 import com.example.tricolv2sb.Service.ServiceInterfaces.GoodsIssueServiceInterface;
 import jakarta.validation.Valid;
@@ -27,6 +28,15 @@ public class GoodsIssueController {
     public ResponseEntity<ApiResponse<List<ReadGoodsIssueDTO>>> getAllGoodsIssues() {
         List<ReadGoodsIssueDTO> goodsIssues = goodsIssueService.fetchAllGoodsIssues();
         return ResponseEntity.ok(ApiResponse.success(goodsIssues, "Goods issues fetched successfully"));
+    }
+
+    @GetMapping("/status/{status}")
+    @PreAuthorize("hasAuthority('GOODS_ISSUE:READ')")
+    public ResponseEntity<ApiResponse<List<ReadGoodsIssueDTO>>> getGoodsIssuesByStatus(
+            @PathVariable GoodsIssueStatus status) {
+        List<ReadGoodsIssueDTO> goodsIssues = goodsIssueService.fetchGoodsIssuesByStatus(status);
+        return ResponseEntity.ok(ApiResponse.success(goodsIssues,
+                "Goods issues with status " + status + " fetched successfully"));
     }
 
     @GetMapping("/{id}")

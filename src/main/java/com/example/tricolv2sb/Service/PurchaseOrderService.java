@@ -6,7 +6,7 @@ import com.example.tricolv2sb.DTO.purchaseorder.UpdatePurchaseOrderDTO;
 import com.example.tricolv2sb.Entity.*;
 import com.example.tricolv2sb.Entity.Enum.OrderStatus;
 import com.example.tricolv2sb.Entity.Enum.StockMovementType;
-import com.example.tricolv2sb.Exception.BusinessValidationException;
+import com.example.tricolv2sb.Exception.BusinessViolationException;
 import com.example.tricolv2sb.Exception.ResourceNotFoundException;
 import com.example.tricolv2sb.Mapper.PurchaseOrderMapper;
 import com.example.tricolv2sb.Repository.ProductRepository;
@@ -41,6 +41,15 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
     @Transactional(readOnly = true)
     public List<ReadPurchaseOrderDTO> getAllPurchaseOrders() {
         return purchaseOrderRepository.findAllWithOrderLines()
+                .stream()
+                .map(purchaseOrderMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReadPurchaseOrderDTO> getPurchaseOrdersByStatus(OrderStatus status) {
+        return purchaseOrderRepository.findByStatusWithOrderLines(status)
                 .stream()
                 .map(purchaseOrderMapper::toDto)
                 .collect(Collectors.toList());
@@ -137,7 +146,7 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
                 .orElseThrow(() -> new ResourceNotFoundException("Purchase order not found with ID: " + id));
 
         if (purchaseOrder.getStatus() == OrderStatus.DELIVERED) {
-            throw new BusinessValidationException("Cannot delete a delivered purchase order");
+            throw new BusinessViolationException("Cannot delete a delivered purchase order");
         }
 
         purchaseOrderRepository.delete(purchaseOrder);
@@ -160,7 +169,7 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
                 .orElseThrow(() -> new ResourceNotFoundException("Purchase order not found with ID: " + orderId));
 
         if (purchaseOrder.getStatus() != OrderStatus.PENDING) {
-            throw new BusinessValidationException(
+            throw new BusinessViolationException(
                     "Only PENDING orders can be validated. Current status: " + purchaseOrder.getStatus());
         }
 
@@ -174,11 +183,11 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
                 .orElseThrow(() -> new ResourceNotFoundException("Purchase order not found with ID: " + orderId));
 
         if (purchaseOrder.getStatus() == OrderStatus.DELIVERED) {
-            throw new BusinessValidationException("Cannot cancel a delivered order");
+            throw new BusinessViolationException("Cannot cancel a delivered order");
         }
 
         if (purchaseOrder.getStatus() == OrderStatus.CANCELLED) {
-            throw new BusinessValidationException("Order is already cancelled");
+            throw new BusinessViolationException("Order is already cancelled");
         }
 
         purchaseOrder.setStatus(OrderStatus.CANCELLED);
@@ -191,11 +200,11 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
                 .orElseThrow(() -> new ResourceNotFoundException("Purchase order not found with ID: " + orderId));
 
         if (purchaseOrder.getStatus() == OrderStatus.DELIVERED) {
-            throw new BusinessValidationException("Purchase order has already been received");
+            throw new BusinessViolationException("Purchase order has already been received");
         }
 
         if (purchaseOrder.getStatus() == OrderStatus.CANCELLED) {
-            throw new BusinessValidationException("Cannot receive a cancelled purchase order");
+            throw new BusinessViolationException("Cannot receive a cancelled purchase order");
         }
 
         purchaseOrder.setStatus(OrderStatus.DELIVERED);

@@ -3,7 +3,7 @@ package com.example.tricolv2sb.Service;
 import com.example.tricolv2sb.DTO.supplier.CreateSupplierDTO;
 import com.example.tricolv2sb.DTO.supplier.ReadSupplierDTO;
 import com.example.tricolv2sb.Entity.Supplier;
-import com.example.tricolv2sb.Exception.BusinessValidationException;
+import com.example.tricolv2sb.Exception.BusinessViolationException;
 import com.example.tricolv2sb.Exception.ResourceAlreadyExistsException;
 import com.example.tricolv2sb.Exception.ResourceNotFoundException;
 import com.example.tricolv2sb.Mapper.SupplierMapper;
@@ -59,7 +59,7 @@ public class SupplierService implements SupplierServiceInterface {
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier not found with ID: " + id));
 
         if (!supplier.getPurchaseOrders().isEmpty()) {
-            throw new BusinessValidationException(
+            throw new BusinessViolationException(
                     "Cannot delete supplier with existing purchase orders");
         }
 

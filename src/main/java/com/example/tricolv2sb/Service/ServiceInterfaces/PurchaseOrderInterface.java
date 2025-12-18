@@ -3,12 +3,15 @@ package com.example.tricolv2sb.Service.ServiceInterfaces;
 import com.example.tricolv2sb.DTO.purchaseorder.CreatePurchaseOrderDTO;
 import com.example.tricolv2sb.DTO.purchaseorder.ReadPurchaseOrderDTO;
 import com.example.tricolv2sb.DTO.purchaseorder.UpdatePurchaseOrderDTO;
+import com.example.tricolv2sb.Entity.Enum.OrderStatus;
 
 import java.util.List;
 
 public interface PurchaseOrderInterface {
 
     List<ReadPurchaseOrderDTO> getAllPurchaseOrders();
+
+    List<ReadPurchaseOrderDTO> getPurchaseOrdersByStatus(OrderStatus status);
 
     ReadPurchaseOrderDTO getPurchaseOrderById(Long id);
 

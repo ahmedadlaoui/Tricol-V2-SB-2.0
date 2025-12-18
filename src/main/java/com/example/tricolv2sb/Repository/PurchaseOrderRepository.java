@@ -17,6 +17,8 @@ import java.util.Optional;
 public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Long> {
     List<PurchaseOrder> findBySupplier(Supplier supplier);
 
+    List<PurchaseOrder> findByStatus(OrderStatus status);
+
     @EntityGraph(attributePaths = { "orderLines", "orderLines.product" })
     @Query("SELECT po FROM PurchaseOrder po WHERE po.id = :id")
     Optional<PurchaseOrder> findByIdWithOrderLines(@Param("id") Long id);
@@ -24,4 +26,8 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Lo
     @EntityGraph(attributePaths = { "orderLines", "orderLines.product" })
     @Query("SELECT po FROM PurchaseOrder po")
     List<PurchaseOrder> findAllWithOrderLines();
+
+    @EntityGraph(attributePaths = { "orderLines", "orderLines.product" })
+    @Query("SELECT po FROM PurchaseOrder po WHERE po.status = :status")
+    List<PurchaseOrder> findByStatusWithOrderLines(@Param("status") OrderStatus status);
 }

@@ -4,6 +4,7 @@ import com.example.tricolv2sb.DTO.common.ApiResponse;
 import com.example.tricolv2sb.DTO.purchaseorder.CreatePurchaseOrderDTO;
 import com.example.tricolv2sb.DTO.purchaseorder.ReadPurchaseOrderDTO;
 import com.example.tricolv2sb.DTO.purchaseorder.UpdatePurchaseOrderDTO;
+import com.example.tricolv2sb.Entity.Enum.OrderStatus;
 import com.example.tricolv2sb.Service.ServiceInterfaces.PurchaseOrderInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,15 @@ public class PurchaseOrderController {
     public ResponseEntity<ApiResponse<List<ReadPurchaseOrderDTO>>> getAllPurchaseOrders() {
         List<ReadPurchaseOrderDTO> purchaseOrders = purchaseOrderService.getAllPurchaseOrders();
         return ResponseEntity.ok(ApiResponse.success(purchaseOrders, "Purchase orders fetched successfully"));
+    }
+
+    @GetMapping("/status/{status}")
+    @PreAuthorize("hasAuthority('PUCHASE_ORDER:READ')")
+    public ResponseEntity<ApiResponse<List<ReadPurchaseOrderDTO>>> getPurchaseOrdersByStatus(
+            @PathVariable OrderStatus status) {
+        List<ReadPurchaseOrderDTO> purchaseOrders = purchaseOrderService.getPurchaseOrdersByStatus(status);
+        return ResponseEntity.ok(ApiResponse.success(purchaseOrders,
+                "Purchase orders with status " + status + " fetched successfully"));
     }
 
     @GetMapping("/{id}")
