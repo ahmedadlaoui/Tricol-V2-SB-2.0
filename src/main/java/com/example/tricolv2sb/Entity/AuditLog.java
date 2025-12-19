@@ -3,12 +3,14 @@ package com.example.tricolv2sb.Entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 
 @Entity
 @Data
 @Table(name = "audit_log")
+@RequiredArgsConstructor
 public class AuditLog {
 
     @Id
