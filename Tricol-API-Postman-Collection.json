@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "tricol-v2-api-2025",
-		"name": "Tricol V2 - Stock Management API",
-		"description": "Complete API collection for Tricol V2 Stock Management System with JWT Authentication (Access Token + Refresh Token in Cookie)",
+		"_postman_id": "tricol-v2-api-2025-12",
+		"name": "Tricol V2 - Complete API Collection",
+		"description": "Complete API collection for Tricol V2 Stock Management System with JWT Authentication (Access Token + Refresh Token in HTTP-only Cookie). Includes all endpoints: Authentication, Users, Roles, Dashboard, Suppliers, Products, Purchase Orders, Goods Issues, Stock, Stock Movements, and Audit Logs.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -85,6 +85,21 @@
 				},
 				{
 					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.response.code===201){",
+									"    const response = pm.response.json();",
+									"    if(response.body && response.body.accessToken){",
+									"        pm.collectionVariables.set('accessToken', response.body.accessToken);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -144,7 +159,7 @@
 								"refresh"
 							]
 						},
-						"description": "Refresh access token using refresh token from cookie. Cookie is sent automatically by browser/Postman."
+						"description": "Refresh access token using refresh token from HTTP-only cookie. Returns new access token."
 					}
 				},
 				{
@@ -164,7 +179,7 @@
 								"logout"
 							]
 						},
-						"description": "Logout and revoke refresh token. Clears refresh token cookie."
+						"description": "Logout and revoke refresh token. Clears HTTP-only cookie."
 					}
 				},
 				{
@@ -189,7 +204,7 @@
 								"current"
 							]
 						},
-						"description": "Get current authenticated user profile."
+						"description": "Get current authenticated user details."
 					}
 				}
 			]
@@ -217,7 +232,8 @@
 								"v1",
 								"users"
 							]
-						}
+						},
+						"description": "Get all users. Requires USER:READ permission."
 					}
 				},
 				{
@@ -226,17 +242,17 @@
 						"method": "PUT",
 						"header": [
 							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
 								"key": "Authorization",
 								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"roleName\": \"ADMIN\"\n}"
+							"raw": "{\n  \"roleName\": \"PURCHASING_MANAGER\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/users/{{userId}}/assign-role",
@@ -250,7 +266,37 @@
 								"{{userId}}",
 								"assign-role"
 							]
-						}
+						},
+						"description": "Assign a role to a user. Requires USER:UPDATE permission. Role options: ADMIN, PURCHASING_MANAGER, STOREKEEPER, WORKSHOP_MANAGER"
+					}
+				}
+			]
+		},
+		{
+			"name": "Roles",
+			"item": [
+				{
+					"name": "Get All Roles with Permissions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/roles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"roles"
+							]
+						},
+						"description": "Get all roles with their associated permissions. Requires USER:READ permission (Admin only). Returns roles: ADMIN, PURCHASING_MANAGER, STOREKEEPER, WORKSHOP_MANAGER with their permissions."
 					}
 				}
 			]
@@ -278,7 +324,8 @@
 								"v1",
 								"dashboard"
 							]
-						}
+						},
+						"description": "Get dashboard statistics. Requires STOCK:READ permission."
 					}
 				},
 				{
@@ -302,7 +349,8 @@
 								"dashboard",
 								"alerts"
 							]
-						}
+						},
+						"description": "Get stock alerts (products below reorder point). Requires STOCK:READ permission."
 					}
 				}
 			]
@@ -330,11 +378,12 @@
 								"v1",
 								"suppliers"
 							]
-						}
+						},
+						"description": "Get all suppliers. Requires SUPPLIER:READ permission."
 					}
 				},
 				{
-					"name": "Get Supplier By ID",
+					"name": "Get Supplier by ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -354,7 +403,8 @@
 								"suppliers",
 								"{{supplierId}}"
 							]
-						}
+						},
+						"description": "Get supplier by ID. Requires SUPPLIER:READ permission."
 					}
 				},
 				{
@@ -363,17 +413,17 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
 								"key": "Authorization",
 								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"ice\": \"ICE123456789\",\n  \"email\": \"supplier@company.com\",\n  \"phone\": \"0612345678\",\n  \"address\": \"123 Business Street\",\n  \"city\": \"Casablanca\"\n}"
+							"raw": "{\n  \"companyName\": \"TechSupply Maroc\",\n  \"address\": \"123 Boulevard Mohammed V\",\n  \"city\": \"Casablanca\",\n  \"email\": \"contact@techsupply.ma\",\n  \"phone\": \"0522-123456\",\n  \"ice\": \"ICE001234567890\",\n  \"contactPerson\": \"Hassan El Mansouri\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/suppliers",
@@ -385,7 +435,8 @@
 								"v1",
 								"suppliers"
 							]
-						}
+						},
+						"description": "Create a new supplier. Requires SUPPLIER:CREATE permission."
 					}
 				},
 				{
@@ -394,17 +445,17 @@
 						"method": "PUT",
 						"header": [
 							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
 								"key": "Authorization",
 								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"ice\": \"ICE123456789\",\n  \"email\": \"updated@company.com\",\n  \"phone\": \"0698765432\",\n  \"address\": \"456 New Street\",\n  \"city\": \"Rabat\"\n}"
+							"raw": "{\n  \"companyName\": \"TechSupply Maroc Updated\",\n  \"address\": \"123 Boulevard Mohammed V\",\n  \"city\": \"Casablanca\",\n  \"email\": \"contact@techsupply.ma\",\n  \"phone\": \"0522-123456\",\n  \"ice\": \"ICE001234567890\",\n  \"contactPerson\": \"Hassan El Mansouri\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/suppliers/{{supplierId}}",
@@ -417,7 +468,8 @@
 								"suppliers",
 								"{{supplierId}}"
 							]
-						}
+						},
+						"description": "Update supplier by ID. Requires SUPPLIER:UPDATE permission."
 					}
 				},
 				{
@@ -441,7 +493,8 @@
 								"suppliers",
 								"{{supplierId}}"
 							]
-						}
+						},
+						"description": "Delete supplier by ID. Requires SUPPLIER:DELETE permission."
 					}
 				}
 			]
@@ -469,11 +522,12 @@
 								"v1",
 								"products"
 							]
-						}
+						},
+						"description": "Get all products. Requires PRODUCT:READ permission."
 					}
 				},
 				{
-					"name": "Get Product By ID",
+					"name": "Get Product by ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -493,7 +547,98 @@
 								"products",
 								"{{productId}}"
 							]
-						}
+						},
+						"description": "Get product by ID. Requires PRODUCT:READ permission."
+					}
+				},
+				{
+					"name": "Create Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reference\": \"PROD-001\",\n  \"name\": \"Laptop HP ProBook 450\",\n  \"description\": \"HP ProBook 450 G8 - Intel Core i7, 16GB RAM, 512GB SSD\",\n  \"unitPrice\": 12500,\n  \"category\": \"Electronics\",\n  \"reorderPoint\": 5.0,\n  \"unitOfMeasure\": \"UNIT\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products"
+							]
+						},
+						"description": "Create a new product. Requires PRODUCT:CREATE permission."
+					}
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reference\": \"PROD-001\",\n  \"name\": \"Laptop HP ProBook 450 Updated\",\n  \"description\": \"HP ProBook 450 G8 - Intel Core i7, 16GB RAM, 512GB SSD\",\n  \"unitPrice\": 12500,\n  \"category\": \"Electronics\",\n  \"reorderPoint\": 5.0,\n  \"unitOfMeasure\": \"UNIT\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/products/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"{{productId}}"
+							]
+						},
+						"description": "Update product by ID. Requires PRODUCT:UPDATE permission."
+					}
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/products/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"{{productId}}"
+							]
+						},
+						"description": "Delete product by ID. Requires PRODUCT:DELETE permission."
 					}
 				},
 				{
@@ -518,94 +663,8 @@
 								"{{productId}}",
 								"stock"
 							]
-						}
-					}
-				},
-				{
-					"name": "Create Product",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"reference\": \"PROD-001\",\n  \"name\": \"Laptop HP\",\n  \"description\": \"HP Laptop i7 16GB RAM\",\n  \"category\": \"Electronics\",\n  \"unitPrice\": 8500,\n  \"unitOfMeasure\": \"UNIT\",\n  \"reorderPoint\": 5.0\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/products",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"products"
-							]
-						}
-					}
-				},
-				{
-					"name": "Update Product",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Laptop HP Updated\",\n  \"description\": \"HP Laptop i7 32GB RAM\",\n  \"category\": \"Electronics\",\n  \"unitPrice\": 9500,\n  \"reorderPoint\": 10.0\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/products/{{productId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"products",
-								"{{productId}}"
-							]
-						}
-					}
-				},
-				{
-					"name": "Delete Product",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/products/{{productId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"products",
-								"{{productId}}"
-							]
-						}
+						"description": "Get product stock detail with FIFO lots. Requires STOCK:READ permission."
 					}
 				}
 			]
@@ -633,11 +692,12 @@
 								"v1",
 								"orders"
 							]
-						}
+						},
+						"description": "Get all purchase orders. Requires PUCHASE_ORDER:READ permission."
 					}
 				},
 				{
-					"name": "Get Purchase Orders By Status - PENDING",
+					"name": "Get Purchase Orders by Status",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -658,61 +718,12 @@
 								"status",
 								"PENDING"
 							]
-						}
+						},
+						"description": "Get purchase orders by status. Status options: PENDING, VALIDATED, RECEIVED, DELIVERED, CANCELLED. Requires PUCHASE_ORDER:READ permission."
 					}
 				},
 				{
-					"name": "Get Purchase Orders By Status - VALIDATED",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/orders/status/VALIDATED",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"orders",
-								"status",
-								"VALIDATED"
-							]
-						}
-					}
-				},
-				{
-					"name": "Get Purchase Orders By Status - DELIVERED",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/orders/status/DELIVERED",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"orders",
-								"status",
-								"DELIVERED"
-							]
-						}
-					}
-				},
-				{
-					"name": "Get Purchase Order By ID",
+					"name": "Get Purchase Order by ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -732,11 +743,12 @@
 								"orders",
 								"{{orderId}}"
 							]
-						}
+						},
+						"description": "Get purchase order by ID. Requires PUCHASE_ORDER:READ permission."
 					}
 				},
 				{
-					"name": "Get Purchase Orders By Supplier",
+					"name": "Get Purchase Orders by Supplier",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -757,7 +769,8 @@
 								"supplier",
 								"{{supplierId}}"
 							]
-						}
+						},
+						"description": "Get purchase orders by supplier ID. Requires PUCHASE_ORDER:READ permission."
 					}
 				},
 				{
@@ -766,17 +779,17 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
 								"key": "Authorization",
 								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"supplierId\": 1,\n  \"orderLines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 50.0,\n      \"unitPrice\": 100.0\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 25.0,\n      \"unitPrice\": 200.0\n    }\n  ]\n}"
+							"raw": "{\n  \"orderDate\": \"2025-12-18\",\n  \"supplierId\": 1,\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 10.0,\n      \"unitPrice\": 12500.0\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 5.0,\n      \"unitPrice\": 2500.0\n    }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders",
@@ -788,7 +801,8 @@
 								"v1",
 								"orders"
 							]
-						}
+						},
+						"description": "Create a new purchase order. Requires PUCHASE_ORDER:CREATE permission."
 					}
 				},
 				{
@@ -797,17 +811,17 @@
 						"method": "PUT",
 						"header": [
 							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
 								"key": "Authorization",
 								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"status\": \"PENDING\",\n  \"orderLines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 75.0,\n      \"unitPrice\": 95.0\n    }\n  ]\n}"
+							"raw": "{\n  \"orderDate\": \"2025-12-18\",\n  \"supplierId\": 1,\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 15.0,\n      \"unitPrice\": 12500.0\n    }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders/{{orderId}}",
@@ -820,7 +834,33 @@
 								"orders",
 								"{{orderId}}"
 							]
-						}
+						},
+						"description": "Update purchase order by ID. Requires PUCHASE_ORDER:UPDATE permission."
+					}
+				},
+				{
+					"name": "Delete Purchase Order",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/orders/{{orderId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"{{orderId}}"
+							]
+						},
+						"description": "Delete purchase order by ID. Requires PUCHASE_ORDER:DELETE permission."
 					}
 				},
 				{
@@ -845,11 +885,12 @@
 								"{{orderId}}",
 								"validate"
 							]
-						}
+						},
+						"description": "Validate a purchase order. Changes status to VALIDATED. Requires PUCHASE_ORDER:VALIDATE permission."
 					}
 				},
 				{
-					"name": "Receive Purchase Order (Creates Stock)",
+					"name": "Receive Purchase Order",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -870,7 +911,8 @@
 								"{{orderId}}",
 								"reception"
 							]
-						}
+						},
+						"description": "Receive a purchase order. Creates stock lots and changes status to DELIVERED. Requires PUCHASE_ORDER:RECEIVE permission."
 					}
 				},
 				{
@@ -895,31 +937,8 @@
 								"{{orderId}}",
 								"cancel"
 							]
-						}
-					}
-				},
-				{
-					"name": "Delete Purchase Order",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/orders/{{orderId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"orders",
-								"{{orderId}}"
-							]
-						}
+						},
+						"description": "Cancel a purchase order. Changes status to CANCELLED. Requires PUCHASE_ORDER:CANCEL permission."
 					}
 				}
 			]
@@ -947,11 +966,12 @@
 								"v1",
 								"goods-issues"
 							]
-						}
+						},
+						"description": "Get all goods issues. Requires GOODS_ISSUE:READ permission."
 					}
 				},
 				{
-					"name": "Get Goods Issues By Status - DRAFT",
+					"name": "Get Goods Issues by Status",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -972,36 +992,12 @@
 								"status",
 								"DRAFT"
 							]
-						}
+						},
+						"description": "Get goods issues by status. Status options: DRAFT, VALIDATED, CANCELLED. Requires GOODS_ISSUE:READ permission."
 					}
 				},
 				{
-					"name": "Get Goods Issues By Status - VALIDATED",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/goods-issues/status/VALIDATED",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"goods-issues",
-								"status",
-								"VALIDATED"
-							]
-						}
-					}
-				},
-				{
-					"name": "Get Goods Issue By ID",
+					"name": "Get Goods Issue by ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1021,7 +1017,8 @@
 								"goods-issues",
 								"{{goodsIssueId}}"
 							]
-						}
+						},
+						"description": "Get goods issue by ID. Requires GOODS_ISSUE:READ permission."
 					}
 				},
 				{
@@ -1030,17 +1027,17 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
 								"key": "Authorization",
 								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"destination\": \"Workshop A\",\n  \"motif\": \"PRODUCTION\",\n  \"issueDate\": \"2025-12-18\",\n  \"issueLines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 10.0\n    }\n  ]\n}"
+							"raw": "{\n  \"issueDate\": \"2025-12-18\",\n  \"destination\": \"Workshop A - Production Line\",\n  \"motif\": \"PRODUCTION\",\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2.0\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 5.0\n    }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues",
@@ -1052,26 +1049,27 @@
 								"v1",
 								"goods-issues"
 							]
-						}
+						},
+						"description": "Create a new goods issue (DRAFT status). Requires GOODS_ISSUE:CREATE permission. Motif options: PRODUCTION, MAINTENANCE, OTHER."
 					}
 				},
 				{
-					"name": "Update Goods Issue (DRAFT only)",
+					"name": "Update Goods Issue",
 					"request": {
 						"method": "PUT",
 						"header": [
 							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
 								"key": "Authorization",
 								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"destination\": \"Workshop B\",\n  \"motif\": \"PRODUCTION\",\n  \"issueDate\": \"2025-12-19\"\n}"
+							"raw": "{\n  \"issueDate\": \"2025-12-18\",\n  \"destination\": \"Workshop A - Production Line Updated\",\n  \"motif\": \"PRODUCTION\",\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 3.0\n    }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues/{{goodsIssueId}}",
@@ -1084,11 +1082,37 @@
 								"goods-issues",
 								"{{goodsIssueId}}"
 							]
-						}
+						},
+						"description": "Update goods issue by ID (only DRAFT status). Requires GOODS_ISSUE:UPDATE permission."
 					}
 				},
 				{
-					"name": "Validate Goods Issue (Consumes Stock FIFO)",
+					"name": "Delete Goods Issue",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/goods-issues/{{goodsIssueId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"goods-issues",
+								"{{goodsIssueId}}"
+							]
+						},
+						"description": "Delete goods issue by ID (only DRAFT status). Requires GOODS_ISSUE:DELETE permission."
+					}
+				},
+				{
+					"name": "Validate Goods Issue",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -1109,7 +1133,8 @@
 								"{{goodsIssueId}}",
 								"validate"
 							]
-						}
+						},
+						"description": "Validate a goods issue. Consumes stock using FIFO and changes status to VALIDATED. Requires GOODS_ISSUE:VALIDATE permission."
 					}
 				},
 				{
@@ -1134,31 +1159,8 @@
 								"{{goodsIssueId}}",
 								"cancel"
 							]
-						}
-					}
-				},
-				{
-					"name": "Delete Goods Issue (DRAFT only)",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/goods-issues/{{goodsIssueId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"goods-issues",
-								"{{goodsIssueId}}"
-							]
-						}
+						},
+						"description": "Cancel a goods issue (only DRAFT status). Changes status to CANCELLED. Requires GOODS_ISSUE:CANCEL permission."
 					}
 				}
 			]
@@ -1167,7 +1169,7 @@
 			"name": "Stock",
 			"item": [
 				{
-					"name": "Get Global Stock Summary",
+					"name": "Get Global Stock",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1186,7 +1188,8 @@
 								"v1",
 								"stock"
 							]
-						}
+						},
+						"description": "Get global stock summary for all products. Requires STOCK:READ permission."
 					}
 				},
 				{
@@ -1211,11 +1214,12 @@
 								"product",
 								"{{productId}}"
 							]
-						}
+						},
+						"description": "Get product stock detail with FIFO lots. Requires STOCK:READ permission."
 					}
 				},
 				{
-					"name": "Get Total Stock Valuation",
+					"name": "Get Stock Valuation",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1235,7 +1239,8 @@
 								"stock",
 								"valuation"
 							]
-						}
+						},
+						"description": "Get total stock valuation based on FIFO. Requires STOCK:READ permission."
 					}
 				}
 			]
@@ -1244,7 +1249,7 @@
 			"name": "Stock Movements",
 			"item": [
 				{
-					"name": "Search Movements (All Parameters)",
+					"name": "Search Stock Movements",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1254,7 +1259,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/stock/mouvements?dateDebut=2025-01-01&dateFin=2025-12-31&produitId=1&type=IN&page=0&size=20",
+							"raw": "{{baseUrl}}/api/v1/stock/mouvements?dateDebut=2025-12-01&dateFin=2025-12-31&produitId=1&type=IN&page=0&size=20",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -1267,228 +1272,51 @@
 							"query": [
 								{
 									"key": "dateDebut",
-									"value": "2025-01-01"
+									"value": "2025-12-01",
+									"description": "Start date (YYYY-MM-DD)"
 								},
 								{
 									"key": "dateFin",
-									"value": "2025-12-31"
+									"value": "2025-12-31",
+									"description": "End date (YYYY-MM-DD)"
 								},
 								{
 									"key": "produitId",
-									"value": "1"
+									"value": "1",
+									"description": "Product ID"
+								},
+								{
+									"key": "reference",
+									"value": "",
+									"description": "Product reference"
 								},
 								{
 									"key": "type",
-									"value": "IN"
+									"value": "IN",
+									"description": "Movement type: IN or OUT"
 								},
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								}
-							]
-						}
-					}
-				},
-				{
-					"name": "Search Movements (By Type IN)",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/stock/mouvements?type=IN&page=0&size=20",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"stock",
-								"mouvements"
-							],
-							"query": [
-								{
-									"key": "type",
-									"value": "IN"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								}
-							]
-						}
-					}
-				},
-				{
-					"name": "Search Movements (By Type OUT)",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/stock/mouvements?type=OUT&page=0&size=20",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"stock",
-								"mouvements"
-							],
-							"query": [
-								{
-									"key": "type",
-									"value": "OUT"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								}
-							]
-						}
-					}
-				},
-				{
-					"name": "Search Movements (By Date Range)",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/stock/mouvements?dateDebut=2025-12-01&dateFin=2025-12-31&page=0&size=20",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"stock",
-								"mouvements"
-							],
-							"query": [
-								{
-									"key": "dateDebut",
-									"value": "2025-12-01"
-								},
-								{
-									"key": "dateFin",
-									"value": "2025-12-31"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								}
-							]
-						}
-					}
-				},
-				{
-					"name": "Search Movements (By Product)",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/stock/mouvements?produitId={{productId}}&page=0&size=20",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"stock",
-								"mouvements"
-							],
-							"query": [
-								{
-									"key": "produitId",
-									"value": "{{productId}}"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								}
-							]
-						}
-					}
-				},
-				{
-					"name": "Search Movements (By Lot Number)",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/stock/mouvements?numeroLot=LOT-1-1-20251218&page=0&size=20",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"stock",
-								"mouvements"
-							],
-							"query": [
 								{
 									"key": "numeroLot",
-									"value": "LOT-1-1-20251218"
+									"value": "",
+									"description": "Lot number"
 								},
 								{
 									"key": "page",
-									"value": "0"
+									"value": "0",
+									"description": "Page number (default: 0)"
 								},
 								{
 									"key": "size",
-									"value": "20"
+									"value": "20",
+									"description": "Page size (default: 20)"
 								}
 							]
-						}
+						},
+						"description": "Search stock movements with filters (paginated). Requires STOCK_MOVEMENT:READ permission."
 					}
 				},
 				{
-					"name": "Get All Movements",
+					"name": "Get All Stock Movements",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1509,11 +1337,12 @@
 								"mouvements",
 								"all"
 							]
-						}
+						},
+						"description": "Get all stock movements. Requires STOCK_MOVEMENT:READ permission."
 					}
 				},
 				{
-					"name": "Get Movement By ID",
+					"name": "Get Stock Movement by ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1534,11 +1363,12 @@
 								"mouvements",
 								"1"
 							]
-						}
+						},
+						"description": "Get stock movement by ID. Requires STOCK_MOVEMENT:READ permission."
 					}
 				},
 				{
-					"name": "Get Movements By Product",
+					"name": "Get Stock Movements by Product",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1560,7 +1390,37 @@
 								"product",
 								"{{productId}}"
 							]
-						}
+						},
+						"description": "Get stock movements by product ID. Requires STOCK_MOVEMENT:READ permission."
+					}
+				}
+			]
+		},
+		{
+			"name": "Audit Logs",
+			"item": [
+				{
+					"name": "Get All Audit Logs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/logs",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"logs"
+							]
+						},
+						"description": "Get all audit logs. Requires AUDIT_LOGS:READ permission (Admin only)."
 					}
 				}
 			]
