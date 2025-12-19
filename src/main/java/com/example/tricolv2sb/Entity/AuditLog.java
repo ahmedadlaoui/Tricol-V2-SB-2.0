@@ -12,7 +12,6 @@ import java.time.Instant;
 @Data
 @Table(name = "audit_log")
 @RequiredArgsConstructor
-@Builder
 public class AuditLog {
 
     @Id

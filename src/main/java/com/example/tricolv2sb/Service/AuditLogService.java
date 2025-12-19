@@ -17,6 +17,6 @@ public class AuditLogService implements AuditLogServiceInterface {
 
     @Override
     public List<AuditLog> getAllLogs() {
-        return List.of();
+        return auditLogRepo.findAll();
     }
 }

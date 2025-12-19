@@ -7,5 +7,6 @@ public enum RessourceName {
     STOCK_MOVEMENT,
     GOODS_ISSUE,
     PUCHASE_ORDER,
-    USER
+    USER,
+    AUDIT_LOGS
 }
