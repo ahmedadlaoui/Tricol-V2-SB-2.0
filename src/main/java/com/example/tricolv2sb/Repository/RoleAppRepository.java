@@ -13,3 +13,4 @@ public interface RoleAppRepository extends JpaRepository<RoleApp, Long> {
 }
 
 
+

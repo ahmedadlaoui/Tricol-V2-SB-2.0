@@ -1,93 +1,5 @@
-2025-12-18T10:25:31.525+01:00 ERROR 19432 --- [Tricol-V2-SB] [http-nio-8080-exec-2] c.e.tricolv2sb.Service.SupplierService   : Runtime exception: Bad credentials
-2025-12-18T10:55:31.041+01:00 ERROR 15828 --- [Tricol-V2-SB] [http-nio-8080-exec-4] c.e.tricolv2sb.Service.SupplierService   : Runtime exception: Bad credentials
-2025-12-18T11:07:26.454+01:00 ERROR 15828 --- [Tricol-V2-SB] [http-nio-8080-exec-2] c.e.tricolv2sb.Service.SupplierService   : Runtime exception: Bad credentials
-2025-12-18T14:02:31.798+01:00 ERROR 1388 --- [Tricol-V2-SB] [main] o.s.boot.SpringApplication               : Application run failed
-
-org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'authController': Lookup method resolution failed
-	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.checkLookupMethods(AutowiredAnnotationBeanPostProcessor.java:498) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:368) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1334) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1229) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1228) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1194) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1130) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:990) ~[spring-context-6.2.12.jar:6.2.12]
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627) ~[spring-context-6.2.12.jar:6.2.12]
-	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.7.jar:3.5.7]
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.7.jar:3.5.7]
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.7.jar:3.5.7]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.7.jar:3.5.7]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.7.jar:3.5.7]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.7.jar:3.5.7]
-	at com.example.tricolv2sb.TricolV2SbApplication.main(TricolV2SbApplication.java:10) ~[classes/:na]
-Caused by: java.lang.IllegalStateException: Failed to introspect Class [com.example.tricolv2sb.Controller.AuthController] from ClassLoader [jdk.internal.loader.ClassLoaders$AppClassLoader@1d44bcfa]
-	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:483) ~[spring-core-6.2.12.jar:6.2.12]
-	at org.springframework.util.ReflectionUtils.doWithLocalMethods(ReflectionUtils.java:320) ~[spring-core-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.checkLookupMethods(AutowiredAnnotationBeanPostProcessor.java:476) ~[spring-beans-6.2.12.jar:6.2.12]
-	... 21 common frames omitted
-Caused by: java.lang.NoClassDefFoundError: RegisterRequest
-	at java.base/java.lang.Class.getDeclaredMethods0(Native Method) ~[na:na]
-	at java.base/java.lang.Class.privateGetDeclaredMethods(Class.java:3402) ~[na:na]
-	at java.base/java.lang.Class.getDeclaredMethods(Class.java:2504) ~[na:na]
-	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:465) ~[spring-core-6.2.12.jar:6.2.12]
-	... 23 common frames omitted
-Caused by: java.lang.ClassNotFoundException: RegisterRequest
-	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641) ~[na:na]
-	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188) ~[na:na]
-	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:525) ~[na:na]
-	... 27 common frames omitted
-
-2025-12-18T14:03:18.102+01:00 ERROR 17044 --- [Tricol-V2-SB] [main] o.s.boot.SpringApplication               : Application run failed
-
-org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'authController': Lookup method resolution failed
-	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.checkLookupMethods(AutowiredAnnotationBeanPostProcessor.java:498) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:368) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1334) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1229) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1228) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1194) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1130) ~[spring-beans-6.2.12.jar:6.2.12]
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:990) ~[spring-context-6.2.12.jar:6.2.12]
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627) ~[spring-context-6.2.12.jar:6.2.12]
-	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.7.jar:3.5.7]
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.7.jar:3.5.7]
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.7.jar:3.5.7]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.7.jar:3.5.7]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.7.jar:3.5.7]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.7.jar:3.5.7]
-	at com.example.tricolv2sb.TricolV2SbApplication.main(TricolV2SbApplication.java:10) ~[classes/:na]
-Caused by: java.lang.IllegalStateException: Failed to introspect Class [com.example.tricolv2sb.Controller.AuthController] from ClassLoader [jdk.internal.loader.ClassLoaders$AppClassLoader@1d44bcfa]
-	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:483) ~[spring-core-6.2.12.jar:6.2.12]
-	at org.springframework.util.ReflectionUtils.doWithLocalMethods(ReflectionUtils.java:320) ~[spring-core-6.2.12.jar:6.2.12]
-	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.checkLookupMethods(AutowiredAnnotationBeanPostProcessor.java:476) ~[spring-beans-6.2.12.jar:6.2.12]
-	... 21 common frames omitted
-Caused by: java.lang.NoClassDefFoundError: RegisterRequest
-	at java.base/java.lang.Class.getDeclaredMethods0(Native Method) ~[na:na]
-	at java.base/java.lang.Class.privateGetDeclaredMethods(Class.java:3402) ~[na:na]
-	at java.base/java.lang.Class.getDeclaredMethods(Class.java:2504) ~[na:na]
-	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:465) ~[spring-core-6.2.12.jar:6.2.12]
-	... 23 common frames omitted
-Caused by: java.lang.ClassNotFoundException: RegisterRequest
-	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641) ~[na:na]
-	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188) ~[na:na]
-	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:525) ~[na:na]
-	... 27 common frames omitted
-
-2025-12-18T17:09:49.313+01:00 ERROR 22856 --- [Tricol-V2-SB] [http-nio-8080-exec-5] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: failed to lazily initialize a collection of role: com.example.tricolv2sb.Entity.UserApp.customPermissions: could not initialize proxy - no Session
-2025-12-18T17:10:21.395+01:00 ERROR 22856 --- [Tricol-V2-SB] [http-nio-8080-exec-6] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: failed to lazily initialize a collection of role: com.example.tricolv2sb.Entity.UserApp.customPermissions: could not initialize proxy - no Session
-2025-12-18T17:18:37.229+01:00 ERROR 17264 --- [Tricol-V2-SB] [http-nio-8080-exec-6] c.e.t.E.GlobalExceptionHandler           : Unexpected error occurred: 
+2025-12-19T11:10:35.211+01:00 ERROR 7220 --- [Tricol-V2-SB] [http-nio-8080-exec-4] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: failed to lazily initialize a collection of role: com.example.tricolv2sb.Entity.RoleApp.permissions: could not initialize proxy - no Session
+2025-12-19T11:13:27.682+01:00 ERROR 11444 --- [Tricol-V2-SB] [http-nio-8080-exec-3] c.e.t.E.GlobalExceptionHandler           : Unexpected error occurred: 
 
 org.springframework.web.servlet.resource.NoResourceFoundException: No static resource api/v1/auth/me.
 	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585) ~[spring-webmvc-6.2.12.jar:6.2.12]
@@ -125,7 +37,7 @@ org.springframework.web.servlet.resource.NoResourceFoundException: No static res
 	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.6.jar:6.5.6]
 	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) ~[spring-security-web-6.5.6.jar:6.5.6]
 	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.6.jar:6.5.6]
-	at com.example.tricolv2sb.Security.filters.JwtAuthenticationFilter.doFilterInternal(JwtAuthenticationFilter.java:67) ~[classes/:na]
+	at com.example.tricolv2sb.Security.filters.JwtAuthenticationFilter.doFilterInternal(JwtAuthenticationFilter.java:65) ~[classes/:na]
 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.12.jar:6.2.12]
 	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.5.6.jar:6.5.6]
 	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-6.5.6.jar:6.5.6]
@@ -189,3 +101,16 @@ org.springframework.web.servlet.resource.NoResourceFoundException: No static res
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
 	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
 
+2025-12-19T11:28:35.340+01:00 ERROR 11444 --- [Tricol-V2-SB] [http-nio-8080-exec-3] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 17337 milliseconds ago at 2025-12-19T10:28:18.000Z. Current time: 2025-12-19T10:28:35.337Z. Allowed clock skew: 0 milliseconds.
+2025-12-19T11:28:42.967+01:00 ERROR 11444 --- [Tricol-V2-SB] [http-nio-8080-exec-4] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 24966 milliseconds ago at 2025-12-19T10:28:18.000Z. Current time: 2025-12-19T10:28:42.966Z. Allowed clock skew: 0 milliseconds.
+2025-12-19T11:28:44.497+01:00 ERROR 11444 --- [Tricol-V2-SB] [http-nio-8080-exec-6] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 26497 milliseconds ago at 2025-12-19T10:28:18.000Z. Current time: 2025-12-19T10:28:44.497Z. Allowed clock skew: 0 milliseconds.
+2025-12-19T11:28:45.606+01:00 ERROR 11444 --- [Tricol-V2-SB] [http-nio-8080-exec-5] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 27606 milliseconds ago at 2025-12-19T10:28:18.000Z. Current time: 2025-12-19T10:28:45.606Z. Allowed clock skew: 0 milliseconds.
+2025-12-19T11:28:46.515+01:00 ERROR 11444 --- [Tricol-V2-SB] [http-nio-8080-exec-7] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 28515 milliseconds ago at 2025-12-19T10:28:18.000Z. Current time: 2025-12-19T10:28:46.515Z. Allowed clock skew: 0 milliseconds.
+2025-12-19T11:28:47.404+01:00 ERROR 11444 --- [Tricol-V2-SB] [http-nio-8080-exec-8] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 29403 milliseconds ago at 2025-12-19T10:28:18.000Z. Current time: 2025-12-19T10:28:47.403Z. Allowed clock skew: 0 milliseconds.
+2025-12-19T11:28:48.283+01:00 ERROR 11444 --- [Tricol-V2-SB] [http-nio-8080-exec-9] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 30282 milliseconds ago at 2025-12-19T10:28:18.000Z. Current time: 2025-12-19T10:28:48.282Z. Allowed clock skew: 0 milliseconds.
+2025-12-19T11:28:49.096+01:00 ERROR 11444 --- [Tricol-V2-SB] [http-nio-8080-exec-10] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 31095 milliseconds ago at 2025-12-19T10:28:18.000Z. Current time: 2025-12-19T10:28:49.095Z. Allowed clock skew: 0 milliseconds.
+2025-12-19T11:28:49.924+01:00 ERROR 11444 --- [Tricol-V2-SB] [http-nio-8080-exec-2] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 31923 milliseconds ago at 2025-12-19T10:28:18.000Z. Current time: 2025-12-19T10:28:49.923Z. Allowed clock skew: 0 milliseconds.
+2025-12-19T11:28:50.750+01:00 ERROR 11444 --- [Tricol-V2-SB] [http-nio-8080-exec-1] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 32750 milliseconds ago at 2025-12-19T10:28:18.000Z. Current time: 2025-12-19T10:28:50.750Z. Allowed clock skew: 0 milliseconds.
+2025-12-19T11:28:55.653+01:00 ERROR 11444 --- [Tricol-V2-SB] [http-nio-8080-exec-3] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 37653 milliseconds ago at 2025-12-19T10:28:18.000Z. Current time: 2025-12-19T10:28:55.653Z. Allowed clock skew: 0 milliseconds.
+2025-12-19T11:28:58.561+01:00 ERROR 11444 --- [Tricol-V2-SB] [http-nio-8080-exec-4] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 40561 milliseconds ago at 2025-12-19T10:28:18.000Z. Current time: 2025-12-19T10:28:58.561Z. Allowed clock skew: 0 milliseconds.
+2025-12-19T11:29:22.663+01:00 ERROR 11444 --- [Tricol-V2-SB] [http-nio-8080-exec-6] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 64663 milliseconds ago at 2025-12-19T10:28:18.000Z. Current time: 2025-12-19T10:29:22.663Z. Allowed clock skew: 0 milliseconds.

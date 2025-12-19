@@ -39,4 +39,13 @@ public class ApiResponse<T> {
                 .body(body)
                 .build();
     }
+
+    public static <T> ApiResponse<T> error(int status, String message) {
+        return ApiResponse.<T>builder()
+                .timestamp(LocalDateTime.now())
+                .status(status)
+                .message(message)
+                .body(null)
+                .build();
+    }
 }

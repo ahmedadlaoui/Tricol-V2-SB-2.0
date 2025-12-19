@@ -1,7 +1,8 @@
 {
 	"info": {
-		"_postman_id": "tricol-v2-api",
+		"_postman_id": "tricol-v2-api-2025",
 		"name": "Tricol V2 - Stock Management API",
+		"description": "Complete API collection for Tricol V2 Stock Management System with JWT Authentication (Access Token + Refresh Token in Cookie)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -10,7 +11,7 @@
 			"value": "http://localhost:8080"
 		},
 		{
-			"key": "token",
+			"key": "accessToken",
 			"value": ""
 		},
 		{
@@ -36,7 +37,7 @@
 	],
 	"item": [
 		{
-			"name": "Auth",
+			"name": "Authentication",
 			"item": [
 				{
 					"name": "Login",
@@ -45,7 +46,12 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"if(pm.response.code===200){pm.collectionVariables.set('token',pm.response.json().body.token);}"
+									"if(pm.response.code===200){",
+									"    const response = pm.response.json();",
+									"    if(response.body && response.body.accessToken){",
+									"        pm.collectionVariables.set('accessToken', response.body.accessToken);",
+									"    }",
+									"}"
 								]
 							}
 						}
@@ -60,7 +66,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"admin123\"\n}"
+							"raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"admin\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/auth/login",
@@ -73,7 +79,8 @@
 								"auth",
 								"login"
 							]
-						}
+						},
+						"description": "Login with email and password. Returns access token in response body and refresh token in HTTP-only cookie."
 					}
 				},
 				{
@@ -101,7 +108,63 @@
 								"auth",
 								"register"
 							]
+						},
+						"description": "Register a new user. Returns access token in response body and refresh token in HTTP-only cookie."
+					}
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.response.code===200){",
+									"    const response = pm.response.json();",
+									"    if(response.body && response.body.accessToken){",
+									"        pm.collectionVariables.set('accessToken', response.body.accessToken);",
+									"    }",
+									"}"
+								]
+							}
 						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/refresh",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"refresh"
+							]
+						},
+						"description": "Refresh access token using refresh token from cookie. Cookie is sent automatically by browser/Postman."
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logout and revoke refresh token. Clears refresh token cookie."
 					}
 				},
 				{
@@ -111,11 +174,11 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/auth/me",
+							"raw": "{{baseUrl}}/api/v1/auth/current",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -123,9 +186,10 @@
 								"api",
 								"v1",
 								"auth",
-								"me"
+								"current"
 							]
-						}
+						},
+						"description": "Get current authenticated user profile."
 					}
 				}
 			]
@@ -140,7 +204,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -157,7 +221,7 @@
 					}
 				},
 				{
-					"name": "Assign Role",
+					"name": "Assign Role to User",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -167,7 +231,7 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"body": {
@@ -201,7 +265,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -224,7 +288,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -247,13 +311,13 @@
 			"name": "Suppliers",
 			"item": [
 				{
-					"name": "Get All",
+					"name": "Get All Suppliers",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -270,13 +334,13 @@
 					}
 				},
 				{
-					"name": "Get By ID",
+					"name": "Get Supplier By ID",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -294,7 +358,7 @@
 					}
 				},
 				{
-					"name": "Create",
+					"name": "Create Supplier",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -304,7 +368,7 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"body": {
@@ -325,7 +389,7 @@
 					}
 				},
 				{
-					"name": "Update",
+					"name": "Update Supplier",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -335,7 +399,7 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"body": {
@@ -357,13 +421,13 @@
 					}
 				},
 				{
-					"name": "Delete",
+					"name": "Delete Supplier",
 					"request": {
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -386,13 +450,13 @@
 			"name": "Products",
 			"item": [
 				{
-					"name": "Get All",
+					"name": "Get All Products",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -409,13 +473,13 @@
 					}
 				},
 				{
-					"name": "Get By ID",
+					"name": "Get Product By ID",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -433,13 +497,13 @@
 					}
 				},
 				{
-					"name": "Get Stock Detail",
+					"name": "Get Product Stock Detail",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -458,7 +522,7 @@
 					}
 				},
 				{
-					"name": "Create",
+					"name": "Create Product",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -468,7 +532,7 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"body": {
@@ -489,7 +553,7 @@
 					}
 				},
 				{
-					"name": "Update",
+					"name": "Update Product",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -499,7 +563,7 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"body": {
@@ -521,13 +585,13 @@
 					}
 				},
 				{
-					"name": "Delete",
+					"name": "Delete Product",
 					"request": {
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -550,13 +614,13 @@
 			"name": "Purchase Orders",
 			"item": [
 				{
-					"name": "Get All",
+					"name": "Get All Purchase Orders",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -573,13 +637,13 @@
 					}
 				},
 				{
-					"name": "Get By Status (PENDING)",
+					"name": "Get Purchase Orders By Status - PENDING",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -598,13 +662,13 @@
 					}
 				},
 				{
-					"name": "Get By Status (VALIDATED)",
+					"name": "Get Purchase Orders By Status - VALIDATED",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -623,13 +687,13 @@
 					}
 				},
 				{
-					"name": "Get By Status (DELIVERED)",
+					"name": "Get Purchase Orders By Status - DELIVERED",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -648,13 +712,13 @@
 					}
 				},
 				{
-					"name": "Get By ID",
+					"name": "Get Purchase Order By ID",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -672,13 +736,13 @@
 					}
 				},
 				{
-					"name": "Get By Supplier",
+					"name": "Get Purchase Orders By Supplier",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -697,7 +761,7 @@
 					}
 				},
 				{
-					"name": "Create",
+					"name": "Create Purchase Order",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -707,7 +771,7 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"body": {
@@ -728,7 +792,7 @@
 					}
 				},
 				{
-					"name": "Update",
+					"name": "Update Purchase Order",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -738,7 +802,7 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"body": {
@@ -760,13 +824,13 @@
 					}
 				},
 				{
-					"name": "Validate",
+					"name": "Validate Purchase Order",
 					"request": {
 						"method": "PUT",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -785,13 +849,13 @@
 					}
 				},
 				{
-					"name": "Receive (Creates Stock)",
+					"name": "Receive Purchase Order (Creates Stock)",
 					"request": {
 						"method": "PUT",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -810,13 +874,13 @@
 					}
 				},
 				{
-					"name": "Cancel",
+					"name": "Cancel Purchase Order",
 					"request": {
 						"method": "PUT",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -835,13 +899,13 @@
 					}
 				},
 				{
-					"name": "Delete",
+					"name": "Delete Purchase Order",
 					"request": {
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -864,13 +928,13 @@
 			"name": "Goods Issues",
 			"item": [
 				{
-					"name": "Get All",
+					"name": "Get All Goods Issues",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -887,13 +951,13 @@
 					}
 				},
 				{
-					"name": "Get By Status (DRAFT)",
+					"name": "Get Goods Issues By Status - DRAFT",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -912,13 +976,13 @@
 					}
 				},
 				{
-					"name": "Get By Status (VALIDATED)",
+					"name": "Get Goods Issues By Status - VALIDATED",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -937,13 +1001,13 @@
 					}
 				},
 				{
-					"name": "Get By ID",
+					"name": "Get Goods Issue By ID",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -961,7 +1025,7 @@
 					}
 				},
 				{
-					"name": "Create",
+					"name": "Create Goods Issue",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -971,7 +1035,7 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"body": {
@@ -992,7 +1056,7 @@
 					}
 				},
 				{
-					"name": "Update (DRAFT only)",
+					"name": "Update Goods Issue (DRAFT only)",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -1002,7 +1066,7 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"body": {
@@ -1024,13 +1088,13 @@
 					}
 				},
 				{
-					"name": "Validate (Consumes Stock FIFO)",
+					"name": "Validate Goods Issue (Consumes Stock FIFO)",
 					"request": {
 						"method": "PUT",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -1049,13 +1113,13 @@
 					}
 				},
 				{
-					"name": "Cancel",
+					"name": "Cancel Goods Issue",
 					"request": {
 						"method": "PUT",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -1074,13 +1138,13 @@
 					}
 				},
 				{
-					"name": "Delete (DRAFT only)",
+					"name": "Delete Goods Issue (DRAFT only)",
 					"request": {
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -1109,7 +1173,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -1132,7 +1196,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -1151,13 +1215,13 @@
 					}
 				},
 				{
-					"name": "Get Total Valuation",
+					"name": "Get Total Stock Valuation",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -1180,13 +1244,13 @@
 			"name": "Stock Movements",
 			"item": [
 				{
-					"name": "Search Movements (All Params)",
+					"name": "Search Movements (All Parameters)",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -1236,7 +1300,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -1274,7 +1338,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -1312,7 +1376,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -1354,7 +1418,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -1392,7 +1456,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -1430,7 +1494,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -1455,7 +1519,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {
@@ -1480,7 +1544,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{accessToken}}"
 							}
 						],
 						"url": {

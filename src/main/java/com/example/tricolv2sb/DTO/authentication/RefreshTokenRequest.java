@@ -1,5 +1,6 @@
 package com.example.tricolv2sb.DTO.authentication;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,9 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AuthenticationResponse {
-    private String accessToken;
-    private String email;
-    private String fullName;
-    private String role;
+public class RefreshTokenRequest {
+    @NotBlank(message = "Refresh token is required")
+    private String refreshToken;
 }
