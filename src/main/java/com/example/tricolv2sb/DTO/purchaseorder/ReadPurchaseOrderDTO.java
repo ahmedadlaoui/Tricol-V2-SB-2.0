@@ -1,6 +1,7 @@
 package com.example.tricolv2sb.DTO.purchaseorder;
 
 import com.example.tricolv2sb.Entity.Enum.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,8 @@ public class ReadPurchaseOrderDTO {
     private LocalDate orderDate;
     private OrderStatus status;
     private Double totalAmount;
+
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime receptionDate;
 
     private Long supplierId;

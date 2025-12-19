@@ -18,3 +18,4 @@ public class PermissionDTO {
     private String description;
     private String authority; // e.g., "STOCK:READ"
 }
+

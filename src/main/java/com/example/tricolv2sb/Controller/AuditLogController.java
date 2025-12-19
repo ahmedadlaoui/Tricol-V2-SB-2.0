@@ -1,8 +1,7 @@
 package com.example.tricolv2sb.Controller;
 
-
+import com.example.tricolv2sb.DTO.auditlog.ReadAuditLogDTO;
 import com.example.tricolv2sb.DTO.common.ApiResponse;
-import com.example.tricolv2sb.Entity.AuditLog;
 import com.example.tricolv2sb.Service.ServiceInterfaces.AuditLogServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +21,9 @@ public class AuditLogController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('AUDIT_LOGS:READ')")
-    public ResponseEntity<ApiResponse<List<AuditLog>>> fetchAuditLogs(){
-        List<AuditLog> logs = auditLogService.getAllLogs();
-        return ResponseEntity.ok(ApiResponse.success(logs,"logs fetched successfully"));
+    public ResponseEntity<ApiResponse<List<ReadAuditLogDTO>>> fetchAuditLogs() {
+        List<ReadAuditLogDTO> logs = auditLogService.getAllLogs();
+        return ResponseEntity.ok(ApiResponse.success(logs, "Logs fetched successfully"));
     }
-
 
 }

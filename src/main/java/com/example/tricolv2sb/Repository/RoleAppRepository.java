@@ -16,3 +16,4 @@ public interface RoleAppRepository extends JpaRepository<RoleApp, Long> {
     @Query("SELECT DISTINCT r FROM RoleApp r LEFT JOIN FETCH r.permissions")
     List<RoleApp> findAllWithPermissions();
 }
+

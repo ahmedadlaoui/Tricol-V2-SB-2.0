@@ -26,3 +26,4 @@ public class RoleAppController {
         return ResponseEntity.ok(ApiResponse.success(roles, "Roles with permissions fetched successfully"));
     }
 }
+
