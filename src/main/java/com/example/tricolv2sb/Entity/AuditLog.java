@@ -2,6 +2,7 @@ package com.example.tricolv2sb.Entity;
 
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.time.Instant;
 @Data
 @Table(name = "audit_log")
 @RequiredArgsConstructor
+@Builder
 public class AuditLog {
 
     @Id

@@ -133,7 +133,6 @@ public class DashboardService implements DashboardServiceInterface {
     private List<RecentActivityDTO> getRecentActivities(List<PurchaseOrder> orders, List<GoodsIssue> issues) {
         List<RecentActivityDTO> activities = new ArrayList<>();
 
-        // Add recent purchase orders
         orders.stream()
                 .sorted(Comparator.comparing(PurchaseOrder::getOrderDate).reversed())
                 .limit(5)
@@ -146,7 +145,6 @@ public class DashboardService implements DashboardServiceInterface {
                                 " - " + order.getSupplier().getEmail())
                         .build()));
 
-        // Add recent goods issues
         issues.stream()
                 .sorted(Comparator.comparing(GoodsIssue::getIssueDate).reversed())
                 .limit(5)
@@ -159,7 +157,6 @@ public class DashboardService implements DashboardServiceInterface {
                                 " - " + issue.getDestination())
                         .build()));
 
-        // Sort by date and return top 10
         return activities.stream()
                 .sorted(Comparator.comparing(RecentActivityDTO::getDate).reversed())
                 .limit(10)
