@@ -12,4 +12,6 @@ public interface AuthServiceInterface {
     AuthenticationResponse refreshToken(String refreshToken);
 
     void logout(String refreshToken);
+
+    String getRefreshTokenForUser(String email);
 }

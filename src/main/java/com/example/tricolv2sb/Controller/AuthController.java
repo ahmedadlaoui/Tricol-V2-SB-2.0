@@ -36,8 +36,8 @@ public class AuthController {
             HttpServletResponse httpResponse) {
         AuthenticationResponse response = authService.signUserIn(request);
 
-        String refreshToken = ((com.example.tricolv2sb.Service.AuthService) authService)
-                .getRefreshTokenForUser(response.getEmail());
+        String refreshToken = authService.getRefreshTokenForUser(response.getEmail());
+
         if (refreshToken != null) {
             int maxAge = (int) (jwtService.getRefreshExpiration() / 1000);
             cookieUtil.setRefreshTokenCookie(httpResponse, refreshToken, maxAge);
@@ -52,8 +52,7 @@ public class AuthController {
             HttpServletResponse httpResponse) {
         AuthenticationResponse response = authService.register(request);
 
-        String refreshToken = ((com.example.tricolv2sb.Service.AuthService) authService)
-                .getRefreshTokenForUser(response.getEmail());
+        String refreshToken = authService.getRefreshTokenForUser(response.getEmail());
         if (refreshToken != null) {
             int maxAge = (int) (jwtService.getRefreshExpiration() / 1000);
             cookieUtil.setRefreshTokenCookie(httpResponse, refreshToken, maxAge);

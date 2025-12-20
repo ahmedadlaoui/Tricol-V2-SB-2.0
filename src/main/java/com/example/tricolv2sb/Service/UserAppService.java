@@ -28,7 +28,6 @@ public class UserAppService implements UserAppServiceInterface {
     private final UserAppRepository userRepository;
     private final RoleAppRepository roleRepository;
     private final UserAppMapper userAppMapper;
-    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -41,24 +40,6 @@ public class UserAppService implements UserAppServiceInterface {
 
         user.setRole(role);
         userRepository.save(user);
-
-
-        String ip = null;
-        String path = null;
-
-        ServletRequestAttributes attributes =
-                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-
-        if (attributes != null) {
-            HttpServletRequest request = attributes.getRequest();
-            ip = request.getRemoteAddr();
-            path = request.getRequestURI();
-        }
-
-        eventPublisher.publishEvent(
-                new AuditLogEvent(user.getEmail(), "ROLE_ASSIGNED", Map.of("User_ID", user.getId(), "Role", role.getName(), "IP_adress", ip, "path", path))
-        );
-
 
     }
 
