@@ -16,6 +16,7 @@ import com.example.tricolv2sb.Repository.StockMovementRepository;
 import com.example.tricolv2sb.Repository.SupplierRepository;
 import com.example.tricolv2sb.Service.ServiceInterfaces.PurchaseOrderInterface;
 
+import com.example.tricolv2sb.Util.interfaces.currentUserGetterInterface;
 import com.example.tricolv2sb.Util.interfaces.eventPublisherUtilInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -26,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,6 +44,7 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
     private final StockMovementRepository stockMovementRepository;
     private final ProductRepository productRepository;
     private final eventPublisherUtilInterface eventPublisherUtilInterface;
+    private final currentUserGetterInterface userGetter;
 
     @Transactional(readOnly = true)
     public List<ReadPurchaseOrderDTO> getAllPurchaseOrders() {
@@ -96,15 +100,13 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
         PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
 
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getPrincipal() instanceof UserApp) {
-            UserApp currentUser = (UserApp) auth.getPrincipal();
-            eventPublisherUtilInterface.triggerAuditLogEventPublisher("RESOURCE_STATUS_CHANGED", currentUser);
-        }
+        UserApp currentUser = userGetter.getCurrentUser();
+        Map<String, String> additionalDetails = new HashMap<>();
+        additionalDetails.put("Order id", String.valueOf(savedPurchaseOrder.getId()));
+
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher("ORDER_CREATED", currentUser, additionalDetails);
 
         return purchaseOrderMapper.toDto(savedPurchaseOrder);
-
-
     }
 
     public ReadPurchaseOrderDTO updatePurchaseOrder(Long id, UpdatePurchaseOrderDTO updatePurchaseOrderDTO) {
@@ -189,6 +191,15 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
 
         purchaseOrder.setStatus(OrderStatus.VALIDATED);
         purchaseOrderRepository.save(purchaseOrder);
+
+
+        PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
+
+        UserApp currentUser = userGetter.getCurrentUser();
+        Map<String, String> additionalDetails = new HashMap<>();
+        additionalDetails.put("Order id", String.valueOf(savedPurchaseOrder.getId()));
+
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher("ORDER_VALIDATED", currentUser, additionalDetails);
     }
 
     @Transactional
@@ -205,7 +216,13 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
         }
 
         purchaseOrder.setStatus(OrderStatus.CANCELLED);
-        purchaseOrderRepository.save(purchaseOrder);
+        PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
+
+        UserApp currentUser = userGetter.getCurrentUser();
+        Map<String, String> additionalDetails = new HashMap<>();
+        additionalDetails.put("Order id", String.valueOf(savedPurchaseOrder.getId()));
+
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher("ORDER_CANCELLED", currentUser, additionalDetails);
     }
 
     @Transactional
@@ -253,6 +270,14 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
         }
 
         purchaseOrderRepository.save(purchaseOrder);
+
+        PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
+
+        UserApp currentUser = userGetter.getCurrentUser();
+        Map<String, String> additionalDetails = new HashMap<>();
+        additionalDetails.put("Order id", String.valueOf(savedPurchaseOrder.getId()));
+
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher("ORDER_RECEIVED", currentUser, additionalDetails);
     }
 
     private String generateLotNumber(Long orderId, Long lineId) {
