@@ -16,6 +16,7 @@ import com.example.tricolv2sb.Repository.StockMovementRepository;
 import com.example.tricolv2sb.Repository.SupplierRepository;
 import com.example.tricolv2sb.Service.ServiceInterfaces.PurchaseOrderInterface;
 
+import com.example.tricolv2sb.Util.interfaces.eventPublisherUtilInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,8 +92,6 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
 
         PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
         return purchaseOrderMapper.toDto(savedPurchaseOrder);
-
-
 
     }
 

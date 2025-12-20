@@ -19,22 +19,11 @@ public class eventPublisherUtil implements eventPublisherUtilInterface {
 
     private final ApplicationEventPublisher eventPublisher;
 
-    public void triggerAuditLogEventPublisher(String action, UserApp user){
-        String ip = null;
-        String path = null;
+    public void triggerAuditLogEventPublisher(String action, UserApp user) {
 
-        ServletRequestAttributes attributes =
-                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-
-        if (attributes != null) {
-            HttpServletRequest request = attributes.getRequest();
-            ip = request.getRemoteAddr();
-            path = request.getRequestURI();
-        }
-
+        Map<String, String> requestInfos = getIpAndPathFromContextHolder();
         eventPublisher.publishEvent(
-                new AuditLogEvent(user.getEmail(),action, Map.of("User_ID", user.getId(), "Role", user.getRole().getName(), "IP_adress", ip, "path", path))
+                new AuditLogEvent(user.getEmail(), action, Map.of("User_ID", user.getId(), "Role", user.getRole().getName(), "IP_adress", requestInfos.get("ip"), "path", requestInfos.get("path")))
         );
     }
-
 }

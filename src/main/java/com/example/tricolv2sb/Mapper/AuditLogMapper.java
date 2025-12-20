@@ -20,7 +20,10 @@ public interface AuditLogMapper {
 
     @Mapping(target = "details", expression = "java(mapDetails(auditLog.getDetails(), objectMapper))")
     @Mapping(target = "timestamp", expression = "java(mapTimestamp(auditLog.getTimestamp()))")
+
+
     ReadAuditLogDTO toDto(AuditLog auditLog, @Context ObjectMapper objectMapper);
+
 
     default Map<String, Object> mapDetails(String detailsJson, ObjectMapper objectMapper) {
         Map<String, Object> detailsMap = new HashMap<>();
@@ -31,7 +34,6 @@ public interface AuditLogMapper {
                         new TypeReference<Map<String, Object>>() {
                         });
             } catch (Exception e) {
-                // If parsing fails, keep as string in a wrapper
                 detailsMap.put("raw", detailsJson);
             }
         }

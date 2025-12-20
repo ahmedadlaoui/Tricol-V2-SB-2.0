@@ -10,6 +10,7 @@ import com.example.tricolv2sb.Mapper.UserAppMapper;
 import com.example.tricolv2sb.Repository.RoleAppRepository;
 import com.example.tricolv2sb.Repository.UserAppRepository;
 import com.example.tricolv2sb.Service.ServiceInterfaces.UserAppServiceInterface;
+import com.example.tricolv2sb.Util.interfaces.eventPublisherUtilInterface;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -28,6 +29,7 @@ public class UserAppService implements UserAppServiceInterface {
     private final UserAppRepository userRepository;
     private final RoleAppRepository roleRepository;
     private final UserAppMapper userAppMapper;
+    private final eventPublisherUtilInterface eventPublisherUtilInterface;
 
     @Override
     @Transactional
@@ -40,6 +42,7 @@ public class UserAppService implements UserAppServiceInterface {
 
         user.setRole(role);
         userRepository.save(user);
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher("ROLE_ASSIGNED", user);
 
     }
 
