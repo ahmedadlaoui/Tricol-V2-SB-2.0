@@ -23,7 +23,20 @@ public class eventPublisherUtil implements eventPublisherUtilInterface {
 
         Map<String, String> requestInfos = getIpAndPathFromContextHolder();
         eventPublisher.publishEvent(
-                new AuditLogEvent(user.getEmail(), action, Map.of("User_ID", user.getId(), "Role", user.getRole().getName(), "IP_adress", requestInfos.get("ip"), "path", requestInfos.get("path")))
+                new AuditLogEvent(user.getEmail(), action, Map.of("User_ID", user.getId(), "Role", user.getRole().getName(), "IP_address", requestInfos.get("ip"), "path", requestInfos.get("path")))
+        );
+    }
+
+    public void triggerAuditLogEventPublisher(String action, UserApp user, Map<String,String> additionalDetails) {
+
+        Map<String, String> requestInfos = getIpAndPathFromContextHolder();
+
+        if (!additionalDetails.isEmpty()) {
+            requestInfos.putAll(additionalDetails);
+        }
+
+        eventPublisher.publishEvent(
+                new AuditLogEvent(user.getEmail(), action, Map.of("User_ID", user.getId(), "Role", user.getRole().getName(), "IP_address", requestInfos.get("ip"), "path", requestInfos.get("path")))
         );
     }
 }

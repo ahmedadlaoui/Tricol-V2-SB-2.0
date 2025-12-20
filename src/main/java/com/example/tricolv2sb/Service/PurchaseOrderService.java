@@ -18,6 +18,8 @@ import com.example.tricolv2sb.Service.ServiceInterfaces.PurchaseOrderInterface;
 
 import com.example.tricolv2sb.Util.interfaces.eventPublisherUtilInterface;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +40,7 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
     private final PurchaseOrderMapper purchaseOrderMapper;
     private final StockMovementRepository stockMovementRepository;
     private final ProductRepository productRepository;
+    private final eventPublisherUtilInterface eventPublisherUtilInterface;
 
     @Transactional(readOnly = true)
     public List<ReadPurchaseOrderDTO> getAllPurchaseOrders() {
@@ -91,7 +94,16 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
         purchaseOrder.calculateTotalAmount();
 
         PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
+
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof UserApp) {
+            UserApp currentUser = (UserApp) auth.getPrincipal();
+            eventPublisherUtilInterface.triggerAuditLogEventPublisher("RESOURCE_STATUS_CHANGED", currentUser);
+        }
+
         return purchaseOrderMapper.toDto(savedPurchaseOrder);
+
 
     }
 

@@ -10,7 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface eventPublisherUtilInterface {
+    public void triggerAuditLogEventPublisher(String action, UserApp user,Map<String, String> additionalDetails);
+
     public void triggerAuditLogEventPublisher(String action, UserApp user);
+
+
 
     default Map<String, String> getIpAndPathFromContextHolder() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
