@@ -10,9 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface eventPublisherUtilInterface {
-    public void triggerAuditLogEventPublisher(String action, UserApp user,Map<String, String> additionalDetails);
+    void triggerAuditLogEventPublisher(String action, UserApp user,Map<String, String> additionalDetails);
 
-    public void triggerAuditLogEventPublisher(String action, UserApp user);
+    void triggerAuditLogEventPublisher(String action, UserApp user);
 
 
 

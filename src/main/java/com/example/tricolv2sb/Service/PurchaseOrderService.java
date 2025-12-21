@@ -190,9 +190,6 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
         }
 
         purchaseOrder.setStatus(OrderStatus.VALIDATED);
-        purchaseOrderRepository.save(purchaseOrder);
-
-
         PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
 
         UserApp currentUser = userGetter.getCurrentUser();
@@ -268,9 +265,6 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
                 stockMovementRepository.save(stockMovement);
             }
         }
-
-        purchaseOrderRepository.save(purchaseOrder);
-
         PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
 
         UserApp currentUser = userGetter.getCurrentUser();

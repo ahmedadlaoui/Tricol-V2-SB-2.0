@@ -11,15 +11,15 @@ import com.example.tricolv2sb.Exception.ResourceNotFoundException;
 import com.example.tricolv2sb.Mapper.GoodsIssueMapper;
 import com.example.tricolv2sb.Repository.*;
 import com.example.tricolv2sb.Service.ServiceInterfaces.GoodsIssueServiceInterface;
+import com.example.tricolv2sb.Util.interfaces.currentUserGetterInterface;
+import com.example.tricolv2sb.Util.interfaces.eventPublisherUtilInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +31,8 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
     private final StockLotRepository stockLotRepository;
     private final StockMovementRepository stockMovementRepository;
     private final GoodsIssueMapper goodsIssueMapper;
+    private final eventPublisherUtilInterface eventPublisherUtilInterface;
+    private final currentUserGetterInterface userGetter;
 
     @Transactional(readOnly = true)
     public List<ReadGoodsIssueDTO> fetchAllGoodsIssues() {
@@ -80,6 +82,14 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
 
         goodsIssue.setIssueLines(issueLines);
         GoodsIssue savedGoodsIssue = goodsIssueRepository.save(goodsIssue);
+
+        UserApp currentUser = userGetter.getCurrentUser();
+        Map<String, String> additionalDetails = new HashMap<>();
+        additionalDetails.put("GoodsIssue id", String.valueOf(savedGoodsIssue.getId()));
+
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher("GOODSISSUE_CREATED", currentUser, additionalDetails);
+
+
         return goodsIssueMapper.toDto(savedGoodsIssue);
     }
 

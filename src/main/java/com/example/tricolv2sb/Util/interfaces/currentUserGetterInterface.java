@@ -6,5 +6,5 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public interface currentUserGetterInterface {
 
-    public UserApp getCurrentUser();
+    UserApp getCurrentUser();
 }
