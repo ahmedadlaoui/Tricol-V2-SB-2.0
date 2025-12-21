@@ -151,6 +151,12 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
 
         goodsIssue.setStatus(GoodsIssueStatus.VALIDATED);
         goodsIssueRepository.save(goodsIssue);
+
+        UserApp currentUser = userGetter.getCurrentUser();
+        Map<String, String> additionalDetails = new HashMap<>();
+        additionalDetails.put("GoodsIssue id", String.valueOf(goodsIssue.getId()));
+
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher("GOODSISSUE_VALIDATED", currentUser, additionalDetails);
     }
 
     private void processGoodsIssueLineFIFO(GoodsIssueLine line) {
@@ -205,6 +211,8 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
                     String.format("Failed to consume required quantity for product ID %d. Remaining: %.2f",
                             productId, remainingToConsume));
         }
+
+
     }
 
     @Transactional
@@ -218,6 +226,12 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
 
         goodsIssue.setStatus(GoodsIssueStatus.CANCELLED);
         goodsIssueRepository.save(goodsIssue);
+
+        UserApp currentUser = userGetter.getCurrentUser();
+        Map<String, String> additionalDetails = new HashMap<>();
+        additionalDetails.put("GoodsIssue id", String.valueOf(goodsIssue.getId()));
+
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher("GOODSISSUE_CANCELED", currentUser, additionalDetails);
     }
 
     private String generateIssueNumber() {
