@@ -44,4 +44,16 @@ public class GoodsIssueLine {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+
+    @Override
+    public String toString() {
+        return "GoodsIssueLine{" +
+                "id=" + id +
+                ", quantity=" + quantity +
+                ", productId=" + (product != null ? product.getId() : "null") +
+                ", goodsIssueId=" + (goodsIssue != null ? goodsIssue.getId() : "null") +
+                '}';
+    }
+
 }

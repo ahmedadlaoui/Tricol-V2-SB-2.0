@@ -119,6 +119,14 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
         }
 
         goodsIssueRepository.deleteById(id);
+
+        UserApp currentUser = userGetter.getCurrentUser();
+        Map<String, String> additionalDetails = new HashMap<>();
+        additionalDetails.put("GoodsIssue id", String.valueOf(goodsIssue.getId()));
+        additionalDetails.put("GoodsIssue status", String.valueOf(goodsIssue.getStatus()));
+        additionalDetails.put("GoodsIssue lines", String.valueOf(goodsIssue.getIssueLines()));
+
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher("GOODSISSUE_DELETED", currentUser, additionalDetails);
     }
 
     @Transactional
