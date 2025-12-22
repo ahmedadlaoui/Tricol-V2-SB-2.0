@@ -1,6 +1,7 @@
 package com.example.tricolv2sb.Util;
 
 
+import com.example.tricolv2sb.Entity.Enum.ActionName;
 import com.example.tricolv2sb.Entity.UserApp;
 import com.example.tricolv2sb.Event.AuditLogEvent;
 import com.example.tricolv2sb.Util.interfaces.eventPublisherUtilInterface;
@@ -19,7 +20,7 @@ public class eventPublisherUtil implements eventPublisherUtilInterface {
 
     private final ApplicationEventPublisher eventPublisher;
 
-    public void triggerAuditLogEventPublisher(String action, UserApp user) {
+    public void triggerAuditLogEventPublisher(ActionName action, UserApp user) {
 
         Map<String, String> requestInfos = getIpAndPathFromContextHolder();
         eventPublisher.publishEvent(
@@ -27,7 +28,7 @@ public class eventPublisherUtil implements eventPublisherUtilInterface {
         );
     }
 
-    public void triggerAuditLogEventPublisher(String action, UserApp user, Map<String,String> additionalDetails) {
+    public void triggerAuditLogEventPublisher(ActionName action, UserApp user, Map<String,String> additionalDetails) {
 
         Map<String, String> requestInfos = getIpAndPathFromContextHolder();
 

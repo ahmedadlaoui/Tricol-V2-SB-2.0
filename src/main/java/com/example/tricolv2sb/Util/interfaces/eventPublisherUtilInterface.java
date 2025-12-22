@@ -1,5 +1,6 @@
 package com.example.tricolv2sb.Util.interfaces;
 
+import com.example.tricolv2sb.Entity.Enum.ActionName;
 import com.example.tricolv2sb.Entity.UserApp;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -10,9 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface eventPublisherUtilInterface {
-    void triggerAuditLogEventPublisher(String action, UserApp user,Map<String, String> additionalDetails);
+    void triggerAuditLogEventPublisher(ActionName action, UserApp user,Map<String, String> additionalDetails);
 
-    void triggerAuditLogEventPublisher(String action, UserApp user);
+    void triggerAuditLogEventPublisher(ActionName action, UserApp user);
 
 
 

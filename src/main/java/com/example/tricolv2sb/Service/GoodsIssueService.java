@@ -4,6 +4,7 @@ import com.example.tricolv2sb.DTO.goodsissue.CreateGoodsIssueDTO;
 import com.example.tricolv2sb.DTO.goodsissue.ReadGoodsIssueDTO;
 import com.example.tricolv2sb.DTO.goodsissue.UpdateGoodsIssueDTO;
 import com.example.tricolv2sb.Entity.*;
+import com.example.tricolv2sb.Entity.Enum.ActionName;
 import com.example.tricolv2sb.Entity.Enum.GoodsIssueStatus;
 import com.example.tricolv2sb.Entity.Enum.StockMovementType;
 import com.example.tricolv2sb.Exception.BusinessViolationException;
@@ -87,7 +88,7 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
         Map<String, String> additionalDetails = new HashMap<>();
         additionalDetails.put("GoodsIssue id", String.valueOf(savedGoodsIssue.getId()));
 
-        eventPublisherUtilInterface.triggerAuditLogEventPublisher("GOODSISSUE_CREATED", currentUser, additionalDetails);
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.GOODSISSUE_CREATED, currentUser, additionalDetails);
 
 
         return goodsIssueMapper.toDto(savedGoodsIssue);
@@ -126,7 +127,7 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
         additionalDetails.put("GoodsIssue status", String.valueOf(goodsIssue.getStatus()));
         additionalDetails.put("GoodsIssue lines", String.valueOf(goodsIssue.getIssueLines()));
 
-        eventPublisherUtilInterface.triggerAuditLogEventPublisher("GOODSISSUE_DELETED", currentUser, additionalDetails);
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.GOODSISSUE_DELETED, currentUser, additionalDetails);
     }
 
     @Transactional
@@ -156,7 +157,7 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
         Map<String, String> additionalDetails = new HashMap<>();
         additionalDetails.put("GoodsIssue id", String.valueOf(goodsIssue.getId()));
 
-        eventPublisherUtilInterface.triggerAuditLogEventPublisher("GOODSISSUE_VALIDATED", currentUser, additionalDetails);
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.GOODSISSUE_VALIDATED, currentUser, additionalDetails);
     }
 
     private void processGoodsIssueLineFIFO(GoodsIssueLine line) {
@@ -231,7 +232,7 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
         Map<String, String> additionalDetails = new HashMap<>();
         additionalDetails.put("GoodsIssue id", String.valueOf(goodsIssue.getId()));
 
-        eventPublisherUtilInterface.triggerAuditLogEventPublisher("GOODSISSUE_CANCELED", currentUser, additionalDetails);
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.GOODSISSUE_CANCELED, currentUser, additionalDetails);
     }
 
     private String generateIssueNumber() {

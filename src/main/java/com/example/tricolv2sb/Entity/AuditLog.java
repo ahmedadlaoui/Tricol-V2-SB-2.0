@@ -1,6 +1,7 @@
 package com.example.tricolv2sb.Entity;
 
 
+import com.example.tricolv2sb.Entity.Enum.ActionName;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +21,8 @@ public class AuditLog {
 
     private String user;
 
-    private String action;
+    @Enumerated(EnumType.STRING)
+    private ActionName action;
 
     @Column(columnDefinition = "JSON")
     private String details;

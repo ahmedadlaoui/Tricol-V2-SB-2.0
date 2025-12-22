@@ -4,6 +4,7 @@ import com.example.tricolv2sb.DTO.purchaseorder.CreatePurchaseOrderDTO;
 import com.example.tricolv2sb.DTO.purchaseorder.ReadPurchaseOrderDTO;
 import com.example.tricolv2sb.DTO.purchaseorder.UpdatePurchaseOrderDTO;
 import com.example.tricolv2sb.Entity.*;
+import com.example.tricolv2sb.Entity.Enum.ActionName;
 import com.example.tricolv2sb.Entity.Enum.OrderStatus;
 import com.example.tricolv2sb.Entity.Enum.StockMovementType;
 import com.example.tricolv2sb.Exception.BusinessViolationException;
@@ -104,7 +105,7 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
         Map<String, String> additionalDetails = new HashMap<>();
         additionalDetails.put("Order id", String.valueOf(savedPurchaseOrder.getId()));
 
-        eventPublisherUtilInterface.triggerAuditLogEventPublisher("ORDER_CREATED", currentUser, additionalDetails);
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.ORDER_CREATED, currentUser, additionalDetails);
 
         return purchaseOrderMapper.toDto(savedPurchaseOrder);
     }
@@ -196,7 +197,7 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
         Map<String, String> additionalDetails = new HashMap<>();
         additionalDetails.put("Order id", String.valueOf(savedPurchaseOrder.getId()));
 
-        eventPublisherUtilInterface.triggerAuditLogEventPublisher("ORDER_VALIDATED", currentUser, additionalDetails);
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.ORDER_VALIDATED, currentUser, additionalDetails);
     }
 
     @Transactional
@@ -219,7 +220,7 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
         Map<String, String> additionalDetails = new HashMap<>();
         additionalDetails.put("Order id", String.valueOf(savedPurchaseOrder.getId()));
 
-        eventPublisherUtilInterface.triggerAuditLogEventPublisher("ORDER_CANCELLED", currentUser, additionalDetails);
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.ORDER_CANCELLED, currentUser, additionalDetails);
     }
 
     @Transactional
@@ -271,7 +272,7 @@ public class PurchaseOrderService implements PurchaseOrderInterface {
         Map<String, String> additionalDetails = new HashMap<>();
         additionalDetails.put("Order id", String.valueOf(savedPurchaseOrder.getId()));
 
-        eventPublisherUtilInterface.triggerAuditLogEventPublisher("ORDER_RECEIVED", currentUser, additionalDetails);
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.ORDER_RECEIVED, currentUser, additionalDetails);
     }
 
     private String generateLotNumber(Long orderId, Long lineId) {

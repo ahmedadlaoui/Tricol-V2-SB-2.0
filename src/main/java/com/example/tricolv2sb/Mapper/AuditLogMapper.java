@@ -2,6 +2,7 @@ package com.example.tricolv2sb.Mapper;
 
 import com.example.tricolv2sb.DTO.auditlog.ReadAuditLogDTO;
 import com.example.tricolv2sb.Entity.AuditLog;
+import com.example.tricolv2sb.Entity.Enum.ActionName;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mapstruct.AfterMapping;
@@ -20,10 +21,9 @@ public interface AuditLogMapper {
 
     @Mapping(target = "details", expression = "java(mapDetails(auditLog.getDetails(), objectMapper))")
     @Mapping(target = "timestamp", expression = "java(mapTimestamp(auditLog.getTimestamp()))")
-
+    @Mapping(target = "action", expression = "java(mapAction(auditLog.getAction()))")
 
     ReadAuditLogDTO toDto(AuditLog auditLog, @Context ObjectMapper objectMapper);
-
 
     default Map<String, Object> mapDetails(String detailsJson, ObjectMapper objectMapper) {
         Map<String, Object> detailsMap = new HashMap<>();
@@ -45,5 +45,9 @@ public interface AuditLogMapper {
             return LocalDateTime.ofInstant(timestamp, ZoneId.systemDefault());
         }
         return null;
+    }
+
+    default String mapAction(ActionName action) {
+        return action != null ? action.name() : null;
     }
 }
