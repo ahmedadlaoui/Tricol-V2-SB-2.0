@@ -64,13 +64,13 @@ public class JwtService {
                 .compact();
     }
 
-    public boolean isRefreshTokenValid(String token) {
-        try {
-            return !isTokenExpired(token);
-        } catch (Exception e) {
-            return false;
-        }
-    }
+//    public boolean isRefreshTokenValid(String token) {
+//        try {
+//            return !isTokenExpired(token);
+//        } catch (Exception e) {
+//            return false;
+//        }
+//    }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractEmail(token);
