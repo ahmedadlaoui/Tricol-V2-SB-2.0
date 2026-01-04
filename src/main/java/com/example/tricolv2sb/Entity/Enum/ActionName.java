@@ -1,6 +1,13 @@
 package com.example.tricolv2sb.Entity.Enum;
 
 public enum ActionName {
+    CREATE,
+    UPDATE,
+    READ,
+    DELETE,
+    RECEIVE,
+    VALIDATE,
+    CANCEL,
     GOODSISSUE_CREATED,
     GOODSISSUE_DELETED,
     GOODSISSUE_VALIDATED,
@@ -9,5 +16,6 @@ public enum ActionName {
     ORDER_VALIDATED,
     ORDER_CANCELLED,
     ORDER_RECEIVED,
-    ROLE_ASSIGNED
+    ROLE_ASSIGNED,
+    PERMISSION_ASSIGNED
 }

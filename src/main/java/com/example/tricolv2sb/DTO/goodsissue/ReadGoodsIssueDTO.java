@@ -17,5 +17,6 @@ public class ReadGoodsIssueDTO {
     private String destination;
     private GoodsIssueMotif motif;
     private GoodsIssueStatus status;
+    private Double totalAmount;
     private List<ReadGoodsIssueLineDTO> issueLines;
 }

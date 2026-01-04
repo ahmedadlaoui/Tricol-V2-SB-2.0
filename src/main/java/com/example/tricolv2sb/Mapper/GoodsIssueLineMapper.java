@@ -17,5 +17,7 @@ public interface GoodsIssueLineMapper {
 
     @Mapping(target = "productId", source = "product.id")
     @Mapping(target = "productName", source = "product.name")
+    @Mapping(target = "unitCost", source = "unitCost")
+    @Mapping(target = "lineTotal", source = "lineTotal")
     ReadGoodsIssueLineDTO toDto(GoodsIssueLine entity);
 }

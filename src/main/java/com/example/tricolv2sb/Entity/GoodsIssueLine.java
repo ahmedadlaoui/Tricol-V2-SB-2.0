@@ -19,6 +19,12 @@ public class GoodsIssueLine {
     @Column(nullable = false)
     private Double quantity;
 
+    @Column(nullable = true)
+    private Double unitCost;
+
+    @Column(nullable = true)
+    private Double lineTotal;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goods_issue_id", nullable = false)
     private GoodsIssue goodsIssue;

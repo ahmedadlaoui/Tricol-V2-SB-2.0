@@ -15,3 +15,7 @@ databaseChangeLog:
       file: db/changelog/tables/StockLot.sql
   - include:
       file: db/changelog/tables/StockMovement.sql
+  - include:
+      file: db/changelog/tables/009-add-cost-fields-to-goods-issues.sql
+  - include:
+      file: db/changelog/tables/010-add-cost-fields-to-goods-issue-lines.sql

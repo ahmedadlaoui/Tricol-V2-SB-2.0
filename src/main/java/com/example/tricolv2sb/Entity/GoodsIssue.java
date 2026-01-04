@@ -36,8 +36,22 @@ public class GoodsIssue {
     @Column(nullable = false)
     private GoodsIssueStatus status;
 
+    @Column(nullable = true)
+    private Double totalAmount;
+
     @OneToMany(mappedBy = "goodsIssue", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<GoodsIssueLine> issueLines = new ArrayList<>();
+
+    public void calculateTotalAmount() {
+        if (issueLines != null && !issueLines.isEmpty()) {
+            this.totalAmount = issueLines.stream()
+                    .filter(line -> line.getLineTotal() != null)
+                    .mapToDouble(GoodsIssueLine::getLineTotal)
+                    .sum();
+        } else {
+            this.totalAmount = 0.0;
+        }
+    }
 
     @Override
     public boolean equals(Object o) {

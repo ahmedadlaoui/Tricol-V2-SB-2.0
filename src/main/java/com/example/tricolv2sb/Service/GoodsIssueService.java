@@ -88,8 +88,8 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
         Map<String, String> additionalDetails = new HashMap<>();
         additionalDetails.put("GoodsIssue id", String.valueOf(savedGoodsIssue.getId()));
 
-        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.GOODSISSUE_CREATED, currentUser, additionalDetails);
-
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.GOODSISSUE_CREATED, currentUser,
+                additionalDetails);
 
         return goodsIssueMapper.toDto(savedGoodsIssue);
     }
@@ -127,7 +127,8 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
         additionalDetails.put("GoodsIssue status", String.valueOf(goodsIssue.getStatus()));
         additionalDetails.put("GoodsIssue lines", String.valueOf(goodsIssue.getIssueLines()));
 
-        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.GOODSISSUE_DELETED, currentUser, additionalDetails);
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.GOODSISSUE_DELETED, currentUser,
+                additionalDetails);
     }
 
     @Transactional
@@ -150,6 +151,12 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
             processGoodsIssueLineFIFO(line);
         }
 
+        // Refresh the goods issue to get updated lines with costs
+        goodsIssue = goodsIssueRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Goods issue not found with ID: " + id));
+
+        // Calculate total amount based on line totals
+        goodsIssue.calculateTotalAmount();
         goodsIssue.setStatus(GoodsIssueStatus.VALIDATED);
         goodsIssueRepository.save(goodsIssue);
 
@@ -157,7 +164,8 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
         Map<String, String> additionalDetails = new HashMap<>();
         additionalDetails.put("GoodsIssue id", String.valueOf(goodsIssue.getId()));
 
-        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.GOODSISSUE_VALIDATED, currentUser, additionalDetails);
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.GOODSISSUE_VALIDATED, currentUser,
+                additionalDetails);
     }
 
     private void processGoodsIssueLineFIFO(GoodsIssueLine line) {
@@ -183,6 +191,8 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
         List<StockLot> availableLots = stockLotRepository.findAvailableLotsByProductIdOrderByEntryDate(productId);
 
         Double remainingToConsume = requiredQuantity;
+        Double totalCost = 0.0;
+        Double totalQuantityConsumed = 0.0;
 
         for (StockLot lot : availableLots) {
             if (remainingToConsume <= 0) {
@@ -191,6 +201,11 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
 
             Double lotAvailable = lot.getRemainingQuantity();
             Double quantityToConsume = Math.min(lotAvailable, remainingToConsume);
+
+            // Calculate cost based on purchase price from stock lot
+            Double costForThisLot = quantityToConsume * lot.getPurchasePrice();
+            totalCost += costForThisLot;
+            totalQuantityConsumed += quantityToConsume;
 
             lot.setRemainingQuantity(lotAvailable - quantityToConsume);
             stockLotRepository.save(lot);
@@ -213,7 +228,13 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
                             productId, remainingToConsume));
         }
 
-
+        // Calculate and set unit cost and line total based on actual purchase prices
+        if (totalQuantityConsumed > 0) {
+            Double averageUnitCost = totalCost / totalQuantityConsumed;
+            line.setUnitCost(averageUnitCost);
+            line.setLineTotal(totalCost);
+            goodsIssueLineRepository.save(line);
+        }
     }
 
     @Transactional
@@ -232,7 +253,8 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
         Map<String, String> additionalDetails = new HashMap<>();
         additionalDetails.put("GoodsIssue id", String.valueOf(goodsIssue.getId()));
 
-        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.GOODSISSUE_CANCELED, currentUser, additionalDetails);
+        eventPublisherUtilInterface.triggerAuditLogEventPublisher(ActionName.GOODSISSUE_CANCELED, currentUser,
+                additionalDetails);
     }
 
     private String generateIssueNumber() {
