@@ -1,8 +1,7 @@
 {
 	"info": {
-		"_postman_id": "tricol-v2-api-2025-12",
-		"name": "Tricol V2 - Complete API Collection",
-		"description": "Complete API collection for Tricol V2 Stock Management System with JWT Authentication (Access Token + Refresh Token in HTTP-only Cookie). Includes all endpoints: Authentication, Users, Roles, Dashboard, Suppliers, Products, Purchase Orders, Goods Issues, Stock, Stock Movements, and Audit Logs.",
+		"_postman_id": "tricol-v2-api",
+		"name": "Tricol V2 API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -16,6 +15,10 @@
 		},
 		{
 			"key": "userId",
+			"value": "1"
+		},
+		{
+			"key": "permissionId",
 			"value": "1"
 		},
 		{
@@ -37,7 +40,7 @@
 	],
 	"item": [
 		{
-			"name": "Authentication",
+			"name": "Auth",
 			"item": [
 				{
 					"name": "Login",
@@ -46,12 +49,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"if(pm.response.code===200){",
-									"    const response = pm.response.json();",
-									"    if(response.body && response.body.accessToken){",
-									"        pm.collectionVariables.set('accessToken', response.body.accessToken);",
-									"    }",
-									"}"
+									"if(pm.response.code===200){const r=pm.response.json();if(r.body&&r.body.accessToken){pm.collectionVariables.set('accessToken',r.body.accessToken);}}"
 								]
 							}
 						}
@@ -66,7 +64,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"admin\"\n}"
+							"raw": "{\n  \"email\": \"admin@tricol.ma\",\n  \"password\": \"Admin@123\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/auth/login",
@@ -79,8 +77,7 @@
 								"auth",
 								"login"
 							]
-						},
-						"description": "Login with email and password. Returns access token in response body and refresh token in HTTP-only cookie."
+						}
 					}
 				},
 				{
@@ -90,12 +87,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"if(pm.response.code===201){",
-									"    const response = pm.response.json();",
-									"    if(response.body && response.body.accessToken){",
-									"        pm.collectionVariables.set('accessToken', response.body.accessToken);",
-									"    }",
-									"}"
+									"if(pm.response.code===201){const r=pm.response.json();if(r.body&&r.body.accessToken){pm.collectionVariables.set('accessToken',r.body.accessToken);}}"
 								]
 							}
 						}
@@ -110,7 +102,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"newuser@test.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"New User\"\n}"
+							"raw": "{\n  \"email\": \"newuser@test.com\",\n  \"password\": \"Test@123\",\n  \"fullName\": \"New User\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/auth/register",
@@ -123,8 +115,7 @@
 								"auth",
 								"register"
 							]
-						},
-						"description": "Register a new user. Returns access token in response body and refresh token in HTTP-only cookie."
+						}
 					}
 				},
 				{
@@ -134,19 +125,13 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"if(pm.response.code===200){",
-									"    const response = pm.response.json();",
-									"    if(response.body && response.body.accessToken){",
-									"        pm.collectionVariables.set('accessToken', response.body.accessToken);",
-									"    }",
-									"}"
+									"if(pm.response.code===200){const r=pm.response.json();if(r.body&&r.body.accessToken){pm.collectionVariables.set('accessToken',r.body.accessToken);}}"
 								]
 							}
 						}
 					],
 					"request": {
 						"method": "POST",
-						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/auth/refresh",
 							"host": [
@@ -158,15 +143,13 @@
 								"auth",
 								"refresh"
 							]
-						},
-						"description": "Refresh access token using refresh token from HTTP-only cookie. Returns new access token."
+						}
 					}
 				},
 				{
 					"name": "Logout",
 					"request": {
 						"method": "POST",
-						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/auth/logout",
 							"host": [
@@ -178,12 +161,11 @@
 								"auth",
 								"logout"
 							]
-						},
-						"description": "Logout and revoke refresh token. Clears HTTP-only cookie."
+						}
 					}
 				},
 				{
-					"name": "Get Current User",
+					"name": "Current User",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -203,8 +185,7 @@
 								"auth",
 								"current"
 							]
-						},
-						"description": "Get current authenticated user details."
+						}
 					}
 				}
 			]
@@ -232,12 +213,36 @@
 								"v1",
 								"users"
 							]
-						},
-						"description": "Get all users. Requires USER:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Assign Role to User",
+					"name": "Get User Permissions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/users/{{userId}}/all-permissions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"{{userId}}",
+								"all-permissions"
+							]
+						}
+					}
+				},
+				{
+					"name": "Assign Role",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -266,8 +271,91 @@
 								"{{userId}}",
 								"assign-role"
 							]
+						}
+					}
+				},
+				{
+					"name": "Get Custom Permissions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/users/{{userId}}/permissions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"{{userId}}",
+								"permissions"
+							]
+						}
+					}
+				},
+				{
+					"name": "Assign Permission",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"permissionId\": 1,\n  \"isGranted\": true\n}"
 						},
-						"description": "Assign a role to a user. Requires USER:UPDATE permission. Role options: ADMIN, PURCHASING_MANAGER, STOREKEEPER, WORKSHOP_MANAGER"
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/users/{{userId}}/permissions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"{{userId}}",
+								"permissions"
+							]
+						}
+					}
+				},
+				{
+					"name": "Revoke Permission",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/users/{{userId}}/permissions/{{permissionId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"{{userId}}",
+								"permissions",
+								"{{permissionId}}"
+							]
+						}
 					}
 				}
 			]
@@ -276,7 +364,7 @@
 			"name": "Roles",
 			"item": [
 				{
-					"name": "Get All Roles with Permissions",
+					"name": "Get All Roles",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -295,8 +383,35 @@
 								"v1",
 								"roles"
 							]
-						},
-						"description": "Get all roles with their associated permissions. Requires USER:READ permission (Admin only). Returns roles: ADMIN, PURCHASING_MANAGER, STOREKEEPER, WORKSHOP_MANAGER with their permissions."
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Permissions",
+			"item": [
+				{
+					"name": "Get All Permissions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/permissions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"permissions"
+							]
+						}
 					}
 				}
 			]
@@ -305,7 +420,7 @@
 			"name": "Dashboard",
 			"item": [
 				{
-					"name": "Get Dashboard Stats",
+					"name": "Get Stats",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -324,12 +439,11 @@
 								"v1",
 								"dashboard"
 							]
-						},
-						"description": "Get dashboard statistics. Requires STOCK:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Get Stock Alerts",
+					"name": "Get Alerts",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -349,8 +463,7 @@
 								"dashboard",
 								"alerts"
 							]
-						},
-						"description": "Get stock alerts (products below reorder point). Requires STOCK:READ permission."
+						}
 					}
 				}
 			]
@@ -359,7 +472,7 @@
 			"name": "Suppliers",
 			"item": [
 				{
-					"name": "Get All Suppliers",
+					"name": "Get All",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -378,12 +491,11 @@
 								"v1",
 								"suppliers"
 							]
-						},
-						"description": "Get all suppliers. Requires SUPPLIER:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Get Supplier by ID",
+					"name": "Get By ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -403,12 +515,11 @@
 								"suppliers",
 								"{{supplierId}}"
 							]
-						},
-						"description": "Get supplier by ID. Requires SUPPLIER:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Create Supplier",
+					"name": "Create",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -435,12 +546,11 @@
 								"v1",
 								"suppliers"
 							]
-						},
-						"description": "Create a new supplier. Requires SUPPLIER:CREATE permission."
+						}
 					}
 				},
 				{
-					"name": "Update Supplier",
+					"name": "Update",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -468,12 +578,11 @@
 								"suppliers",
 								"{{supplierId}}"
 							]
-						},
-						"description": "Update supplier by ID. Requires SUPPLIER:UPDATE permission."
+						}
 					}
 				},
 				{
-					"name": "Delete Supplier",
+					"name": "Delete",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -493,8 +602,7 @@
 								"suppliers",
 								"{{supplierId}}"
 							]
-						},
-						"description": "Delete supplier by ID. Requires SUPPLIER:DELETE permission."
+						}
 					}
 				}
 			]
@@ -503,7 +611,7 @@
 			"name": "Products",
 			"item": [
 				{
-					"name": "Get All Products",
+					"name": "Get All",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -522,12 +630,11 @@
 								"v1",
 								"products"
 							]
-						},
-						"description": "Get all products. Requires PRODUCT:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Get Product by ID",
+					"name": "Get By ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -547,12 +654,11 @@
 								"products",
 								"{{productId}}"
 							]
-						},
-						"description": "Get product by ID. Requires PRODUCT:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Create Product",
+					"name": "Create",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -567,7 +673,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"reference\": \"PROD-001\",\n  \"name\": \"Laptop HP ProBook 450\",\n  \"description\": \"HP ProBook 450 G8 - Intel Core i7, 16GB RAM, 512GB SSD\",\n  \"unitPrice\": 12500,\n  \"category\": \"Electronics\",\n  \"reorderPoint\": 5.0,\n  \"unitOfMeasure\": \"UNIT\"\n}"
+							"raw": "{\n  \"reference\": \"PROD-001\",\n  \"name\": \"Laptop HP ProBook 450\",\n  \"description\": \"HP ProBook 450 G8\",\n  \"unitPrice\": 12500,\n  \"category\": \"Electronics\",\n  \"reorderPoint\": 5.0,\n  \"unitOfMeasure\": \"UNIT\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/products",
@@ -579,12 +685,11 @@
 								"v1",
 								"products"
 							]
-						},
-						"description": "Create a new product. Requires PRODUCT:CREATE permission."
+						}
 					}
 				},
 				{
-					"name": "Update Product",
+					"name": "Update",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -599,7 +704,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"reference\": \"PROD-001\",\n  \"name\": \"Laptop HP ProBook 450 Updated\",\n  \"description\": \"HP ProBook 450 G8 - Intel Core i7, 16GB RAM, 512GB SSD\",\n  \"unitPrice\": 12500,\n  \"category\": \"Electronics\",\n  \"reorderPoint\": 5.0,\n  \"unitOfMeasure\": \"UNIT\"\n}"
+							"raw": "{\n  \"reference\": \"PROD-001\",\n  \"name\": \"Laptop HP ProBook 450 Updated\",\n  \"description\": \"HP ProBook 450 G8\",\n  \"unitPrice\": 12500,\n  \"category\": \"Electronics\",\n  \"reorderPoint\": 5.0,\n  \"unitOfMeasure\": \"UNIT\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/products/{{productId}}",
@@ -612,12 +717,11 @@
 								"products",
 								"{{productId}}"
 							]
-						},
-						"description": "Update product by ID. Requires PRODUCT:UPDATE permission."
+						}
 					}
 				},
 				{
-					"name": "Delete Product",
+					"name": "Delete",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -637,12 +741,11 @@
 								"products",
 								"{{productId}}"
 							]
-						},
-						"description": "Delete product by ID. Requires PRODUCT:DELETE permission."
+						}
 					}
 				},
 				{
-					"name": "Get Product Stock Detail",
+					"name": "Get Stock Detail",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -663,8 +766,7 @@
 								"{{productId}}",
 								"stock"
 							]
-						},
-						"description": "Get product stock detail with FIFO lots. Requires STOCK:READ permission."
+						}
 					}
 				}
 			]
@@ -673,7 +775,7 @@
 			"name": "Purchase Orders",
 			"item": [
 				{
-					"name": "Get All Purchase Orders",
+					"name": "Get All",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -692,12 +794,11 @@
 								"v1",
 								"orders"
 							]
-						},
-						"description": "Get all purchase orders. Requires PUCHASE_ORDER:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Get Purchase Orders by Status",
+					"name": "Get By Status",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -718,12 +819,11 @@
 								"status",
 								"PENDING"
 							]
-						},
-						"description": "Get purchase orders by status. Status options: PENDING, VALIDATED, RECEIVED, DELIVERED, CANCELLED. Requires PUCHASE_ORDER:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Get Purchase Order by ID",
+					"name": "Get By ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -743,12 +843,11 @@
 								"orders",
 								"{{orderId}}"
 							]
-						},
-						"description": "Get purchase order by ID. Requires PUCHASE_ORDER:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Get Purchase Orders by Supplier",
+					"name": "Get By Supplier",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -769,12 +868,11 @@
 								"supplier",
 								"{{supplierId}}"
 							]
-						},
-						"description": "Get purchase orders by supplier ID. Requires PUCHASE_ORDER:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Create Purchase Order",
+					"name": "Create",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -789,7 +887,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"orderDate\": \"2025-12-18\",\n  \"supplierId\": 1,\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 10.0,\n      \"unitPrice\": 12500.0\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 5.0,\n      \"unitPrice\": 2500.0\n    }\n  ]\n}"
+							"raw": "{\n  \"orderDate\": \"2026-01-03\",\n  \"supplierId\": 1,\n  \"lines\": [\n    {\"productId\": 1, \"quantity\": 10.0, \"unitPrice\": 12500.0}\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders",
@@ -801,12 +899,11 @@
 								"v1",
 								"orders"
 							]
-						},
-						"description": "Create a new purchase order. Requires PUCHASE_ORDER:CREATE permission."
+						}
 					}
 				},
 				{
-					"name": "Update Purchase Order",
+					"name": "Update",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -821,7 +918,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"orderDate\": \"2025-12-18\",\n  \"supplierId\": 1,\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 15.0,\n      \"unitPrice\": 12500.0\n    }\n  ]\n}"
+							"raw": "{\n  \"orderDate\": \"2026-01-03\",\n  \"supplierId\": 1,\n  \"lines\": [\n    {\"productId\": 1, \"quantity\": 15.0, \"unitPrice\": 12500.0}\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/orders/{{orderId}}",
@@ -834,12 +931,11 @@
 								"orders",
 								"{{orderId}}"
 							]
-						},
-						"description": "Update purchase order by ID. Requires PUCHASE_ORDER:UPDATE permission."
+						}
 					}
 				},
 				{
-					"name": "Delete Purchase Order",
+					"name": "Delete",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -859,12 +955,11 @@
 								"orders",
 								"{{orderId}}"
 							]
-						},
-						"description": "Delete purchase order by ID. Requires PUCHASE_ORDER:DELETE permission."
+						}
 					}
 				},
 				{
-					"name": "Validate Purchase Order",
+					"name": "Validate",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -885,12 +980,11 @@
 								"{{orderId}}",
 								"validate"
 							]
-						},
-						"description": "Validate a purchase order. Changes status to VALIDATED. Requires PUCHASE_ORDER:VALIDATE permission."
+						}
 					}
 				},
 				{
-					"name": "Receive Purchase Order",
+					"name": "Receive",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -911,12 +1005,11 @@
 								"{{orderId}}",
 								"reception"
 							]
-						},
-						"description": "Receive a purchase order. Creates stock lots and changes status to DELIVERED. Requires PUCHASE_ORDER:RECEIVE permission."
+						}
 					}
 				},
 				{
-					"name": "Cancel Purchase Order",
+					"name": "Cancel",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -937,8 +1030,7 @@
 								"{{orderId}}",
 								"cancel"
 							]
-						},
-						"description": "Cancel a purchase order. Changes status to CANCELLED. Requires PUCHASE_ORDER:CANCEL permission."
+						}
 					}
 				}
 			]
@@ -947,7 +1039,7 @@
 			"name": "Goods Issues",
 			"item": [
 				{
-					"name": "Get All Goods Issues",
+					"name": "Get All",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -966,12 +1058,11 @@
 								"v1",
 								"goods-issues"
 							]
-						},
-						"description": "Get all goods issues. Requires GOODS_ISSUE:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Get Goods Issues by Status",
+					"name": "Get By Status",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -992,12 +1083,11 @@
 								"status",
 								"DRAFT"
 							]
-						},
-						"description": "Get goods issues by status. Status options: DRAFT, VALIDATED, CANCELLED. Requires GOODS_ISSUE:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Get Goods Issue by ID",
+					"name": "Get By ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1017,12 +1107,11 @@
 								"goods-issues",
 								"{{goodsIssueId}}"
 							]
-						},
-						"description": "Get goods issue by ID. Requires GOODS_ISSUE:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Create Goods Issue",
+					"name": "Create",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1037,7 +1126,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"issueDate\": \"2025-12-18\",\n  \"destination\": \"Workshop A - Production Line\",\n  \"motif\": \"PRODUCTION\",\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2.0\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 5.0\n    }\n  ]\n}"
+							"raw": "{\n  \"issueDate\": \"2026-01-03\",\n  \"destination\": \"Workshop A\",\n  \"motif\": \"PRODUCTION\",\n  \"lines\": [\n    {\"productId\": 1, \"quantity\": 2.0}\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues",
@@ -1049,12 +1138,11 @@
 								"v1",
 								"goods-issues"
 							]
-						},
-						"description": "Create a new goods issue (DRAFT status). Requires GOODS_ISSUE:CREATE permission. Motif options: PRODUCTION, MAINTENANCE, OTHER."
+						}
 					}
 				},
 				{
-					"name": "Update Goods Issue",
+					"name": "Update",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -1069,7 +1157,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"issueDate\": \"2025-12-18\",\n  \"destination\": \"Workshop A - Production Line Updated\",\n  \"motif\": \"PRODUCTION\",\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 3.0\n    }\n  ]\n}"
+							"raw": "{\n  \"issueDate\": \"2026-01-03\",\n  \"destination\": \"Workshop A Updated\",\n  \"motif\": \"PRODUCTION\",\n  \"lines\": [\n    {\"productId\": 1, \"quantity\": 3.0}\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/goods-issues/{{goodsIssueId}}",
@@ -1082,12 +1170,11 @@
 								"goods-issues",
 								"{{goodsIssueId}}"
 							]
-						},
-						"description": "Update goods issue by ID (only DRAFT status). Requires GOODS_ISSUE:UPDATE permission."
+						}
 					}
 				},
 				{
-					"name": "Delete Goods Issue",
+					"name": "Delete",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -1107,12 +1194,11 @@
 								"goods-issues",
 								"{{goodsIssueId}}"
 							]
-						},
-						"description": "Delete goods issue by ID (only DRAFT status). Requires GOODS_ISSUE:DELETE permission."
+						}
 					}
 				},
 				{
-					"name": "Validate Goods Issue",
+					"name": "Validate",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -1133,12 +1219,11 @@
 								"{{goodsIssueId}}",
 								"validate"
 							]
-						},
-						"description": "Validate a goods issue. Consumes stock using FIFO and changes status to VALIDATED. Requires GOODS_ISSUE:VALIDATE permission."
+						}
 					}
 				},
 				{
-					"name": "Cancel Goods Issue",
+					"name": "Cancel",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -1159,8 +1244,7 @@
 								"{{goodsIssueId}}",
 								"cancel"
 							]
-						},
-						"description": "Cancel a goods issue (only DRAFT status). Changes status to CANCELLED. Requires GOODS_ISSUE:CANCEL permission."
+						}
 					}
 				}
 			]
@@ -1188,12 +1272,11 @@
 								"v1",
 								"stock"
 							]
-						},
-						"description": "Get global stock summary for all products. Requires STOCK:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Get Product Stock Detail",
+					"name": "Get Product Stock",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1214,12 +1297,11 @@
 								"product",
 								"{{productId}}"
 							]
-						},
-						"description": "Get product stock detail with FIFO lots. Requires STOCK:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Get Stock Valuation",
+					"name": "Get Valuation",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1239,8 +1321,7 @@
 								"stock",
 								"valuation"
 							]
-						},
-						"description": "Get total stock valuation based on FIFO. Requires STOCK:READ permission."
+						}
 					}
 				}
 			]
@@ -1249,7 +1330,7 @@
 			"name": "Stock Movements",
 			"item": [
 				{
-					"name": "Search Stock Movements",
+					"name": "Search",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1259,7 +1340,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/stock/mouvements?dateDebut=2025-12-01&dateFin=2025-12-31&produitId=1&type=IN&page=0&size=20",
+							"raw": "{{baseUrl}}/api/v1/stock/mouvements?page=0&size=20",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -1271,52 +1352,19 @@
 							],
 							"query": [
 								{
-									"key": "dateDebut",
-									"value": "2025-12-01",
-									"description": "Start date (YYYY-MM-DD)"
-								},
-								{
-									"key": "dateFin",
-									"value": "2025-12-31",
-									"description": "End date (YYYY-MM-DD)"
-								},
-								{
-									"key": "produitId",
-									"value": "1",
-									"description": "Product ID"
-								},
-								{
-									"key": "reference",
-									"value": "",
-									"description": "Product reference"
-								},
-								{
-									"key": "type",
-									"value": "IN",
-									"description": "Movement type: IN or OUT"
-								},
-								{
-									"key": "numeroLot",
-									"value": "",
-									"description": "Lot number"
-								},
-								{
 									"key": "page",
-									"value": "0",
-									"description": "Page number (default: 0)"
+									"value": "0"
 								},
 								{
 									"key": "size",
-									"value": "20",
-									"description": "Page size (default: 20)"
+									"value": "20"
 								}
 							]
-						},
-						"description": "Search stock movements with filters (paginated). Requires STOCK_MOVEMENT:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Get All Stock Movements",
+					"name": "Get All",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1337,12 +1385,11 @@
 								"mouvements",
 								"all"
 							]
-						},
-						"description": "Get all stock movements. Requires STOCK_MOVEMENT:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Get Stock Movement by ID",
+					"name": "Get By ID",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1363,12 +1410,11 @@
 								"mouvements",
 								"1"
 							]
-						},
-						"description": "Get stock movement by ID. Requires STOCK_MOVEMENT:READ permission."
+						}
 					}
 				},
 				{
-					"name": "Get Stock Movements by Product",
+					"name": "Get By Product",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1390,8 +1436,7 @@
 								"product",
 								"{{productId}}"
 							]
-						},
-						"description": "Get stock movements by product ID. Requires STOCK_MOVEMENT:READ permission."
+						}
 					}
 				}
 			]
@@ -1400,7 +1445,7 @@
 			"name": "Audit Logs",
 			"item": [
 				{
-					"name": "Get All Audit Logs",
+					"name": "Get All",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1419,8 +1464,7 @@
 								"v1",
 								"logs"
 							]
-						},
-						"description": "Get all audit logs. Requires AUDIT_LOGS:READ permission (Admin only)."
+						}
 					}
 				}
 			]
