@@ -9,6 +9,10 @@ import com.example.tricolv2sb.Exception.ResourceNotFoundException;
 import com.example.tricolv2sb.Service.ServiceInterfaces.GoodsIssueServiceInterface;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,8 +29,14 @@ public class GoodsIssueController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('GOODS_ISSUE:READ')")
-    public ResponseEntity<ApiResponse<List<ReadGoodsIssueDTO>>> getAllGoodsIssues() {
-        List<ReadGoodsIssueDTO> goodsIssues = goodsIssueService.fetchAllGoodsIssues();
+    public ResponseEntity<ApiResponse<Page<ReadGoodsIssueDTO>>> getAllGoodsIssues(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<ReadGoodsIssueDTO> goodsIssues = goodsIssueService.fetchAllGoodsIssues(pageable);
         return ResponseEntity.ok(ApiResponse.success(goodsIssues, "Goods issues fetched successfully"));
     }
 

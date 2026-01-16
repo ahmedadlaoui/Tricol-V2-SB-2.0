@@ -15,6 +15,8 @@ import com.example.tricolv2sb.Repository.UserAppRepository;
 import com.example.tricolv2sb.Service.ServiceInterfaces.UserAppServiceInterface;
 import com.example.tricolv2sb.Util.interfaces.eventPublisherUtilInterface;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,9 +45,10 @@ public class UserAppService implements UserAppServiceInterface {
     }
 
     @Override
-    public List<ReadUserDTO> getAllUsers() {
-        List<UserApp> users = userRepository.findAll();
-        return userAppMapper.toReadUserDTOList(users);
+    @Transactional(readOnly = true)
+    public Page<ReadUserDTO> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(userAppMapper::toReadUserDTO);
     }
 
     @Override

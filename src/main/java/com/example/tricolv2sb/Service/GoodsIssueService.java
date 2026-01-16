@@ -15,6 +15,8 @@ import com.example.tricolv2sb.Service.ServiceInterfaces.GoodsIssueServiceInterfa
 import com.example.tricolv2sb.Util.interfaces.currentUserGetterInterface;
 import com.example.tricolv2sb.Util.interfaces.eventPublisherUtilInterface;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,11 +38,9 @@ public class GoodsIssueService implements GoodsIssueServiceInterface {
     private final currentUserGetterInterface userGetter;
 
     @Transactional(readOnly = true)
-    public List<ReadGoodsIssueDTO> fetchAllGoodsIssues() {
-        List<GoodsIssue> goodsIssues = goodsIssueRepository.findAll();
-        return goodsIssues.stream()
-                .map(goodsIssueMapper::toDto)
-                .toList();
+    public Page<ReadGoodsIssueDTO> fetchAllGoodsIssues(Pageable pageable) {
+        return goodsIssueRepository.findAll(pageable)
+                .map(goodsIssueMapper::toDto);
     }
 
     @Override

@@ -7,6 +7,10 @@ import com.example.tricolv2sb.DTO.purchaseorder.UpdatePurchaseOrderDTO;
 import com.example.tricolv2sb.Entity.Enum.OrderStatus;
 import com.example.tricolv2sb.Service.ServiceInterfaces.PurchaseOrderInterface;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,8 +28,14 @@ public class PurchaseOrderController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('PUCHASE_ORDER:READ')")
-    public ResponseEntity<ApiResponse<List<ReadPurchaseOrderDTO>>> getAllPurchaseOrders() {
-        List<ReadPurchaseOrderDTO> purchaseOrders = purchaseOrderService.getAllPurchaseOrders();
+    public ResponseEntity<ApiResponse<Page<ReadPurchaseOrderDTO>>> getAllPurchaseOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<ReadPurchaseOrderDTO> purchaseOrders = purchaseOrderService.getAllPurchaseOrders(pageable);
         return ResponseEntity.ok(ApiResponse.success(purchaseOrders, "Purchase orders fetched successfully"));
     }
 

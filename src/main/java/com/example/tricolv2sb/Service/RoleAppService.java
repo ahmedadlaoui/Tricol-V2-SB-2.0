@@ -7,6 +7,8 @@ import com.example.tricolv2sb.Entity.RoleApp;
 import com.example.tricolv2sb.Repository.RoleAppRepository;
 import com.example.tricolv2sb.Service.ServiceInterfaces.RoleAppServiceInterface;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +24,9 @@ public class RoleAppService implements RoleAppServiceInterface {
 
     @Override
     @Transactional(readOnly = true)
-    public List<RoleDTO> getAllRolesWithPermissions() {
-        // Fetch all roles with their permissions eagerly loaded
-        List<RoleApp> roles = roleAppRepository.findAllWithPermissions();
-
-        return roles.stream()
-                .map(this::mapToRoleDTO)
-                .collect(Collectors.toList());
+    public Page<RoleDTO> getAllRolesWithPermissions(Pageable pageable) {
+        return roleAppRepository.findAllWithPermissions(pageable)
+                .map(this::mapToRoleDTO);
     }
 
     private RoleDTO mapToRoleDTO(RoleApp role) {
@@ -58,4 +56,3 @@ public class RoleAppService implements RoleAppServiceInterface {
                 .build();
     }
 }
-

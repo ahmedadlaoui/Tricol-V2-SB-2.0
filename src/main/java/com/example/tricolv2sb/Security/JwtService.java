@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -36,13 +38,30 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
+    public String extractRole(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("role", String.class);
+    }
+
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
 
         if (userDetails instanceof UserApp) {
             UserApp user = (UserApp) userDetails;
+            claims.put("userId", user.getId());
+            claims.put("email", user.getEmail());
+            claims.put("fullName", user.getFullName());
+
             if (user.getRole() != null) {
                 claims.put("role", user.getRole().getName().name());
+
+                // Add permissions list for frontend access control
+                if (user.getRole().getPermissions() != null) {
+                    List<String> permissions = user.getRole().getPermissions().stream()
+                            .map(permission -> permission.getAuthority())
+                            .collect(Collectors.toList());
+                    claims.put("permissions", permissions);
+                }
             }
         }
 
@@ -64,13 +83,13 @@ public class JwtService {
                 .compact();
     }
 
-//    public boolean isRefreshTokenValid(String token) {
-//        try {
-//            return !isTokenExpired(token);
-//        } catch (Exception e) {
-//            return false;
-//        }
-//    }
+    // public boolean isRefreshTokenValid(String token) {
+    // try {
+    // return !isTokenExpired(token);
+    // } catch (Exception e) {
+    // return false;
+    // }
+    // }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractEmail(token);

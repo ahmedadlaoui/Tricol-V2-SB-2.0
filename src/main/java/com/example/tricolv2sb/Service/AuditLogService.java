@@ -8,6 +8,8 @@ import com.example.tricolv2sb.Service.ServiceInterfaces.AuditLogServiceInterface
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,10 +25,8 @@ public class AuditLogService implements AuditLogServiceInterface {
     private final ObjectMapper objectMapper;
 
     @Override
-    public List<ReadAuditLogDTO> getAllLogs() {
-        List<AuditLog> logs = auditLogRepo.findAll();
-        return logs.stream()
-                .map(log -> auditLogMapper.toDto(log, objectMapper))
-                .collect(Collectors.toList());
+    public Page<ReadAuditLogDTO> getAllLogs(Pageable pageable) {
+        return auditLogRepo.findAll(pageable)
+                .map(log -> auditLogMapper.toDto(log, objectMapper));
     }
 }

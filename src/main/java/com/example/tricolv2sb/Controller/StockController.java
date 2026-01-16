@@ -6,6 +6,10 @@ import com.example.tricolv2sb.DTO.stock.StockSummaryDTO;
 import com.example.tricolv2sb.DTO.stock.StockValuationDTO;
 import com.example.tricolv2sb.Service.ServiceInterfaces.StockServiceInterface;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +25,14 @@ public class StockController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('STOCK:READ')")
-    public ResponseEntity<ApiResponse<List<StockSummaryDTO>>> getGlobalStock() {
-        List<StockSummaryDTO> stock = stockService.getGlobalStock();
+    public ResponseEntity<ApiResponse<Page<StockSummaryDTO>>> getGlobalStock(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<StockSummaryDTO> stock = stockService.getGlobalStock(pageable);
         return ResponseEntity.ok(ApiResponse.success(stock, "Global stock summary fetched successfully"));
     }
 

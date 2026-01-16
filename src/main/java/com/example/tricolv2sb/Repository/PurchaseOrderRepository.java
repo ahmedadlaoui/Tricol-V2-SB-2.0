@@ -4,6 +4,8 @@ import com.example.tricolv2sb.Entity.PurchaseOrder;
 
 import com.example.tricolv2sb.Entity.Enum.OrderStatus;
 import com.example.tricolv2sb.Entity.Supplier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
@@ -26,6 +28,10 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Lo
     @EntityGraph(attributePaths = { "orderLines", "orderLines.product" })
     @Query("SELECT po FROM PurchaseOrder po")
     List<PurchaseOrder> findAllWithOrderLines();
+
+    @EntityGraph(attributePaths = { "orderLines", "orderLines.product" })
+    @Query(value = "SELECT po FROM PurchaseOrder po", countQuery = "SELECT COUNT(po) FROM PurchaseOrder po")
+    Page<PurchaseOrder> findAllWithOrderLines(Pageable pageable);
 
     @EntityGraph(attributePaths = { "orderLines", "orderLines.product" })
     @Query("SELECT po FROM PurchaseOrder po WHERE po.status = :status")

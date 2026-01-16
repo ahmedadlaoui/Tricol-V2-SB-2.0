@@ -7,6 +7,10 @@ import com.example.tricolv2sb.DTO.userapp.UserPermissionsDTO;
 import com.example.tricolv2sb.Service.ServiceInterfaces.UserAppServiceInterface;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +26,14 @@ public class UserAppController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('USER:READ')")
-    public ResponseEntity<ApiResponse<List<ReadUserDTO>>> getAllUsers() {
-        List<ReadUserDTO> users = userAppService.getAllUsers();
+    public ResponseEntity<ApiResponse<Page<ReadUserDTO>>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<ReadUserDTO> users = userAppService.getAllUsers(pageable);
         return ResponseEntity.ok(ApiResponse.success(users, "Users fetched successfully"));
     }
 

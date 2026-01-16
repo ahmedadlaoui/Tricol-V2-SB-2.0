@@ -4,12 +4,14 @@ import com.example.tricolv2sb.DTO.purchaseorder.CreatePurchaseOrderDTO;
 import com.example.tricolv2sb.DTO.purchaseorder.ReadPurchaseOrderDTO;
 import com.example.tricolv2sb.DTO.purchaseorder.UpdatePurchaseOrderDTO;
 import com.example.tricolv2sb.Entity.Enum.OrderStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface PurchaseOrderInterface {
 
-    List<ReadPurchaseOrderDTO> getAllPurchaseOrders();
+    Page<ReadPurchaseOrderDTO> getAllPurchaseOrders(Pageable pageable);
 
     List<ReadPurchaseOrderDTO> getPurchaseOrdersByStatus(OrderStatus status);
 

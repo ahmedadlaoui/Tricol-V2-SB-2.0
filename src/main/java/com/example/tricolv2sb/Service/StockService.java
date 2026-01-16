@@ -11,6 +11,8 @@ import com.example.tricolv2sb.Repository.ProductRepository;
 import com.example.tricolv2sb.Repository.StockLotRepository;
 import com.example.tricolv2sb.Service.ServiceInterfaces.StockServiceInterface;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +27,8 @@ public class StockService implements StockServiceInterface {
         private final StockLotRepository stockLotRepository;
 
         @Transactional(readOnly = true)
-        public List<StockSummaryDTO> getGlobalStock() {
-                List<Product> products = productRepository.findAll();
-
-                return products.stream()
+        public Page<StockSummaryDTO> getGlobalStock(Pageable pageable) {
+                return productRepository.findAll(pageable)
                                 .map(product -> {
                                         Double totalStock = stockLotRepository
                                                         .calculateTotalAvailableStock(product.getId());
@@ -41,8 +41,7 @@ public class StockService implements StockServiceInterface {
                                                         totalStock,
                                                         product.getReorderPoint(),
                                                         belowThreshold);
-                                })
-                                .collect(Collectors.toList());
+                                });
         }
 
         @Transactional(readOnly = true)

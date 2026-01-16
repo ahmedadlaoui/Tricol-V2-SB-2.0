@@ -11,6 +11,8 @@ import com.example.tricolv2sb.Repository.SupplierRepository;
 import com.example.tricolv2sb.Service.ServiceInterfaces.SupplierServiceInterface;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,11 +27,9 @@ public class SupplierService implements SupplierServiceInterface {
     private final SupplierRepository supplierRepository;
 
     @Transactional(readOnly = true)
-    public List<ReadSupplierDTO> fetchAllSuppliers() {
-        List<Supplier> suppliers = supplierRepository.findAll();
-        return suppliers.stream()
-                .map(supplierMapper::toDto)
-                .toList();
+    public Page<ReadSupplierDTO> fetchAllSuppliers(Pageable pageable) {
+        return supplierRepository.findAll(pageable)
+                .map(supplierMapper::toDto);
     }
 
     @Transactional

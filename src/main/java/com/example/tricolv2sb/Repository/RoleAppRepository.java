@@ -2,6 +2,8 @@ package com.example.tricolv2sb.Repository;
 
 import com.example.tricolv2sb.Entity.RoleApp;
 import com.example.tricolv2sb.Entity.Enum.RoleName;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,5 +17,7 @@ public interface RoleAppRepository extends JpaRepository<RoleApp, Long> {
 
     @Query("SELECT DISTINCT r FROM RoleApp r LEFT JOIN FETCH r.permissions")
     List<RoleApp> findAllWithPermissions();
-}
 
+    @Query(value = "SELECT DISTINCT r FROM RoleApp r LEFT JOIN FETCH r.permissions", countQuery = "SELECT COUNT(DISTINCT r) FROM RoleApp r")
+    Page<RoleApp> findAllWithPermissions(Pageable pageable);
+}

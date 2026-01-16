@@ -1,4 +1,15 @@
-2025-12-31T15:13:04.443+01:00 ERROR 12784 --- [Tricol-V2-SB] [http-nio-8080-exec-9] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 1015610434 milliseconds ago at 2025-12-19T20:06:14.000Z. Current time: 2025-12-31T14:13:04.434Z. Allowed clock skew: 0 milliseconds.
-2025-12-31T15:56:31.889+01:00 ERROR 25448 --- [Tricol-V2-SB] [http-nio-8080-exec-3] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 1736889 milliseconds ago at 2025-12-31T14:27:35.000Z. Current time: 2025-12-31T14:56:31.889Z. Allowed clock skew: 0 milliseconds.
-2025-12-31T15:56:52.152+01:00 ERROR 25448 --- [Tricol-V2-SB] [http-nio-8080-exec-5] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 1757152 milliseconds ago at 2025-12-31T14:27:35.000Z. Current time: 2025-12-31T14:56:52.152Z. Allowed clock skew: 0 milliseconds.
-2025-12-31T15:59:04.961+01:00 ERROR 32928 --- [Tricol-V2-SB] [http-nio-8080-exec-1] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: JWT expired 1889952 milliseconds ago at 2025-12-31T14:27:35.000Z. Current time: 2025-12-31T14:59:04.952Z. Allowed clock skew: 0 milliseconds.
+2026-01-13T14:19:18.573+01:00 ERROR 12760 --- [Tricol-V2-SB] [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 1 of constructor in com.example.tricolv2sb.Service.AuditLogService required a bean of type 'com.example.tricolv2sb.Mapper.AuditLogMapper' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.example.tricolv2sb.Mapper.AuditLogMapper' in your configuration.
+

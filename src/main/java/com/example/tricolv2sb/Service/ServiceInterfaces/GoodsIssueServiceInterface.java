@@ -4,13 +4,15 @@ import com.example.tricolv2sb.DTO.goodsissue.CreateGoodsIssueDTO;
 import com.example.tricolv2sb.DTO.goodsissue.ReadGoodsIssueDTO;
 import com.example.tricolv2sb.DTO.goodsissue.UpdateGoodsIssueDTO;
 import com.example.tricolv2sb.Entity.Enum.GoodsIssueStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface GoodsIssueServiceInterface {
 
-    List<ReadGoodsIssueDTO> fetchAllGoodsIssues();
+    Page<ReadGoodsIssueDTO> fetchAllGoodsIssues(Pageable pageable);
 
     List<ReadGoodsIssueDTO> fetchGoodsIssuesByStatus(GoodsIssueStatus status);
 

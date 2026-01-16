@@ -7,6 +7,10 @@ import com.example.tricolv2sb.Exception.ResourceNotFoundException;
 import com.example.tricolv2sb.Service.ServiceInterfaces.SupplierServiceInterface;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,8 +27,14 @@ public class SupplierController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('SUPPLIER:READ')")
-    public ResponseEntity<ApiResponse<List<ReadSupplierDTO>>> getAllSuppliers() {
-        List<ReadSupplierDTO> suppliers = supplierService.fetchAllSuppliers();
+    public ResponseEntity<ApiResponse<Page<ReadSupplierDTO>>> getAllSuppliers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<ReadSupplierDTO> suppliers = supplierService.fetchAllSuppliers(pageable);
         return ResponseEntity.ok(ApiResponse.success(suppliers, "Suppliers fetched successfully"));
     }
 

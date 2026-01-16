@@ -35,7 +35,7 @@ public class StockMovementController {
             @RequestParam(required = false) StockMovementType type,
             @RequestParam(required = false) String numeroLot,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("movementDate").descending());
 
