@@ -2,6 +2,7 @@ package com.example.tricolv2sb.Config;
 
 import com.example.tricolv2sb.Security.UserDetailsService;
 import com.example.tricolv2sb.Security.filters.JwtAuthenticationFilter;
+import com.example.tricolv2sb.Security.filters.KeycloakUserSyncFilter;
 import com.example.tricolv2sb.Security.handlers.CustomAccessDeniedHandler;
 import com.example.tricolv2sb.Security.handlers.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 
 import java.util.List;
 
@@ -35,6 +37,7 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final KeycloakRoleConverter keycloakRoleConverter;
+    private final KeycloakUserSyncFilter keycloakUserSyncFilter;
 
     @Value("${security.auth.mode:internal}")
     private String authMode;
@@ -88,6 +91,7 @@ public class SecurityConfig {
             http.oauth2ResourceServer(oauth2 -> oauth2
                     .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                     .authenticationEntryPoint(authenticationEntryPoint));
+            http.addFilterAfter(keycloakUserSyncFilter, BearerTokenAuthenticationFilter.class);
         } else {
             http.authenticationProvider(authenticationProvider())
                     .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -13,6 +13,8 @@ public interface UserAppRepository extends JpaRepository<UserApp, Long> {
 
     Optional<UserApp> findByEmail(String email);
 
+    Optional<UserApp> findByKeycloakId(String keycloakId);
+
     @Query("SELECT u FROM UserApp u " +
             "LEFT JOIN FETCH u.role r " +
             "LEFT JOIN FETCH r.permissions " +

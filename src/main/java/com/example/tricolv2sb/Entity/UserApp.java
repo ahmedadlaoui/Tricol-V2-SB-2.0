@@ -24,6 +24,9 @@ public class UserApp implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "keycloak_id", unique = true)
+    private String keycloakId;
+
     @Column(nullable = false)
     private String password;
 

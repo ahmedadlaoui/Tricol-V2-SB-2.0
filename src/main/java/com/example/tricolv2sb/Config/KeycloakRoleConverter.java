@@ -42,13 +42,13 @@ public class KeycloakRoleConverter implements Converter<Jwt, Collection<GrantedA
         Set<GrantedAuthority> authorities = new HashSet<>();
         Set<String> roles = new HashSet<>();
 
-        // Extract realm roles
+       
         Map<String, Object> realmAccess = (Map<String, Object>) jwt.getClaims().get("realm_access");
         if (realmAccess != null && realmAccess.get("roles") instanceof Collection) {
             roles.addAll((Collection<String>) realmAccess.get("roles"));
         }
 
-        // Extract client roles
+        
         Map<String, Object> resourceAccess = (Map<String, Object>) jwt.getClaims().get("resource_access");
         if (resourceAccess != null) {
             resourceAccess.values().stream()
@@ -59,7 +59,7 @@ public class KeycloakRoleConverter implements Converter<Jwt, Collection<GrantedA
                     .forEach(r -> roles.addAll((Collection<String>) r));
         }
 
-        // Map roles to authorities
+  
         for (String role : roles) {
             String upperRole = role.toUpperCase();
             authorities.add(new SimpleGrantedAuthority("ROLE_" + upperRole));

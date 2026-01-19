@@ -1,15 +1,4 @@
-2026-01-04T17:01:13.771+01:00 ERROR 25132 --- [Tricol-V2-SB] [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
-
-***************************
-APPLICATION FAILED TO START
-***************************
-
-Description:
-
-Parameter 1 of constructor in com.example.tricolv2sb.Service.AuditLogService required a bean of type 'com.example.tricolv2sb.Mapper.AuditLogMapper' that could not be found.
-
-
-Action:
-
-Consider defining a bean of type 'com.example.tricolv2sb.Mapper.AuditLogMapper' in your configuration.
-
+2026-01-19T09:40:10.819+01:00 ERROR 15096 --- [Tricol-V2-SB] [http-nio-8080-exec-6] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: The parsed JWT indicates it was signed with the 'RS256' signature algorithm, but the provided javax.crypto.spec.SecretKeySpec key may not be used to verify RS256 signatures.  Because the specified key reflects a specific and expected algorithm, and the JWT does not reflect this algorithm, it is likely that the JWT was not expected and therefore should not be trusted.  Another possibility is that the parser was provided the incorrect signature verification key, but this cannot be assumed for security reasons.
+2026-01-19T09:40:36.709+01:00 ERROR 15096 --- [Tricol-V2-SB] [http-nio-8080-exec-7] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: The parsed JWT indicates it was signed with the 'RS256' signature algorithm, but the provided javax.crypto.spec.SecretKeySpec key may not be used to verify RS256 signatures.  Because the specified key reflects a specific and expected algorithm, and the JWT does not reflect this algorithm, it is likely that the JWT was not expected and therefore should not be trusted.  Another possibility is that the parser was provided the incorrect signature verification key, but this cannot be assumed for security reasons.
+2026-01-19T09:40:43.203+01:00 ERROR 15096 --- [Tricol-V2-SB] [http-nio-8080-exec-8] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: The parsed JWT indicates it was signed with the 'RS256' signature algorithm, but the provided javax.crypto.spec.SecretKeySpec key may not be used to verify RS256 signatures.  Because the specified key reflects a specific and expected algorithm, and the JWT does not reflect this algorithm, it is likely that the JWT was not expected and therefore should not be trusted.  Another possibility is that the parser was provided the incorrect signature verification key, but this cannot be assumed for security reasons.
+2026-01-19T09:41:14.038+01:00 ERROR 15096 --- [Tricol-V2-SB] [http-nio-8080-exec-9] c.e.t.S.filters.JwtAuthenticationFilter  : JWT Authentication error: The parsed JWT indicates it was signed with the 'RS256' signature algorithm, but the provided javax.crypto.spec.SecretKeySpec key may not be used to verify RS256 signatures.  Because the specified key reflects a specific and expected algorithm, and the JWT does not reflect this algorithm, it is likely that the JWT was not expected and therefore should not be trusted.  Another possibility is that the parser was provided the incorrect signature verification key, but this cannot be assumed for security reasons.
